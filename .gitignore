@@ -87,3 +87,5 @@ coverage/
 # CocoaPods / Bundler (if you use `bundle install --path`)
 vendor/bundle/
 .bundle/
+
+structure.txt
