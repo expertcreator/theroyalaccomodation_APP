@@ -3,8 +3,8 @@ import type { RootStackParamList } from './types';
 import DrawerNavigator from './DrawerNavigator';
 import PlaceholderScreen from '../screens/_Placeholder';
 import { STACK_ROUTES } from './routes';
-import { StatusBar } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+import CustomStatusBar from '@sominaththore/react-native-custom-status-bar';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -14,9 +14,11 @@ export default function RootNavigator() {
 
     return (
         <>
-            <StatusBar
+            <CustomStatusBar
                 barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+                backgroundColor={bg}
             />
+
             {/* TEMP: booting into DrawerRoot until Splash is built.
                 Switch initialRouteName back to STACK_ROUTES.Splash then. */}
             <Stack.Navigator initialRouteName={STACK_ROUTES.DrawerRoot}>

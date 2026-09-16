@@ -18,7 +18,9 @@
     "info": "npx react-native info",
     "start-logs": "npx @react-native-community/cli start --client-logs",
     "fast-run": "yarn react-native run-android --active-arch-only",
-    "structure": "tree -I 'node_modules|android|ios|.git|vendor' -L 50 > structure.txt"
+    "structure": "tree -I 'node_modules|android|ios|.git|vendor' -L 50 > structure.txt",
+    "postinstall": "patch-package",
+    "make-patch": "npx patch-package"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
@@ -26,6 +28,7 @@
     "@react-navigation/drawer": "^7.14.1",
     "@react-navigation/native": "^7.4.1",
     "@react-navigation/native-stack": "^7.19.1",
+    "@sominaththore/react-native-custom-status-bar": "^1.1.0",
     "react": "19.2.3",
     "react-native": "0.87.1",
     "react-native-gesture-handler": "^3.3.0",
@@ -53,7 +56,9 @@
     "jest": "^29.6.3",
     "prettier": "2.8.8",
     "react-test-renderer": "19.2.3",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0"
   },
   "engines": {
     "node": ">= 22.11.0"
