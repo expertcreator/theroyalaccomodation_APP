@@ -3,7 +3,7 @@ import { View, Image, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
-import { typography, radius, ITheme } from '../../theme';
+import { typography, radius, spacing, borderWidth, ITheme } from '../../theme';
 import { withAlpha } from '../../utils/color';
 import { formatGBP } from '../../utils/format';
 import Text from '../Text/Text';
@@ -27,7 +27,7 @@ const PropertyCard: React.FC<Props> = ({ property, onPress }) => {
         <View style={styles.stat}>
             <Icon name={icon} size={14} color={p.accent.main} />
             <Text
-                style={[typography.caption, { color: p.text.primary, marginLeft: moderateScale(5) }]}
+                style={[typography.caption, { color: p.text.primary, marginLeft: spacing.xs }]}
                 numberOfLines={1}
             >
                 {label}
@@ -72,21 +72,21 @@ const PropertyCard: React.FC<Props> = ({ property, onPress }) => {
                     <Stat icon="bathrooms" label={`${property.stats.bathrooms} baths`} />
                 </View>
 
-                <Text style={[typography.title, { color: p.primary.main, marginBottom: verticalScale(6) }]}>
+                <Text style={[typography.title, { color: p.primary.main, marginBottom: spacing.xs }]}>
                     {property.name}
                 </Text>
 
                 <View style={styles.ratingRow}>
                     <Text style={{ color: p.accent.main, fontSize: moderateScale(11), letterSpacing: 1 }}>★★★★★</Text>
-                    <Text style={[typography.caption, { color: p.primary.main, fontWeight: '600', marginLeft: moderateScale(6) }]}>
+                    <Text style={[typography.caption, { color: p.primary.main, fontWeight: '600', marginLeft: spacing.xs }]}>
                         {property.rating.toFixed(1)}
                     </Text>
-                    <Text style={[typography.caption, { color: p.text.placeHolder, marginLeft: moderateScale(4) }]}>
+                    <Text style={[typography.caption, { color: p.text.placeHolder, marginLeft: spacing.xs }]}>
                         ({property.reviews} reviews)
                     </Text>
                 </View>
 
-                <Text style={[typography.bodySmall, { color: p.text.placeHolder, marginBottom: verticalScale(16) }]}>
+                <Text style={[typography.bodySmall, { color: p.text.placeHolder, marginBottom: spacing.lg }]}>
                     {property.description}
                 </Text>
 
@@ -98,8 +98,8 @@ const PropertyCard: React.FC<Props> = ({ property, onPress }) => {
 
 const createStyles = (theme: ITheme) => StyleSheet.create({
     card: {
-        borderRadius: moderateScale(20),
-        borderWidth: 1,
+        borderRadius: radius.xl,
+        borderWidth: borderWidth.thin,
         overflow: 'hidden',
         shadowColor: '#000',
         shadowOpacity: 0.08,
@@ -107,7 +107,7 @@ const createStyles = (theme: ITheme) => StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         elevation: 3,
         backgroundColor: theme.palette.background.card,
-        borderColor: theme.palette.borderColor
+        borderColor: theme.palette.borderColor,
     },
     imageWrap: { width: '100%', height: verticalScale(IMG_H) },
     image: { width: '100%', height: '100%' },
@@ -115,24 +115,24 @@ const createStyles = (theme: ITheme) => StyleSheet.create({
         position: 'absolute',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: moderateScale(14),
-        paddingVertical: verticalScale(6),
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.xs,
         borderRadius: radius.pill,
-        borderWidth: 1,
+        borderWidth: borderWidth.thin,
     },
-    tagPos: { top: moderateScale(12), left: moderateScale(12) },
-    pricePos: { bottom: moderateScale(12), right: moderateScale(12) },
-    body: { padding: moderateScale(20) },
+    tagPos: { top: spacing.md, left: spacing.md },
+    pricePos: { bottom: spacing.md, right: spacing.md },
+    body: { padding: spacing.lg },
     statsRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingBottom: verticalScale(14),
-        marginBottom: verticalScale(14),
+        paddingBottom: spacing.md,
+        marginBottom: spacing.md,
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
     stat: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-    ratingRow: { flexDirection: 'row', alignItems: 'center', marginBottom: verticalScale(8) },
+    ratingRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
 });
 
 export default PropertyCard;

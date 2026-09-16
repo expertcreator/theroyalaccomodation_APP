@@ -2,9 +2,9 @@ import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
-import { ITheme, typography } from '../../theme';
+import { ITheme, typography, spacing } from '../../theme';
 import { PROPERTIES, HERO_SLIDES } from '../../constants/data';
 import type { RootStackParamList } from '../../navigation/types';
 import { STACK_ROUTES } from '../../navigation/routes';
@@ -36,7 +36,7 @@ const Home: React.FC = () => {
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: verticalScale(32) }}
+                contentContainerStyle={{ paddingBottom: spacing.xxl }}
             >
                 <HeroCarousel slides={HERO_SLIDES} />
 
@@ -49,7 +49,7 @@ const Home: React.FC = () => {
                     <Text style={[typography.body, styles.subtitle, { color: p.text.placeHolder }]}>
                         Exclusive private residences with pools and gardens near London.
                     </Text>
-                    <View style={{ marginTop: verticalScale(20) }}>
+                    <View style={{ marginTop: spacing.xl2 }}>
                         <DiamondDivider />
                     </View>
                 </View>
@@ -72,17 +72,17 @@ const Home: React.FC = () => {
 const createStyles = (theme: ITheme) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: theme.palette.background.default
+        backgroundColor: theme.palette.background.default,
     },
     intro: {
-        paddingHorizontal: moderateScale(20),
-        paddingTop: verticalScale(24),
-        paddingBottom: verticalScale(20),
+        paddingHorizontal: spacing.xl2,
+        paddingTop: spacing.xl,
+        paddingBottom: spacing.xl2,
         alignItems: 'center',
     },
-    heading: { textAlign: 'center', marginTop: verticalScale(10), marginBottom: verticalScale(10) },
+    heading: { textAlign: 'center', marginTop: spacing.sm, marginBottom: spacing.sm },
     subtitle: { textAlign: 'center', maxWidth: moderateScale(300) },
-    cards: { paddingHorizontal: moderateScale(20), rowGap: verticalScale(24) },
+    cards: { paddingHorizontal: spacing.xl2, rowGap: spacing.xl },
 });
 
 export default Home;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
+import { typography, spacing, radius } from '../../theme';
 import Text from '../Text/Text';
 import { ITheme } from '../../theme/theme.types';
 
@@ -22,10 +22,9 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
     onCancel,
     onConfirm,
     cancelBtnText,
-    confirmBtnText
+    confirmBtnText,
 }) => {
-
-    const { theme } = useTheme(); // dynamically get theme (light or dark)
+    const { theme } = useTheme();
     const styles = createStyles(theme);
 
     return (
@@ -33,7 +32,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             supportedOrientations={['portrait', 'landscape']}
             visible={visible}
             transparent
-            animationType='slide'
+            animationType="slide"
         >
             <View style={styles.overlay}>
                 <View style={styles.container}>
@@ -41,10 +40,10 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
                     <Text style={styles.message}>{message}</Text>
 
                     <View style={styles.buttonRow}>
-                        <TouchableOpacity style={[styles.button, styles.cancelBtn]} onPress={onCancel}>
+                        <TouchableOpacity style={[styles.button, styles.cancelBtn]} onPress={onCancel} activeOpacity={0.85}>
                             <Text style={styles.cancelText}>{cancelBtnText ? cancelBtnText : `Cancel`}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.confirmBtn]} onPress={onConfirm}>
+                        <TouchableOpacity style={[styles.button, styles.confirmBtn]} onPress={onConfirm} activeOpacity={0.85}>
                             <Text style={styles.confirmText}>{confirmBtnText ? confirmBtnText : `Delete`}</Text>
                         </TouchableOpacity>
                     </View>
@@ -66,29 +65,28 @@ const createStyles = (theme: ITheme) => StyleSheet.create({
     container: {
         width: '80%',
         backgroundColor: theme.palette.background.card,
-        borderRadius: moderateScale(8),
-        padding: moderateScale(20),
+        borderRadius: radius.md,
+        padding: spacing.xl2,
     },
     title: {
-        fontSize: moderateScale(16),
-        fontWeight: 'bold',
+        ...typography.subtitle,
         color: theme.palette.text.primary,
-        marginBottom: moderateScale(10),
+        marginBottom: spacing.sm,
     },
     message: {
-        fontSize: moderateScale(14),
+        ...typography.body,
         color: theme.palette.text.primary,
-        marginBottom: moderateScale(20),
+        marginBottom: spacing.xl2,
     },
     buttonRow: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
     },
     button: {
-        paddingVertical: moderateScale(8),
-        paddingHorizontal: moderateScale(16),
-        borderRadius: moderateScale(8),
-        marginLeft: moderateScale(10),
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.lg,
+        borderRadius: radius.md,
+        marginLeft: spacing.sm,
     },
     cancelBtn: {
         backgroundColor: theme.palette.divider,
@@ -97,12 +95,11 @@ const createStyles = (theme: ITheme) => StyleSheet.create({
         backgroundColor: theme.palette.error.main,
     },
     cancelText: {
+        ...typography.label,
         color: theme.palette.text.primary,
-        fontSize: moderateScale(14),
     },
     confirmText: {
+        ...typography.label,
         color: theme.palette.text.secondary,
-        fontWeight: 'bold',
-        fontSize: moderateScale(14),
     },
 });

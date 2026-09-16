@@ -6,7 +6,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
-import { typography } from '../../theme';
+import { typography, spacing, radius, borderWidth } from '../../theme';
 import { withAlpha } from '../../utils/color';
 import Text from '../Text/Text';
 
@@ -93,26 +93,26 @@ const HeroCarousel: React.FC<Props> = ({ slides, height = 320, interval = 4500 }
 
 const styles = StyleSheet.create({
     overlayRow: {
-        position: 'absolute', left: moderateScale(20), right: moderateScale(20), bottom: verticalScale(16),
+        position: 'absolute', left: spacing.xl2, right: spacing.xl2, bottom: spacing.lg,
         flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     },
     glassPill: {
-        flexDirection: 'row', alignItems: 'center', borderRadius: 999, borderWidth: 1,
+        flexDirection: 'row', alignItems: 'center', borderRadius: radius.pill, borderWidth: borderWidth.thin,
         backgroundColor: 'rgba(0,0,0,0.30)', borderColor: 'rgba(255,255,255,0.15)',
     },
     captionPill: {
-        paddingHorizontal: moderateScale(12),
-        paddingVertical: verticalScale(5),
-        flexShrink: 1,                    // ← give up width when space is tight
-        marginRight: moderateScale(8),   // ← gap so it never touches the dots
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.xs,
+        flexShrink: 1,                 // give up width when space is tight
+        marginRight: spacing.sm,       // gap so it never touches the dots
     },
-    goldDot: { width: moderateScale(6), height: moderateScale(6), borderRadius: 999, marginRight: moderateScale(8) },
+    goldDot: { width: moderateScale(6), height: moderateScale(6), borderRadius: radius.pill, marginRight: spacing.sm },
     dotsPill: {
-        paddingHorizontal: moderateScale(12),
-        paddingVertical: verticalScale(6),
-        flexShrink: 0,                    // ← keeps its full width, always visible
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.xs,
+        flexShrink: 0,                 // keeps its full width, always visible
     },
-    dash: { height: verticalScale(3), borderRadius: 999, marginHorizontal: moderateScale(3) },
+    dash: { height: verticalScale(3), borderRadius: radius.pill, marginHorizontal: moderateScale(3) },
 });
 
 export default HeroCarousel;

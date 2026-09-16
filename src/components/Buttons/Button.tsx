@@ -1,8 +1,7 @@
 import React from 'react';
-import { Pressable, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { TouchableOpacity, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
-import { typography, radius } from '../../theme';
+import { typography, radius, spacing, borderWidth } from '../../theme';
 import Text from '../Text/Text';
 import Icon, { IconName } from '../Icon/Icon';
 
@@ -29,27 +28,27 @@ const Button: React.FC<Props> = ({
     const textColor = isOutline ? p.primary.main : p.primary.contrastText;
 
     return (
-        <Pressable
+        <TouchableOpacity
             onPress={onPress}
             disabled={disabled}
+            activeOpacity={0.7}
             accessibilityRole="button"
             accessibilityLabel={title}
-            style={({ pressed }) => [
+            style={[
                 styles.base,
-                { backgroundColor: bg, borderWidth: isOutline ? 1 : 0, borderColor: p.primary.main },
+                { backgroundColor: bg, borderWidth: isOutline ? borderWidth.thin : 0, borderColor: p.primary.main },
                 fullWidth && { alignSelf: 'stretch' },
-                pressed && { opacity: 0.85 },
                 disabled && { opacity: 0.5 },
                 style,
             ]}
         >
             <Text style={[typography.button, { color: textColor }]}>{title}</Text>
             {rightIcon && (
-                <View style={{ marginLeft: moderateScale(8) }}>
+                <View style={{ marginLeft: spacing.sm }}>
                     <Icon name={rightIcon} size={16} color={p.accent.main} />
                 </View>
             )}
-        </Pressable>
+        </TouchableOpacity>
     );
 };
 
@@ -59,8 +58,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: radius.pill,
-        paddingVertical: verticalScale(12),
-        paddingHorizontal: moderateScale(16),
+        paddingVertical: spacing.md,
+        paddingHorizontal: spacing.lg,
     },
 });
 

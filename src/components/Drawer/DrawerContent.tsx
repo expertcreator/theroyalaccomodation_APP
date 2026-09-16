@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
-import { typography } from '../../theme';
+import { typography, spacing, radius, borderWidth } from '../../theme';
 import { withAlpha } from '../../utils/color';
 import { PROPERTIES, CONTACT } from '../../constants/data';
 import { DRAWER_ROUTES, STACK_ROUTES } from '../../navigation/routes';
@@ -53,7 +53,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             />
 
             {/* Close button */}
-            <View style={[styles.top, { paddingTop: insets.top + verticalScale(12) }]}>
+            <View style={[styles.top, { paddingTop: insets.top + spacing.md }]}>
                 <Pressable
                     onPress={() => nav.closeDrawer()}
                     hitSlop={8}
@@ -66,13 +66,13 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
 
             {/* Wordmark */}
             <View style={styles.wordmark}>
-                <View style={{ marginBottom: verticalScale(12) }}>
+                <View style={{ marginBottom: spacing.md }}>
                     <Icon name="crown" size={26} color={p.accent.main} />
                 </View>
                 <Text style={[typography.title, { color: p.primary.contrastText, letterSpacing: moderateScale(2.5) }]}>
                     The Royal Accommodation
                 </Text>
-                <Text style={[typography.overline, { color: p.accent.main, marginTop: verticalScale(4), letterSpacing: moderateScale(4) }]}>
+                <Text style={[typography.overline, { color: p.accent.main, marginTop: spacing.xs, letterSpacing: moderateScale(4) }]}>
                     Luxury Living
                 </Text>
             </View>
@@ -95,7 +95,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                             {it.label}
                         </Text>
                         {it.chevron && (
-                            <View style={{ marginLeft: moderateScale(8) }}>
+                            <View style={{ marginLeft: spacing.sm }}>
                                 <Icon name="chevron-right" color={p.accent.main} size={14} />
                             </View>
                         )}
@@ -105,7 +105,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                 {isLoggedIn && (
                     <View style={[styles.account, { borderTopColor: white(0.1) }]}>
                         <View style={{ flex: 1 }}>
-                            <Text style={[typography.overline, { color: p.accent.main, marginBottom: verticalScale(3) }]}>Account</Text>
+                            <Text style={[typography.overline, { color: p.accent.main, marginBottom: spacing.xxs }]}>Account</Text>
                             <Text style={[typography.label, { color: p.primary.contrastText }]}>{user?.name}</Text>
                         </View>
                         <Pressable onPress={() => signOut()}>
@@ -116,7 +116,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             </ScrollView>
 
             {/* Footer */}
-            <View style={[styles.footer, { paddingBottom: insets.bottom + verticalScale(16) }]}>
+            <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.lg }]}>
                 <LinearGradient
                     colors={['transparent', withAlpha(p.accent.main, 0.4), 'transparent']}
                     start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
@@ -127,7 +127,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                         <Text style={[typography.bodySmall, { color: white(0.6) }]}>{CONTACT.phoneDisplay}</Text>
                     </Pressable>
                     <Pressable onPress={() => Linking.openURL(`mailto:${CONTACT.email}`)}>
-                        <Text style={[typography.caption, { color: white(0.5), marginTop: verticalScale(4) }]}>{CONTACT.email}</Text>
+                        <Text style={[typography.caption, { color: white(0.5), marginTop: spacing.xs }]}>{CONTACT.email}</Text>
                     </Pressable>
                 </View>
             </View>
@@ -138,20 +138,20 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
 const styles = StyleSheet.create({
     root: { flex: 1, overflow: 'hidden' },
     leftAccent: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 1.5, opacity: 0.8 },
-    top: { paddingHorizontal: moderateScale(28), alignItems: 'flex-end', marginBottom: verticalScale(20) },
+    top: { paddingHorizontal: spacing.xl3, alignItems: 'flex-end', marginBottom: spacing.xl2 },
     closeBtn: {
         width: moderateScale(40), height: moderateScale(40), borderRadius: moderateScale(20),
-        borderWidth: 1, alignItems: 'center', justifyContent: 'center',
+        borderWidth: borderWidth.thin, alignItems: 'center', justifyContent: 'center',
     },
-    wordmark: { paddingHorizontal: moderateScale(28), marginBottom: verticalScale(28) },
-    navContent: { paddingHorizontal: moderateScale(28), paddingVertical: verticalScale(4) },
-    navRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: verticalScale(9) },
+    wordmark: { paddingHorizontal: spacing.xl3, marginBottom: spacing.xl3 },
+    navContent: { paddingHorizontal: spacing.xl3, paddingVertical: spacing.xs },
+    navRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm },
     account: {
         flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
-        marginTop: verticalScale(24), paddingTop: verticalScale(18), borderTopWidth: StyleSheet.hairlineWidth,
+        marginTop: spacing.xl, paddingTop: spacing.lg, borderTopWidth: StyleSheet.hairlineWidth,
     },
-    footer: { paddingHorizontal: moderateScale(28), paddingTop: verticalScale(16) },
-    hairline: { height: 1, width: '100%', marginBottom: verticalScale(16) },
+    footer: { paddingHorizontal: spacing.xl3, paddingTop: spacing.lg },
+    hairline: { height: borderWidth.thin, width: '100%', marginBottom: spacing.lg },
     contact: { alignItems: 'center' },
 });
 

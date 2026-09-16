@@ -3,7 +3,7 @@ import { View, Pressable, StyleSheet, StyleProp, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
-import { typography } from '../../theme';
+import { typography, spacing, borderWidth } from '../../theme';
 import Text from '../Text/Text';
 import Icon, { IconName } from '../Icon/Icon';
 
@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({
                 styles.circle,
                 overlay
                     ? { backgroundColor: 'rgba(0,0,0,0.28)' }
-                    : { backgroundColor: p.background.card, borderWidth: 1, borderColor: p.borderColor },
+                    : { backgroundColor: p.background.card, borderWidth: borderWidth.thin, borderColor: p.borderColor },
                 pressed && { transform: [{ scale: 0.94 }] },
             ]}
         >
@@ -77,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({
             return (
                 <View style={styles.actionRow}>
                     {rightActions.map((a, i) => (
-                        <View key={i} style={i > 0 && { marginLeft: moderateScale(8) }}>
+                        <View key={i} style={i > 0 && { marginLeft: spacing.sm }}>
                             <CircleButton {...a} />
                         </View>
                     ))}
@@ -96,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({
                         THE ROYAL ACCOMMODATION
                     </Text>
                     {!!subtitle && (
-                        <Text style={[typography.overline, { color: p.text.placeHolder, marginTop: verticalScale(2) }]}>
+                        <Text style={[typography.overline, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
                             {subtitle}
                         </Text>
                     )}
@@ -107,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({
             return (
                 <View style={styles.center}>
                     {!!overline && (
-                        <Text style={[typography.overline, { color: p.accent.main, marginBottom: verticalScale(2) }]}>
+                        <Text style={[typography.overline, { color: p.accent.main, marginBottom: spacing.xxs }]}>
                             {overline}
                         </Text>
                     )}
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: moderateScale(20),
+        paddingHorizontal: spacing.xl2,
         height: verticalScale(56),
     },
     circle: {
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     actionRow: { flexDirection: 'row', alignItems: 'center' },
-    center: { flex: 1, alignItems: 'center', paddingHorizontal: moderateScale(8) },
+    center: { flex: 1, alignItems: 'center', paddingHorizontal: spacing.sm },
 });
 
 export default Header;

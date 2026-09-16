@@ -6,6 +6,7 @@ import {
     StyleSheet,
     TextStyle,
 } from 'react-native';
+import { typography } from '../../theme';
 
 type Props = RNTextProps & {
     style?: StyleProp<TextStyle>;
@@ -18,12 +19,7 @@ const Text: React.FC<Props> = ({ style, ...props }) => {
         <RNText
             maxFontSizeMultiplier={1.2}
             {...props}
-            style={[
-                {
-                    fontSize: 14,
-                },
-                flatStyle,
-            ]}
+            style={[typography.bodySmall, flatStyle]}
         />
     );
 };
