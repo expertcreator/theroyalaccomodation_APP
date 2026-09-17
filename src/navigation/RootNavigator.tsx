@@ -7,6 +7,7 @@ import { useTheme } from '../context/ThemeContext';
 import CustomStatusBar from '@sominaththore/react-native-custom-status-bar';
 import PropertyDetail from '../screens/PropertyDetail/PropertyDetail';
 import CheckAvailability from '../screens/CheckAvailability/CheckAvailability';
+import LoginRegister from '../screens/LoginRegister/LoginRegister';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -29,7 +30,7 @@ export default function RootNavigator() {
                 <Stack.Screen name={STACK_ROUTES.PropertyDetail} component={PropertyDetail} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.CheckAvailability} component={CheckAvailability} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.SearchResults} component={PlaceholderScreen} options={{ headerShown: false }} />
-                <Stack.Screen name={STACK_ROUTES.LoginRegister} component={PlaceholderScreen} options={{ headerShown: false }} />
+                <Stack.Screen name={STACK_ROUTES.LoginRegister} component={LoginRegister} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.PaymentReview} component={PlaceholderScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.BookingConfirmed} component={PlaceholderScreen} options={{ headerShown: false }} />
             </Stack.Navigator>

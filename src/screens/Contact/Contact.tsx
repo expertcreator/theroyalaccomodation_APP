@@ -14,11 +14,11 @@ import Text from '../../components/Text/Text';
 import Header from '../../components/Headers/Header';
 import DiamondDivider from '../../components/Dividers/DiamondDivider';
 import Button from '../../components/Buttons/Button';
-import Input from '../../components/Input/Input';
 import Select from '../../components/Dropdown/Select';
 import ConfirmModal from '../../components/Modals/ConfirmModal';
 import ContactRow from './components/ContactRow';
 import { styles } from './styles';
+import Input from '../../components/Input/Input';
 
 type Nav = DrawerNavigationProp<DrawerParamList>;
 

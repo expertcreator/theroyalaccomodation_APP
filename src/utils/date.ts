@@ -47,3 +47,5 @@ export const buildMonthGrid = (year: number, month: number): (Date | null)[] => 
     while (cells.length % 7 !== 0) cells.push(null); // pad final row to 7
     return cells;
 };
+
+export const formatMonthShort = (d: Date): string => MONTHS_SHORT[d.getMonth()];

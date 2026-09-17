@@ -8,7 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { typography, spacing } from '../../theme';
 import { getPropertyById } from '../../constants/data';
 import { calculateStayPrice } from '../../utils/pricing';
-import { toISO, isSameDay, startOfDay, addMonths, nightsBetween } from '../../utils/date';
+import { toISO, startOfDay, addMonths, nightsBetween } from '../../utils/date';
 import type { RootStackParamList } from '../../navigation/types';
 import { STACK_ROUTES } from '../../navigation/routes';
 
@@ -20,6 +20,7 @@ import DateSummary from './components/DateSummary';
 import GuestStepper from './components/GuestStepper';
 import BottomBar from './components/BottomBar';
 import { styles } from './styles';
+import { useAuth } from '../../context/AuthContext';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.CheckAvailability>;
@@ -30,8 +31,10 @@ const firstOfThisMonth = () => {
 };
 
 const CheckAvailability: React.FC = () => {
+
   const navigation = useNavigation<Nav>();
   const route = useRoute<ScreenRoute>();
+  const { isLoggedIn } = useAuth();
   const { theme } = useTheme();
   const p = theme.palette;
 
@@ -93,13 +96,27 @@ const CheckAvailability: React.FC = () => {
 
   const onSearch = () => {
     if (!checkIn || !checkOut) return;
-    navigation.navigate(STACK_ROUTES.SearchResults, {
+
+    // Fast client-side re-check (real, authoritative check happens server-side at payment).
+    if (hasOccupiedInRange(checkIn, checkOut)) {
+      // Those nights were taken — restart the range so the user re-picks.
+      setCheckOut(null);
+      return;
+    }
+
+    const booking = {
       propertyId: property.id,
       checkIn: toISO(checkIn),
       checkOut: toISO(checkOut),
       adults,
       children,
-    });
+    };
+
+    if (isLoggedIn) {
+      navigation.navigate(STACK_ROUTES.PaymentReview, booking);
+    } else {
+      navigation.navigate(STACK_ROUTES.LoginRegister, { entry: 'booking', booking });
+    }
   };
 
   return (
