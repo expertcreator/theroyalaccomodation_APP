@@ -72,6 +72,13 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
+// Linking local.properties to generate APK & AAB
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -86,6 +93,13 @@ android {
         versionName "1.0"
     }
     signingConfigs {
+        release {
+            storeFile localProperties['storeFile'] 
+                ? file(localProperties['storeFile']) : null
+            storePassword localProperties['storePassword']
+            keyAlias      localProperties['keyAlias']
+            keyPassword   localProperties['keyPassword']
+        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -100,7 +114,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
