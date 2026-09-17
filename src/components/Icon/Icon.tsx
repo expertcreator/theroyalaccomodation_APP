@@ -12,7 +12,8 @@ export type IconName =
     | 'crown' | 'pool' | 'jacuzzi' | 'wifi' | 'parking'
     | 'fire' | 'dishwasher' | 'laundry' | 'dining' | 'tennis' | 'helipad'
     | 'mail' | 'phone' | 'map-pin' | 'external-link' | 'chevron-down'
-    | 'lock' | 'eye' | 'eye-off' | 'shield' | 'user' | 'check';
+    | 'lock' | 'eye' | 'eye-off' | 'shield' | 'user' | 'check'
+    | 'calendar' | 'moon';
 
 type FeatherName = ComponentProps<typeof Feather>['name'];
 type MdiName = ComponentProps<typeof MaterialDesignIcons>['name'];
@@ -44,6 +45,8 @@ const FEATHER_MAP: Partial<Record<IconName, FeatherName>> = {
     shield: 'shield',
     user: 'user',
     check: 'check',
+    calendar: 'calendar',
+    moon: 'moon',
 };
 
 // MaterialDesignIcons — icons Feather doesn't have.
