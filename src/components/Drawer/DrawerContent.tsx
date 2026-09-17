@@ -138,7 +138,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
 const styles = StyleSheet.create({
     root: { flex: 1, overflow: 'hidden' },
     leftAccent: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 1.5, opacity: 0.8 },
-    top: { paddingHorizontal: spacing.xl3, alignItems: 'flex-end', marginBottom: spacing.xl2 },
+    top: { paddingHorizontal: spacing.md, alignItems: 'flex-end', marginBottom: spacing.xl2 },
     closeBtn: {
         width: moderateScale(40), height: moderateScale(40), borderRadius: moderateScale(20),
         borderWidth: borderWidth.thin, alignItems: 'center', justifyContent: 'center',
