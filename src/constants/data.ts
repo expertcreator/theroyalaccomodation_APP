@@ -2,6 +2,7 @@ import type { ImageSourcePropType } from 'react-native';
 import imagePath from './imagePath';
 import type { Property, Room, Attraction } from '../interfaces/property';
 import { toISO } from '../utils/date';
+import { AreaAttraction } from '../interfaces/attraction';
 
 export const ASCOT_BASE_RATE = 1250;
 export const WINDSOR_BASE_RATE = 995;
@@ -118,3 +119,55 @@ export const CONTACT = {
     phoneDisplay: '+44 (0) 773 607 2100',
     email: 'info@theroyalaccommodation.com',
 };
+
+// Local-area guide for the "Windsor & Ascot" (Things to Do) screen.
+export const AREA_ATTRACTIONS: AreaAttraction[] = [
+    {
+        id: 'windsor-castle',
+        name: 'Windsor Castle',
+        location: 'Windsor',
+        description: "The oldest and largest occupied castle in the world and an official royal residence, with state apartments and St George's Chapel.",
+        image: imagePath.thingsToDo.windsorCastle,
+        url: 'https://www.rct.uk/visit/windsor-castle',
+    },
+    {
+        id: 'windsor-great-park',
+        name: 'Windsor Great Park',
+        location: 'Windsor',
+        description: 'A vast ancient royal park with woodland, deer and the famous Long Walk up to the castle.',
+        image: imagePath.thingsToDo.windsorGreatPark,
+        url: 'https://www.windsorgreatpark.co.uk',
+    },
+    {
+        id: 'royal-windsor-racecourse',
+        name: 'Royal Windsor Racecourse',
+        location: 'Windsor',
+        description: 'A riverside racecourse on the Thames, known for its popular Monday evening flat racing.',
+        image: imagePath.thingsToDo.windsorRacecourse,
+        url: 'https://www.windsor-racecourse.co.uk',
+    },
+    {
+        id: 'ascot-racecourse',
+        name: 'Ascot Racecourse',
+        location: 'Ascot',
+        description: "One of the world's most famous racecourses and home of Royal Ascot.",
+        image: imagePath.thingsToDo.ascotRacecourse,
+        url: 'https://www.ascot.com',
+    },
+    {
+        id: 'sunningdale-golf',
+        name: 'Sunningdale Golf Club',
+        location: 'Sunningdale',
+        description: 'A renowned heathland golf club with two championship courses.',
+        image: imagePath.thingsToDo.sunningdaleGolf,
+        url: 'https://www.sunningdalegolfclub.co.uk',
+    },
+    {
+        id: 'legoland-windsor',
+        name: 'Legoland Windsor Resort',
+        location: 'Windsor',
+        description: 'A popular family theme park with rides and attractions set in Berkshire parkland.',
+        image: imagePath.thingsToDo.legoland,
+        url: 'https://www.legoland.co.uk',
+    },
+];

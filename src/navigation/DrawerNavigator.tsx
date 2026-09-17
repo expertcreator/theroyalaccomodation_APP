@@ -5,6 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import DrawerContent from '../components/Drawer/DrawerContent';
 import Home from '../screens/Home/Home';
 import PlaceholderScreen from '../screens/_Placeholder';
+import ThingsToDo from '../screens/ThingsToDo/ThingsToDo';
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
@@ -23,10 +24,10 @@ export default function DrawerNavigator() {
             }}
         >
             <Drawer.Screen name={DRAWER_ROUTES.Home} component={Home} />
-            <Drawer.Screen name={DRAWER_ROUTES.ThingsToDo} component={PlaceholderScreen} options={{ title: 'Things to Do' }} />
+            <Drawer.Screen name={DRAWER_ROUTES.ThingsToDo} component={ThingsToDo} />
             <Drawer.Screen name={DRAWER_ROUTES.Contact} component={PlaceholderScreen} />
-            <Drawer.Screen name={DRAWER_ROUTES.MyBookings} component={PlaceholderScreen} options={{ title: 'My Bookings' }} />
-            <Drawer.Screen name={DRAWER_ROUTES.MyProfile} component={PlaceholderScreen} options={{ title: 'My Profile' }} />
+            <Drawer.Screen name={DRAWER_ROUTES.MyBookings} component={PlaceholderScreen} />
+            <Drawer.Screen name={DRAWER_ROUTES.MyProfile} component={PlaceholderScreen} />
         </Drawer.Navigator>
     );
 }

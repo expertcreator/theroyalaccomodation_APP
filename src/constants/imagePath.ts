@@ -16,4 +16,12 @@ export default {
         require('../assets/images/windsor/windsor-5.jpeg'),
         require('../assets/images/windsor/windsor-6.jpg'),
     ],
+    thingsToDo: {
+        windsorCastle: require('../assets/images/thingsToDo/Windsor-Castle.jpg'),
+        windsorGreatPark: require('../assets/images/thingsToDo/Windsor-Great-Park.jpeg'),
+        windsorRacecourse: require('../assets/images/thingsToDo/Royal-Windsor-Racecourse.jpeg'),
+        ascotRacecourse: require('../assets/images/thingsToDo/Ascot-Racecourse.jpg'),
+        sunningdaleGolf: require('../assets/images/thingsToDo/SunningdaleGolf.jpg'),
+        legoland: require('../assets/images/thingsToDo/legoland.jpg'),
+    },
 };
