@@ -1,5 +1,6 @@
 export default {
     logo: require('../assets/images/logo.png'),
+    map: require('../assets/images/map-illustration.png'),
     ascot: [
         require('../assets/images/ascot/ascot-1.png'),
         require('../assets/images/ascot/ascot-2.jpg'),

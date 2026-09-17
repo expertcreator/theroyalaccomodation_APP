@@ -116,8 +116,11 @@ export const getPropertyById = (id: string): Property =>
 
 export const CONTACT = {
     phone: '+447736072100',
-    phoneDisplay: '+44 (0) 773 607 2100',
+    phoneDisplay: '+44 773 607 2100',
+    phone2: '+442071237052',
+    phone2Display: '+44 207 123 7052',
     email: 'info@theroyalaccommodation.com',
+    address: ['71-75 Shelton Street', 'London WC2H 9JQ'],
 };
 
 // Local-area guide for the "Windsor & Ascot" (Things to Do) screen.
