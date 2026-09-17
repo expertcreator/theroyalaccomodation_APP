@@ -121,6 +121,7 @@ export const CONTACT = {
     phone2Display: '+44 207 123 7052',
     email: 'info@theroyalaccommodation.com',
     address: ['71-75 Shelton Street', 'London WC2H 9JQ'],
+    mapsUrl: 'https://maps.google.com/?q=Windsor,Berkshire,England',
 };
 
 // Local-area guide for the "Windsor & Ascot" (Things to Do) screen.
