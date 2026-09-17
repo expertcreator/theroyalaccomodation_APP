@@ -6,6 +6,8 @@ import { useTheme } from '../../context/ThemeContext';
 import { typography, spacing, borderWidth } from '../../theme';
 import Text from '../Text/Text';
 import Icon, { IconName } from '../Icon/Icon';
+import { withAlpha } from '../../utils/color';
+import LinearGradient from 'react-native-linear-gradient';
 
 export type HeaderAction = { icon: IconName; onPress: () => void; label?: string };
 
@@ -42,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({
     const p = theme.palette;
     const overlay = variant === 'overlay';
 
-    const iconColor = overlay ? p.primary.contrastText : p.primary.main;
+    const iconColor = overlay ? p.accent.light : p.primary.main;
     const showBorder = bordered ?? (!overlay);
 
     const CircleButton = ({ icon, onPress, label }: HeaderAction) => (
@@ -123,7 +125,9 @@ const Header: React.FC<HeaderProps> = ({
     return (
         <View
             style={[
-                overlay ? styles.overlayWrap : { backgroundColor: p.background.default },
+                overlay
+                    ? [styles.overlayWrap, { backgroundColor: withAlpha(p.primary.main, 1) }]
+                    : { backgroundColor: p.background.default },
                 { paddingTop: insets.top },
                 showBorder && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: p.borderColor },
                 style,
@@ -134,18 +138,27 @@ const Header: React.FC<HeaderProps> = ({
                 {renderCenter()}
                 {renderRight()}
             </View>
+
+            {/* Champagne-gold shine along the bottom (overlay header only) */}
+            {overlay && (
+                <LinearGradient
+                    colors={['transparent', withAlpha(p.accent.main, 0.4), 'transparent']}
+                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                    style={styles.goldHairline}
+                />
+            )}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    overlayWrap: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 30, backgroundColor: 'transparent' },
+    overlayWrap: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 30 },
     row: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: spacing.xl2,
-        height: verticalScale(56),
+        height: verticalScale(50),
     },
     circle: {
         width: moderateScale(BTN),
@@ -156,6 +169,7 @@ const styles = StyleSheet.create({
     },
     actionRow: { flexDirection: 'row', alignItems: 'center' },
     center: { flex: 1, alignItems: 'center', paddingHorizontal: spacing.sm },
+    goldHairline: { position: 'absolute', bottom: 0, left: 0, right: 0, height: borderWidth.thin },
 });
 
 export default Header;

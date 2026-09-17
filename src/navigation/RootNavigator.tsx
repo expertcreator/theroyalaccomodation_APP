@@ -5,6 +5,8 @@ import PlaceholderScreen from '../screens/_Placeholder';
 import { STACK_ROUTES } from './routes';
 import { useTheme } from '../context/ThemeContext';
 import CustomStatusBar from '@sominaththore/react-native-custom-status-bar';
+import PropertyDetail from '../screens/PropertyDetail/PropertyDetail';
+import CheckAvailability from '../screens/CheckAvailability/CheckAvailability';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,11 +26,11 @@ export default function RootNavigator() {
             <Stack.Navigator initialRouteName={STACK_ROUTES.DrawerRoot}>
                 <Stack.Screen name={STACK_ROUTES.Splash} component={PlaceholderScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.DrawerRoot} component={DrawerNavigator} options={{ headerShown: false }} />
-                <Stack.Screen name={STACK_ROUTES.PropertyDetail} component={PlaceholderScreen} />
-                <Stack.Screen name={STACK_ROUTES.CheckAvailability} component={PlaceholderScreen} options={{ title: 'Check Availability' }} />
-                <Stack.Screen name={STACK_ROUTES.SearchResults} component={PlaceholderScreen} options={{ title: 'Search Results' }} />
-                <Stack.Screen name={STACK_ROUTES.LoginRegister} component={PlaceholderScreen} options={{ title: 'Sign In' }} />
-                <Stack.Screen name={STACK_ROUTES.PaymentReview} component={PlaceholderScreen} options={{ title: 'Payment' }} />
+                <Stack.Screen name={STACK_ROUTES.PropertyDetail} component={PropertyDetail} options={{ headerShown: false }} />
+                <Stack.Screen name={STACK_ROUTES.CheckAvailability} component={CheckAvailability} options={{ headerShown: false }} />
+                <Stack.Screen name={STACK_ROUTES.SearchResults} component={PlaceholderScreen} options={{ headerShown: false }} />
+                <Stack.Screen name={STACK_ROUTES.LoginRegister} component={PlaceholderScreen} options={{ headerShown: false }} />
+                <Stack.Screen name={STACK_ROUTES.PaymentReview} component={PlaceholderScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.BookingConfirmed} component={PlaceholderScreen} options={{ headerShown: false }} />
             </Stack.Navigator>
         </>

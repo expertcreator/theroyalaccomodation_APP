@@ -74,6 +74,13 @@ export const typography = {
         fontFamily: FONT_FAMILY.heading, fontSize: ms(fontSizes.sm),
         fontWeight: '500', letterSpacing: ms(1.5), textTransform: 'uppercase',
     },
+    buttonSmall: {
+        fontFamily: FONT_FAMILY.heading,
+        fontSize: ms(fontSizes.xs),
+        fontWeight: '500',
+        letterSpacing: ms(1),
+        textTransform: 'uppercase',
+    },
     label: {
         fontFamily: FONT_FAMILY.body, fontSize: ms(fontSizes.sm),
         fontWeight: '500', letterSpacing: ms(0.3), lineHeight: ms(20),

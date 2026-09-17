@@ -8,7 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { typography, spacing, radius, borderWidth } from '../../theme';
 import { withAlpha } from '../../utils/color';
-import { PROPERTIES, CONTACT } from '../../constants/data';
+import { CONTACT, PROPERTIES } from '../../constants/data';
 import { DRAWER_ROUTES, STACK_ROUTES } from '../../navigation/routes';
 import Text from '../Text/Text';
 import Icon from '../Icon/Icon';

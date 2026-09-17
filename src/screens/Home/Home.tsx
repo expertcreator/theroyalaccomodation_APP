@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { moderateScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
-import { ITheme, typography, spacing } from '../../theme';
+import { typography, spacing } from '../../theme';
 import { PROPERTIES, HERO_SLIDES } from '../../constants/data';
 import type { RootStackParamList } from '../../navigation/types';
 import { STACK_ROUTES } from '../../navigation/routes';
@@ -15,6 +14,7 @@ import HeroCarousel from '../../components/Carousels/HeroCarousel';
 import SectionEyebrow from '../../components/SectionEyebrow/SectionEyebrow';
 import DiamondDivider from '../../components/Dividers/DiamondDivider';
 import PropertyCard from '../../components/Cards/PropertyCard';
+import { createStyles } from './styles';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -68,21 +68,5 @@ const Home: React.FC = () => {
         </View>
     );
 };
-
-const createStyles = (theme: ITheme) => StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: theme.palette.background.default,
-    },
-    intro: {
-        paddingHorizontal: spacing.xl2,
-        paddingTop: spacing.xl,
-        paddingBottom: spacing.xl2,
-        alignItems: 'center',
-    },
-    heading: { textAlign: 'center', marginTop: spacing.sm, marginBottom: spacing.sm },
-    subtitle: { textAlign: 'center', maxWidth: moderateScale(300) },
-    cards: { paddingHorizontal: spacing.xl2, rowGap: spacing.xl },
-});
 
 export default Home;

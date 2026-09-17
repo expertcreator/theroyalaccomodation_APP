@@ -4,14 +4,19 @@ import MaterialDesignIcons from '@react-native-vector-icons/material-design-icon
 import { moderateScale } from 'react-native-size-matters';
 
 export type IconName =
+    // Feather (UI icons)
     | 'back' | 'close' | 'menu' | 'share' | 'bookmark'
     | 'guests' | 'bedrooms' | 'bathrooms' | 'arrow-right' | 'chevron-right'
-    | 'crown';   // ← from MaterialDesignIcons, not Feather
+    | 'plus' | 'minus' | 'search' | 'info'
+    // MaterialDesignIcons (brand + amenities)
+    | 'crown' | 'pool' | 'jacuzzi' | 'wifi' | 'parking'
+    | 'fire' | 'dishwasher' | 'laundry' | 'dining' | 'tennis' | 'helipad';
 
-// Feather names for everything except the MDI ones below.
 type FeatherName = ComponentProps<typeof Feather>['name'];
+type MdiName = ComponentProps<typeof MaterialDesignIcons>['name'];
 
-const FEATHER_MAP: Record<Exclude<IconName, 'crown'>, FeatherName> = {
+// Feather icons.
+const FEATHER_MAP: Partial<Record<IconName, FeatherName>> = {
     back: 'chevron-left',
     close: 'x',
     menu: 'menu',
@@ -22,6 +27,25 @@ const FEATHER_MAP: Record<Exclude<IconName, 'crown'>, FeatherName> = {
     bathrooms: 'droplet',
     'arrow-right': 'arrow-right',
     'chevron-right': 'chevron-right',
+    plus: 'plus',
+    minus: 'minus',
+    search: 'search',
+    info: 'info',
+};
+
+// MaterialDesignIcons — icons Feather doesn't have.
+const MDI_MAP: Partial<Record<IconName, MdiName>> = {
+    crown: 'crown',
+    pool: 'pool',
+    jacuzzi: 'hot-tub',
+    wifi: 'wifi',
+    parking: 'car',
+    fire: 'fireplace',
+    dishwasher: 'dishwasher',
+    laundry: 'washing-machine',
+    dining: 'silverware-fork-knife',
+    tennis: 'tennis',
+    helipad: 'helicopter',
 };
 
 type Props = { name: IconName; size?: number; color?: string };
@@ -29,13 +53,15 @@ type Props = { name: IconName; size?: number; color?: string };
 const Icon: React.FC<Props> = ({ name, size = 20, color = '#000' }) => {
     const scaledSize = moderateScale(size);
 
-    // MaterialDesignIcons handles the crown.
-    if (name === 'crown') {
-        return <MaterialDesignIcons name="crown" size={scaledSize} color={color} />;
+    // Try MaterialDesignIcons first.
+    const mdiName = MDI_MAP[name];
+    if (mdiName) {
+        return <MaterialDesignIcons name={mdiName} size={scaledSize} color={color} />;
     }
 
-    // Everything else is a Feather icon.
-    return <Feather name={FEATHER_MAP[name]} size={scaledSize} color={color} />;
+    // Otherwise it's a Feather icon.
+    const featherName = FEATHER_MAP[name];
+    return <Feather name={featherName!} size={scaledSize} color={color} />;
 };
 
 export default Icon;
