@@ -15,6 +15,8 @@ import SectionEyebrow from '../../components/SectionEyebrow/SectionEyebrow';
 import DiamondDivider from '../../components/Dividers/DiamondDivider';
 import PropertyCard from '../../components/Cards/PropertyCard';
 import { createStyles } from './styles';
+import { showToast } from '../../utils/ToastNotifier';
+import { Property } from '../../interfaces/property';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -25,13 +27,21 @@ const Home: React.FC = () => {
     const styles = createStyles(theme);
     const p = theme.palette;
 
+    const onMenuPress = () => {
+        navigation.dispatch(DrawerActions.openDrawer());
+    }
+
+    const onPropertyCardPress = (item: Property) => {
+        navigation.navigate(STACK_ROUTES.PropertyDetail, { propertyId: item.id })
+    }
+
     return (
         <View style={styles.container}>
             {/* Sticky header, outside the scroll view */}
             <Header
                 showBrand
                 subtitle="Ascot · Windsor"
-                onMenu={() => navigation.dispatch(DrawerActions.openDrawer())}
+                onMenu={onMenuPress}
             />
 
             <ScrollView
@@ -60,7 +70,7 @@ const Home: React.FC = () => {
                         <PropertyCard
                             key={property.id}
                             property={property}
-                            onPress={() => navigation.navigate(STACK_ROUTES.PropertyDetail, { propertyId: property.id })}
+                            onPress={() => onPropertyCardPress(property)}
                         />
                     ))}
                 </View>
