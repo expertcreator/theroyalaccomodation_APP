@@ -95,7 +95,7 @@ const CheckAvailability: React.FC = () => {
 
   const totalGuests = adults + children;
 
-  const onSearch = () => {
+  const onProceed = () => {
     if (!checkIn || !checkOut) return;
 
     // Fast client-side re-check (real, authoritative check happens server-side at payment).
@@ -204,7 +204,7 @@ const CheckAvailability: React.FC = () => {
 
       </ScrollView>
 
-      <BottomBar total={price.total} nights={nights} rangeComplete={rangeComplete} onSearch={onSearch} />
+      <BottomBar total={price.total} nights={nights} rangeComplete={rangeComplete} onProceed={onProceed} />
     </View>
   );
 };

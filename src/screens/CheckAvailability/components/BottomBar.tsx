@@ -7,9 +7,9 @@ import Text from '../../../components/Text/Text';
 import Button from '../../../components/Buttons/Button';
 import FooterBar from '../../../components/Footer/FooterBar';
 
-type Props = { total: number; nights: number; rangeComplete: boolean; onSearch: () => void };
+type Props = { total: number; nights: number; rangeComplete: boolean; onProceed: () => void };
 
-const BottomBar: React.FC<Props> = ({ total, nights, rangeComplete, onSearch }) => {
+const BottomBar: React.FC<Props> = ({ total, nights, rangeComplete, onProceed }) => {
     const { theme } = useTheme();
     const p = theme.palette;
 
@@ -24,7 +24,7 @@ const BottomBar: React.FC<Props> = ({ total, nights, rangeComplete, onSearch }) 
                     </View>
                 </>
             }
-            right={<Button title="Search" size="sm" rightIcon="search" fullWidth={false} disabled={!rangeComplete} onPress={onSearch} />}
+            right={<Button title="Proceed" size="sm" rightIcon="arrow-right" fullWidth={false} disabled={!rangeComplete} onPress={onProceed} />}
         />
     );
 };
