@@ -33,7 +33,7 @@ export type RootStackParamList = {
     | { entry: 'drawer' }
     | { entry: 'booking'; booking: BookingDraft };
     [STACK_ROUTES.PaymentReview]: BookingDraft;
-    [STACK_ROUTES.BookingConfirmed]: { bookingRef: string };
+    [STACK_ROUTES.BookingConfirmed]: BookingDraft & { bookingRef: string };
 };
 
 // Makes useNavigation()/useRoute() typed everywhere without passing generics

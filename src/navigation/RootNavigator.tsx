@@ -9,6 +9,7 @@ import PropertyDetail from '../screens/PropertyDetail/PropertyDetail';
 import CheckAvailability from '../screens/CheckAvailability/CheckAvailability';
 import LoginRegister from '../screens/LoginRegister/LoginRegister';
 import Payment from '../screens/Payment/Payment';
+import BookingConfirmed from '../screens/BookingConfirmed/BookingConfirmed';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -33,7 +34,7 @@ export default function RootNavigator() {
                 <Stack.Screen name={STACK_ROUTES.SearchResults} component={PlaceholderScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.LoginRegister} component={LoginRegister} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.PaymentReview} component={Payment} options={{ headerShown: false }} />
-                <Stack.Screen name={STACK_ROUTES.BookingConfirmed} component={PlaceholderScreen} options={{ headerShown: false }} />
+                <Stack.Screen name={STACK_ROUTES.BookingConfirmed} component={BookingConfirmed} options={{ headerShown: false }} />
             </Stack.Navigator>
         </>
     );

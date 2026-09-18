@@ -49,3 +49,11 @@ export const buildMonthGrid = (year: number, month: number): (Date | null)[] => 
 };
 
 export const formatMonthShort = (d: Date): string => MONTHS_SHORT[d.getMonth()];
+
+// "18–21 Jun" (same month) or "30 Jun – 2 Jul" (spanning months)
+export const formatDateRange = (a: Date, b: Date): string => {
+    const sameMonth = a.getMonth() === b.getMonth();
+    return sameMonth
+        ? `${a.getDate()}–${b.getDate()} ${formatMonthShort(a)}`
+        : `${a.getDate()} ${formatMonthShort(a)} – ${b.getDate()} ${formatMonthShort(b)}`;
+};
