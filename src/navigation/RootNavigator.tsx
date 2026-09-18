@@ -10,12 +10,20 @@ import CheckAvailability from '../screens/CheckAvailability/CheckAvailability';
 import LoginRegister from '../screens/LoginRegister/LoginRegister';
 import Payment from '../screens/Payment/Payment';
 import BookingConfirmed from '../screens/BookingConfirmed/BookingConfirmed';
+import { useEffect } from 'react';
+import { hideSplash } from 'react-native-splash-view';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
     const { theme, isDarkMode } = useTheme();
     const bg = theme.palette.background.default; // cream in light mode
+
+    useEffect(() => {
+        setTimeout(() => {
+            hideSplash(); // Hide after some time
+        }, 2000);
+    }, []);
 
     return (
         <>
@@ -27,7 +35,6 @@ export default function RootNavigator() {
             {/* TEMP: booting into DrawerRoot until Splash is built.
                 Switch initialRouteName back to STACK_ROUTES.Splash then. */}
             <Stack.Navigator initialRouteName={STACK_ROUTES.DrawerRoot}>
-                <Stack.Screen name={STACK_ROUTES.Splash} component={PlaceholderScreen} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.DrawerRoot} component={DrawerNavigator} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.PropertyDetail} component={PropertyDetail} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.CheckAvailability} component={CheckAvailability} options={{ headerShown: false }} />

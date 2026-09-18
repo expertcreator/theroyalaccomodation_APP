@@ -2035,6 +2035,28 @@ PODS:
     - Yoga
   - SocketRocket (0.7.1):
     - ReactNativeDependencies
+  - SplashView (0.0.22):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - Stripe (26.11.0):
     - StripeApplePay (= 26.11.0)
     - StripeCore (= 26.11.0)
@@ -2246,6 +2268,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNWorklets (from `../node_modules/react-native-worklets`)
   - SocketRocket (from `build/rndeps-facades/SocketRocket`)
+  - SplashView (from `../node_modules/react-native-splash-view`)
   - "stripe-react-native (from `../node_modules/@stripe/stripe-react-native`)"
   - Yoga (from `build/rncore-facades/Yoga`)
 
@@ -2455,6 +2478,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-worklets"
   SocketRocket:
     :path: build/rndeps-facades/SocketRocket
+  SplashView:
+    :path: "../node_modules/react-native-splash-view"
   stripe-react-native:
     :path: "../node_modules/@stripe/stripe-react-native"
   Yoga:
@@ -2556,6 +2581,7 @@ SPEC CHECKSUMS:
   RNScreens: 038dc998fe1ab34778d9e8f4a33318a6c7a5bde8
   RNWorklets: e00d9fe0f91ef81e6056248566c84501506ad539
   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
+  SplashView: 7116eb86c99bde1a69482ccf3aff462cd1a1f924
   Stripe: eeb45e6b3c973d412227def2e757f9b4cf9caf95
   stripe-react-native: 2a588a60c56cdb66778891a94391a22c65af807c
   StripeApplePay: 6067bc754f87b41468ba67f2646a7fbc91abfa34

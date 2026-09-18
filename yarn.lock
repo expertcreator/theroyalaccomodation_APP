@@ -5718,6 +5718,11 @@ react-native-size-matters@^0.4.2:
   resolved "https://registry.yarnpkg.com/react-native-size-matters/-/react-native-size-matters-0.4.2.tgz#4348bdd6fc47383f60326d58ad69870c998a5f9a"
   integrity sha512-DKE3f/sdcozd24oASgkP1iGg+YU3HoajRa5k3a4wkRzpiqREq8SGX12Y5zBgAt/8IivLQoTMYkyQu1/Giuy+zQ==
 
+react-native-splash-view@^0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/react-native-splash-view/-/react-native-splash-view-0.0.22.tgz#87eba63ec047d66208b0e96045fab5f6214f1c0b"
+  integrity sha512-2nmUgFrZYEVSv4t8WUvDHiBNG2EYpkTvheuR2ZFKPE5OFNRx+lGHpMhkdkViz1b9TvKMkFfr05mF002AH8Uirw==
+
 react-native-toast-notifications@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/react-native-toast-notifications/-/react-native-toast-notifications-3.4.0.tgz#9f2c79ec80fba4af6b788ecddf704f94cf21dbc2"
