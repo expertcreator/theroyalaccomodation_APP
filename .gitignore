@@ -90,3 +90,4 @@ vendor/bundle/
 .bundle/
 
 structure.txt
+src/constants/stripe.ts

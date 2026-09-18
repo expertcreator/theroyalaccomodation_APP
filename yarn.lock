@@ -1864,6 +1864,11 @@
   resolved "https://registry.yarnpkg.com/@sominaththore/react-native-custom-status-bar/-/react-native-custom-status-bar-1.1.0.tgz#a7d309da6c7de001d30483f14641c318575777ea"
   integrity sha512-/VyESHZve03NvptG/SbKxnW+VYxwjcj5MVr/Qvgn+/LQaFxeYr+bup+15vUZ5M4MFz4+S0s/psXTXXjSGEVyHw==
 
+"@stripe/stripe-react-native@^0.77.0":
+  version "0.77.0"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.77.0.tgz#1f54b3e4850fd1f599d5e1374d551d98c7e3633b"
+  integrity sha512-+7J7BUmB0p1RQ445m3Nmv58Pj1seP1IJr5wcCfCcSW/3/VXgHdDLLDvuGxiUpt5CpYlBVAclSKWHCfNecMtjGw==
+
 "@types/babel__core@^7.1.14":
   version "7.20.5"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.20.5.tgz#3df15f27ba85319caa07ba08d0721889bb39c017"

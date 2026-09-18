@@ -13,9 +13,9 @@ import { STACK_ROUTES } from '../../navigation/routes';
 import Header from '../../components/Headers/Header';
 import Button from '../../components/Buttons/Button';
 import ReservationSummary from './components/ReservationSummary';
-import StripeNote from './components/StripeNote';
 import TermsCheckboxes from './components/TermsCheckboxes';
 import { styles } from './styles';
+import PaymentCard from './components/PaymentCard';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.PaymentReview>;
@@ -35,9 +35,12 @@ const Payment: React.FC = () => {
     const guests = booking.adults + booking.children;
     const price = calculateStayPrice(property, nights, booking.adults);
 
-    const [acceptTerms, setAcceptTerms] = useState(false);
-    const [acceptPrivacy, setAcceptPrivacy] = useState(false);
-    const canBook = acceptTerms && acceptPrivacy;
+    const [cardComplete, setCardComplete] = useState<boolean>(false);
+    const [cardholderName, setCardholderName] = useState<string>('');
+
+    const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
+    const [acceptPrivacy, setAcceptPrivacy] = useState<boolean>(false);
+    const canBook = acceptTerms && acceptPrivacy && cardComplete && cardholderName.trim().length > 0;
 
     const onBookNow = () => {
         if (!canBook) return;
@@ -60,7 +63,11 @@ const Payment: React.FC = () => {
                     total={price.total}
                 />
 
-                <StripeNote />
+                <PaymentCard
+                    cardholderName={cardholderName}
+                    onCardholderNameChange={setCardholderName}
+                    onCardChange={setCardComplete}
+                />
 
                 <TermsCheckboxes
                     acceptTerms={acceptTerms}

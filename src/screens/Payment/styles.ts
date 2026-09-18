@@ -52,4 +52,12 @@ export const styles = StyleSheet.create({
     },
 
     assurance: { textAlign: 'center', marginTop: spacing.sm },
+
+    payHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+    
+    cardForm: { width: '100%', height: moderateScale(180) },  // trim from 200; tune to fit
+    secureLine: {
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: spacing.sm,
+        marginTop: spacing.md, paddingTop: spacing.md, borderTopWidth: borderWidth.thin, borderTopColor: 'transparent',
+    },
 });
