@@ -83,6 +83,9 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
                     {/* Rows */}
                     <Row label="Dates of stay" value={`${formatDateRange(checkIn, checkOut)} · ${nights} ${nights === 1 ? 'night' : 'nights'}`} />
                     <Row label="Guests" value={`${guests} ${guests === 1 ? 'guest' : 'guests'}`} />
+                    {booking.pets > 0 && (
+                        <Row label="Pets" value={`${booking.pets} ${booking.pets === 1 ? 'pet' : 'pets'}`} />
+                    )}
                     <View style={[styles.totalRow, { borderTopColor: p.divider }]}>
                         <Text style={[typography.label, { color: p.primary.main }]}>Total Paid (VAT incl.)</Text>
                         <Text style={[typography.h2, { color: p.primary.main }]}>{formatGBP(booking.totalPaid)}</Text>

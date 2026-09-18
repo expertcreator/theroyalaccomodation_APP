@@ -10,6 +10,7 @@ export type BookingDraft = {
     checkOut: string;  // ISO
     adults: number;
     children: number;
+    pets: number;
 };
 
 // Param lists are keyed off routes.ts, so a typo'd or missing key is a compile error.

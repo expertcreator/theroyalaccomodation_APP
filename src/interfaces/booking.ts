@@ -10,5 +10,6 @@ export interface Booking {
     checkOut: string;            // ISO
     adults: number;
     children: number;
+    pets: number;
     totalPaid: number;           // stored at time of booking (not recomputed)
 }

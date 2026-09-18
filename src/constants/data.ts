@@ -187,6 +187,7 @@ export const BOOKINGS: Booking[] = [
         checkOut: '2025-06-21',
         adults: 4,
         children: 0,
+        pets: 0,
         totalPaid: 2985,   // Windsor £995 × 3 nights
     },
     {
@@ -197,6 +198,7 @@ export const BOOKINGS: Booking[] = [
         checkOut: '2025-05-15',
         adults: 2,
         children: 0,
+        pets: 0,
         totalPaid: 3750,   // Ascot £1,250 × 3 nights
     },
 ];

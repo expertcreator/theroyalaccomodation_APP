@@ -46,8 +46,9 @@ const CheckAvailability: React.FC = () => {
   const [month, setMonth] = useState<Date>(firstOfThisMonth());
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(0);
+  const [adults, setAdults] = useState<number>(2);
+  const [children, setChildren] = useState<number>(0);
+  const [pets, setPets] = useState<number>(0);
 
   // O(1) occupied lookups for the rule checks.
   const occupiedSet = useMemo(() => new Set(property.occupiedDates), [property.occupiedDates]);
@@ -90,7 +91,7 @@ const CheckAvailability: React.FC = () => {
 
   const rangeComplete = !!(checkIn && checkOut);
   const nights = rangeComplete ? nightsBetween(checkIn!, checkOut!) : 0;
-  const price = calculateStayPrice(property, nights, adults);
+  const price = calculateStayPrice(property, nights, adults, pets);
 
   const totalGuests = adults + children;
 
@@ -110,6 +111,7 @@ const CheckAvailability: React.FC = () => {
       checkOut: toISO(checkOut),
       adults,
       children,
+      pets
     };
 
     if (isLoggedIn) {
@@ -181,6 +183,25 @@ const CheckAvailability: React.FC = () => {
             canIncrement={totalGuests < maxGuests}
           />
         </View>
+
+        {/* Pets — separate card; not counted in guests, max 2, flat £295 each */}
+        <View style={[styles.guestsCard, { backgroundColor: p.background.card, borderColor: p.borderColor, marginTop: spacing.lg }]}>
+          <View style={[styles.guestsHeader, { borderBottomColor: p.divider }]}>
+            <Text style={[typography.overline, { color: p.primary.main }]}>PETS</Text>
+            <Text style={[typography.caption, { color: p.text.placeHolder }]}>£295 per pet · max 2</Text>
+          </View>
+
+          <GuestStepper
+            label="Pets"
+            sublabel="Charged £295 each"
+            value={pets}
+            onDecrement={() => setPets((n) => Math.max(0, n - 1))}
+            onIncrement={() => setPets((n) => Math.min(2, n + 1))}
+            canDecrement={pets > 0}
+            canIncrement={pets < 2}
+          />
+        </View>
+
       </ScrollView>
 
       <BottomBar total={price.total} nights={nights} rangeComplete={rangeComplete} onSearch={onSearch} />

@@ -39,11 +39,11 @@ const BookingConfirmed: React.FC = () => {
     const { user } = useAuth();
     const p = theme.palette;
 
-    const { bookingRef, propertyId, checkIn, checkOut, adults, children } = route.params;
+    const { bookingRef, propertyId, checkIn, checkOut, adults, children, pets } = route.params;
     const property = getPropertyById(propertyId);
     const nights = nightsBetween(new Date(checkIn), new Date(checkOut));
     const guests = adults + children;
-    const total = calculateStayPrice(property, nights, adults).total;
+    const total = calculateStayPrice(property, nights, adults, pets).total;
 
     const goHome = () =>
         navigation.reset({ index: 0, routes: [{ name: STACK_ROUTES.DrawerRoot, params: { screen: DRAWER_ROUTES.Home } }] });
@@ -85,6 +85,7 @@ const BookingConfirmed: React.FC = () => {
                         </Text>
                         <Text style={[typography.caption, { color: p.text.placeHolder }]}>
                             {user?.name ?? 'Lead Guest'} · {guests} {guests === 1 ? 'guest' : 'guests'}
+                            {pets > 0 ? ` · ${pets} ${pets === 1 ? 'pet' : 'pets'}` : ''}
                         </Text>
                         <View style={[styles.totalRow, { borderTopColor: p.divider }]}>
                             <Text style={[typography.overline, { color: p.text.placeHolder }]}>TOTAL PAID</Text>

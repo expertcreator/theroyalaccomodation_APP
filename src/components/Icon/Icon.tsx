@@ -13,7 +13,7 @@ export type IconName =
     | 'fire' | 'dishwasher' | 'laundry' | 'dining' | 'tennis' | 'helipad'
     | 'mail' | 'phone' | 'map-pin' | 'external-link' | 'chevron-down'
     | 'lock' | 'eye' | 'eye-off' | 'shield' | 'user' | 'check'
-    | 'calendar' | 'moon' | 'camera';
+    | 'calendar' | 'moon' | 'camera' | 'paw';
 
 type FeatherName = ComponentProps<typeof Feather>['name'];
 type MdiName = ComponentProps<typeof MaterialDesignIcons>['name'];
@@ -64,6 +64,7 @@ const MDI_MAP: Partial<Record<IconName, MdiName>> = {
     dining: 'silverware-fork-knife',
     tennis: 'tennis',
     helipad: 'helicopter',
+    paw: 'paw',
 };
 
 type Props = { name: IconName; size?: number; color?: string };

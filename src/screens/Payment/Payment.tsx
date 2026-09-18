@@ -33,7 +33,7 @@ const Payment: React.FC = () => {
     const checkOut = new Date(booking.checkOut);
     const nights = nightsBetween(checkIn, checkOut);
     const guests = booking.adults + booking.children;
-    const price = calculateStayPrice(property, nights, booking.adults);
+    const price = calculateStayPrice(property, nights, booking.adults, booking.pets);
 
     const [cardComplete, setCardComplete] = useState<boolean>(false);
     const [cardholderName, setCardholderName] = useState<string>('');
@@ -60,6 +60,7 @@ const Payment: React.FC = () => {
                     checkOut={checkOut}
                     nights={nights}
                     guests={guests}
+                    pets={booking.pets}
                     total={price.total}
                 />
 

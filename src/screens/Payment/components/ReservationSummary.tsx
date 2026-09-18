@@ -17,10 +17,11 @@ type Props = {
     checkOut: Date;
     nights: number;
     guests: number;
+    pets: number;
     total: number;
 };
 
-const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nights, guests, total }) => {
+const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nights, guests, pets, total }) => {
     const { theme } = useTheme();
     const p = theme.palette;
 
@@ -75,8 +76,17 @@ const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nigh
                 <Text style={{ color: p.divider }}>·</Text>
                 <View style={styles.stripItem}>
                     <Icon name="guests" size={14} color={p.accent.main} />
-                    <Text style={[typography.caption, { color: p.text.primary }]}>{guests} {guests === 1 ? 'guest' : 'guests'}</Text>
+                    <Text style={[typography.caption, { color: p.text.primary }]}>{guests} {guests === 1 ? 'Guest' : 'Guests'}</Text>
                 </View>
+                {pets > 0 && (
+                    <>
+                        <Text style={{ color: p.divider }}>·</Text>
+                        <View style={styles.stripItem}>
+                            <Icon name="paw" size={14} color={p.accent.main} />
+                            <Text style={[typography.caption, { color: p.text.primary }]}>{pets} {pets === 1 ? 'Pet' : 'Pets'}</Text>
+                        </View>
+                    </>
+                )}
             </View>
 
             <GoldHairline />
