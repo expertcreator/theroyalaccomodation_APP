@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Image, TouchableOpacity, Linking, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Image, TouchableOpacity, Linking } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
 
@@ -15,11 +15,11 @@ import Header from '../../components/Headers/Header';
 import DiamondDivider from '../../components/Dividers/DiamondDivider';
 import Button from '../../components/Buttons/Button';
 import Select from '../../components/Dropdown/Select';
-import ConfirmModal from '../../components/Modals/ConfirmModal';
 import ContactRow from './components/ContactRow';
 import { styles } from './styles';
 import Input from '../../components/Input/Input';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { showToast } from '../../utils/ToastNotifier';
 
 type Nav = DrawerNavigationProp<DrawerParamList>;
 
@@ -36,7 +36,6 @@ const Contact: React.FC = () => {
     const [email, setEmail] = useState('');
     const [property, setProperty] = useState(PROPERTY_OPTIONS[0]);
     const [message, setMessage] = useState('');
-    const [sent, setSent] = useState(false);
     const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
 
     useFocusEffect(
@@ -59,7 +58,8 @@ const Contact: React.FC = () => {
         // Stop if anything is missing.
         if (nextErrors.name || nextErrors.email) return;
 
-        setSent(true);
+        showToast('success', 'Enquiry received — we\'ll be in touch');
+        resetForm();  // clear the form after sending
     };
 
     const resetForm = () => {
@@ -69,7 +69,6 @@ const Contact: React.FC = () => {
         setProperty(PROPERTY_OPTIONS[0]);
         setMessage('');
         setErrors({});
-        setSent(false);
     };
 
     const onBackPress = () => {
@@ -179,16 +178,6 @@ const Contact: React.FC = () => {
                 </View>
             </KeyboardAwareScrollView>
 
-            {/* Success confirmation */}
-            <ConfirmModal
-                visible={sent}
-                title="Enquiry Received"
-                message="Thank you. Your enquiry has been received by our estate concierge."
-                cancelBtnText="Close"
-                confirmBtnText="Done"
-                onCancel={() => setSent(false)}
-                onConfirm={() => setSent(false)}
-            />
         </View>
     );
 };
