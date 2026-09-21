@@ -5,7 +5,7 @@ import { spacing, radius, borderWidth } from '../../theme';
 export const HERO_H = verticalScale(400);
 
 export const styles = StyleSheet.create({
-    container: { flex: 1 },
+    container: { flex: 1, },
     content: { paddingHorizontal: spacing.xl2, paddingTop: spacing.lg, rowGap: spacing.xl },
 
     // Hero
@@ -49,7 +49,9 @@ export const styles = StyleSheet.create({
     narrativeCard: { marginTop: spacing.md, borderWidth: borderWidth.thin, borderRadius: radius.md, padding: spacing.md },
 
     // Bottom bar
-    bottomBar: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: spacing.md, paddingHorizontal: spacing.xl2 },
+    bottomBar: {
+        position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: spacing.md, paddingHorizontal: spacing.xl2,
+    },
     bottomHairline: { position: 'absolute', top: 0, left: 0, right: 0, height: borderWidth.thin },
     bottomRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', columnGap: spacing.md },
     priceCol: { flexShrink: 1 },

@@ -1,8 +1,8 @@
 diff --git a/node_modules/@sominaththore/react-native-custom-status-bar/CustomStatusBar.js b/node_modules/@sominaththore/react-native-custom-status-bar/CustomStatusBar.js
-index 803faeb..2c9b291 100644
+index 803faeb..012b5cc 100644
 --- a/node_modules/@sominaththore/react-native-custom-status-bar/CustomStatusBar.js
 +++ b/node_modules/@sominaththore/react-native-custom-status-bar/CustomStatusBar.js
-@@ -1,23 +1,61 @@
+@@ -1,23 +1,45 @@
  import React from 'react';
 -import { SafeAreaView, Platform, StatusBar, StyleSheet } from 'react-native';
 -import { getStatusBarHeight } from './status-bar-height/index.js';
@@ -17,46 +17,29 @@ index 803faeb..2c9b291 100644
  const CustomStatusBar = ({ backgroundColor, barStyle }) => {
 +    const insets = useSafeAreaInsets();
 +
-+    if (Platform.OS === 'android') {
-+        return (
-+            <>
-+                <View
-+                    pointerEvents="none"
-+                    style={[
-+                        styles.androidStatusBar,
-+                        {
-+                            height: insets.top,
-+                            backgroundColor,
-+                        },
-+                    ]}
-+                />
-+
-+                <StatusBar barStyle={barStyle} />
-+            </>
-+        );
-+    }
-+
      return (
 -        <SafeAreaView style={[styles.statusbar, { backgroundColor, height: getStatusBarHeight() }]}>
 -            <StatusBar
 -                translucent
 -                backgroundColor={backgroundColor}
 -                barStyle={barStyle}
--            />
++        <>
++            <View
++                pointerEvents="none"
++                style={[
++                    styles.androidStatusBar,
++                    {
++                        height: insets.top,
++                        backgroundColor,
++                    },
++                ]}
+             />
 -        </SafeAreaView>
 -    )
 -}
-+        <View
-+            style={[
-+                styles.iosStatusBar,
-+                {
-+                    height: insets.top,
-+                    backgroundColor,
-+                },
-+            ]}
-+        >
++
 +            <StatusBar barStyle={barStyle} />
-+        </View>
++        </>
 +    );
 +};
  

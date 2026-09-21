@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { StyleSheet } from 'react-native';
@@ -21,7 +21,10 @@ const FooterBar: React.FC<Props> = ({ left, right }) => {
     const p = theme.palette;
 
     return (
-        <View style={[styles.bar, { backgroundColor: p.background.card, paddingBottom: insets.bottom + spacing.md }]}>
+        <View style={[styles.bar, {
+            backgroundColor: p.background.card,
+            paddingBottom: Platform.OS === "ios" ? insets.bottom : insets.bottom + spacing.md
+        }]}>
             <LinearGradient
                 colors={['transparent', withAlpha(p.accent.main, 0.4), 'transparent']}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
@@ -36,7 +39,9 @@ const FooterBar: React.FC<Props> = ({ left, right }) => {
 };
 
 const styles = StyleSheet.create({
-    bar: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: spacing.md, paddingHorizontal: spacing.xl2 },
+    bar: {
+        position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: spacing.md, paddingHorizontal: spacing.xl2,
+    },
     hairline: { position: 'absolute', top: 0, left: 0, right: 0, height: borderWidth.thin },
     row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', columnGap: spacing.md },
     leftCol: { flexShrink: 1 },

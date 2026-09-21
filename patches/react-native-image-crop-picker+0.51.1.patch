@@ -1,0 +1,1590 @@
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/results.bin b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/results.bin
+new file mode 100644
+index 0000000..7ed749e
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/results.bin
+@@ -0,0 +1 @@
++o/bundleLibRuntimeToDirDebug
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/BuildConfig.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/BuildConfig.dex
+new file mode 100644
+index 0000000..8cad174
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/BuildConfig.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/Compression.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/Compression.dex
+new file mode 100644
+index 0000000..b358680
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/Compression.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ExifExtractor.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ExifExtractor.dex
+new file mode 100644
+index 0000000..a15d3d3
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ExifExtractor.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/GeoDegree.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/GeoDegree.dex
+new file mode 100644
+index 0000000..e8e41eb
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/GeoDegree.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$1.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$1.dex
+new file mode 100644
+index 0000000..ec36062
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$1.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$2.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$2.dex
+new file mode 100644
+index 0000000..9bc0b14
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$2.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$3.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$3.dex
+new file mode 100644
+index 0000000..700de65
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$3.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$4.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$4.dex
+new file mode 100644
+index 0000000..6749164
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$4.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$5.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$5.dex
+new file mode 100644
+index 0000000..1887a7a
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$5.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$6.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$6.dex
+new file mode 100644
+index 0000000..bc17564
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker$6.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker.dex
+new file mode 100644
+index 0000000..671403e
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ImageCropPicker.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/IvpusicImagePickerFileProvider.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/IvpusicImagePickerFileProvider.dex
+new file mode 100644
+index 0000000..04a9ee6
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/IvpusicImagePickerFileProvider.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.dex
+new file mode 100644
+index 0000000..1c277ff
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/PickerModule.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/PickerModule.dex
+new file mode 100644
+index 0000000..d2b45fa
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/PickerModule.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/PickerPackage.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/PickerPackage.dex
+new file mode 100644
+index 0000000..0ca6595
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/PickerPackage.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/RealPathUtil.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/RealPathUtil.dex
+new file mode 100644
+index 0000000..106d9c7
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/RealPathUtil.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ResultCollector.dex b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ResultCollector.dex
+new file mode 100644
+index 0000000..127a0e0
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnative/ivpusic/imagepicker/ResultCollector.dex differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/ImageCropPicker$$InternalSyntheticLambda$9$7284469ececd40195943eb64684cbcb627d00cda8f57af41f91f383869efaefe$0.globals b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/ImageCropPicker$$InternalSyntheticLambda$9$7284469ececd40195943eb64684cbcb627d00cda8f57af41f91f383869efaefe$0.globals
+new file mode 100644
+index 0000000..cf6ce7d
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/ImageCropPicker$$InternalSyntheticLambda$9$7284469ececd40195943eb64684cbcb627d00cda8f57af41f91f383869efaefe$0.globals differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/ImageCropPicker$$InternalSyntheticLambda$9$7284469ececd40195943eb64684cbcb627d00cda8f57af41f91f383869efaefe$1.globals b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/ImageCropPicker$$InternalSyntheticLambda$9$7284469ececd40195943eb64684cbcb627d00cda8f57af41f91f383869efaefe$1.globals
+new file mode 100644
+index 0000000..cf6ce7d
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/ImageCropPicker$$InternalSyntheticLambda$9$7284469ececd40195943eb64684cbcb627d00cda8f57af41f91f383869efaefe$1.globals differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/ImageCropPicker$$InternalSyntheticLambda$9$f8044bbd7e9721813bcbf45c470b710b1a08a83a284bdc2e882b76ca7f1c2f92$0.globals b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/ImageCropPicker$$InternalSyntheticLambda$9$f8044bbd7e9721813bcbf45c470b710b1a08a83a284bdc2e882b76ca7f1c2f92$0.globals
+new file mode 100644
+index 0000000..cf6ce7d
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/ImageCropPicker$$InternalSyntheticLambda$9$f8044bbd7e9721813bcbf45c470b710b1a08a83a284bdc2e882b76ca7f1c2f92$0.globals differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/PickerPackage$$InternalSyntheticLambda$2$dcbb9d763307d1d73f9ad13a79b9906268115b01aa7353a57094fddbec1319e7$0.globals b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/PickerPackage$$InternalSyntheticLambda$2$dcbb9d763307d1d73f9ad13a79b9906268115b01aa7353a57094fddbec1319e7$0.globals
+new file mode 100644
+index 0000000..cf6ce7d
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/reactnative/ivpusic/imagepicker/PickerPackage$$InternalSyntheticLambda$2$dcbb9d763307d1d73f9ad13a79b9906268115b01aa7353a57094fddbec1319e7$0.globals differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin
+new file mode 100644
+index 0000000..c328e56
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/.transforms/6a1f44641730237d3e2a2fb0d0757af2/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/buildConfig/debug/com/reactnative/ivpusic/imagepicker/BuildConfig.java b/node_modules/react-native-image-crop-picker/android/build/generated/source/buildConfig/debug/com/reactnative/ivpusic/imagepicker/BuildConfig.java
+new file mode 100644
+index 0000000..10b5e84
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/buildConfig/debug/com/reactnative/ivpusic/imagepicker/BuildConfig.java
+@@ -0,0 +1,12 @@
++/**
++ * Automatically generated file. DO NOT MODIFY
++ */
++package com.reactnative.ivpusic.imagepicker;
++
++public final class BuildConfig {
++  public static final boolean DEBUG = Boolean.parseBoolean("true");
++  public static final String LIBRARY_PACKAGE_NAME = "com.reactnative.ivpusic.imagepicker";
++  public static final String BUILD_TYPE = "debug";
++  // Field from default config.
++  public static final boolean IS_NEW_ARCHITECTURE_ENABLED = true;
++}
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/java/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.java b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/java/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.java
+new file mode 100644
+index 0000000..271b4bb
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/java/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.java
+@@ -0,0 +1,55 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleJavaSpec.js
++ *
++ * @nolint
++ */
++
++package com.reactnative.ivpusic.imagepicker;
++
++import com.facebook.proguard.annotations.DoNotStrip;
++import com.facebook.react.bridge.Promise;
++import com.facebook.react.bridge.ReactApplicationContext;
++import com.facebook.react.bridge.ReactContextBaseJavaModule;
++import com.facebook.react.bridge.ReactMethod;
++import com.facebook.react.bridge.ReadableMap;
++import com.facebook.react.turbomodule.core.interfaces.TurboModule;
++import javax.annotation.Nonnull;
++
++public abstract class NativeImageCropPickerSpec extends ReactContextBaseJavaModule implements TurboModule {
++  public static final String NAME = "RNCImageCropPicker";
++
++  public NativeImageCropPickerSpec(ReactApplicationContext reactContext) {
++    super(reactContext);
++  }
++
++  @Override
++  public @Nonnull String getName() {
++    return NAME;
++  }
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void openPicker(ReadableMap options, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void openCamera(ReadableMap options, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void openCropper(ReadableMap options, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void clean(Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void cleanSingle(String path, Promise promise);
++}
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/CMakeLists.txt b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/CMakeLists.txt
+new file mode 100644
+index 0000000..2844d70
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/CMakeLists.txt
+@@ -0,0 +1,28 @@
++# Copyright (c) Meta Platforms, Inc. and affiliates.
++#
++# This source code is licensed under the MIT license found in the
++# LICENSE file in the root directory of this source tree.
++
++cmake_minimum_required(VERSION 3.13)
++set(CMAKE_VERBOSE_MAKEFILE on)
++
++file(GLOB react_codegen_SRCS CONFIGURE_DEPENDS *.cpp react/renderer/components/RNCImageCropPickerSpec/*.cpp)
++
++add_library(
++  react_codegen_RNCImageCropPickerSpec
++  OBJECT
++  ${react_codegen_SRCS}
++)
++
++target_include_directories(react_codegen_RNCImageCropPickerSpec PUBLIC . react/renderer/components/RNCImageCropPickerSpec)
++
++target_link_libraries(
++  react_codegen_RNCImageCropPickerSpec
++  fbjni
++  jsi
++  # We need to link different libraries based on whether we are building rncore or not, that's necessary
++  # because we want to break a circular dependency between react_codegen_rncore and reactnative
++  reactnative
++)
++
++target_compile_reactnative_options(react_codegen_RNCImageCropPickerSpec PRIVATE)
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/RNCImageCropPickerSpec-generated.cpp b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/RNCImageCropPickerSpec-generated.cpp
+new file mode 100644
+index 0000000..24adafa
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/RNCImageCropPickerSpec-generated.cpp
+@@ -0,0 +1,56 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleJniCpp.js
++ */
++
++#include "RNCImageCropPickerSpec.h"
++
++namespace facebook::react {
++
++static facebook::jsi::Value __hostFunction_NativeImageCropPickerSpecJSI_openPicker(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "openPicker", "(Lcom/facebook/react/bridge/ReadableMap;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeImageCropPickerSpecJSI_openCamera(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "openCamera", "(Lcom/facebook/react/bridge/ReadableMap;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeImageCropPickerSpecJSI_openCropper(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "openCropper", "(Lcom/facebook/react/bridge/ReadableMap;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeImageCropPickerSpecJSI_clean(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "clean", "(Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeImageCropPickerSpecJSI_cleanSingle(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "cleanSingle", "(Ljava/lang/String;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++NativeImageCropPickerSpecJSI::NativeImageCropPickerSpecJSI(const JavaTurboModule::InitParams &params)
++  : JavaTurboModule(params) {
++  methodMap_["openPicker"] = MethodMetadata {1, __hostFunction_NativeImageCropPickerSpecJSI_openPicker};
++  methodMap_["openCamera"] = MethodMetadata {1, __hostFunction_NativeImageCropPickerSpecJSI_openCamera};
++  methodMap_["openCropper"] = MethodMetadata {1, __hostFunction_NativeImageCropPickerSpecJSI_openCropper};
++  methodMap_["clean"] = MethodMetadata {0, __hostFunction_NativeImageCropPickerSpecJSI_clean};
++  methodMap_["cleanSingle"] = MethodMetadata {1, __hostFunction_NativeImageCropPickerSpecJSI_cleanSingle};
++}
++
++std::shared_ptr<TurboModule> RNCImageCropPickerSpec_ModuleProvider(const std::string &moduleName, const JavaTurboModule::InitParams &params) {
++  if (moduleName == "RNCImageCropPicker") {
++    return std::make_shared<NativeImageCropPickerSpecJSI>(params);
++  }
++  return nullptr;
++}
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/RNCImageCropPickerSpec.h b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/RNCImageCropPickerSpec.h
+new file mode 100644
+index 0000000..70a0ca0
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/RNCImageCropPickerSpec.h
+@@ -0,0 +1,31 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleJniH.js
++ */
++
++#pragma once
++
++#include <ReactCommon/JavaTurboModule.h>
++#include <ReactCommon/TurboModule.h>
++#include <jsi/jsi.h>
++
++namespace facebook::react {
++
++/**
++ * JNI C++ class for module 'NativeImageCropPicker'
++ */
++class JSI_EXPORT NativeImageCropPickerSpecJSI : public JavaTurboModule {
++public:
++  NativeImageCropPickerSpecJSI(const JavaTurboModule::InitParams &params);
++};
++
++
++JSI_EXPORT
++std::shared_ptr<TurboModule> RNCImageCropPickerSpec_ModuleProvider(const std::string &moduleName, const JavaTurboModule::InitParams &params);
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ComponentDescriptors.cpp b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ComponentDescriptors.cpp
+new file mode 100644
+index 0000000..bfb654c
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ComponentDescriptors.cpp
+@@ -0,0 +1,22 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateComponentDescriptorCpp.js
++ */
++
++#include <react/renderer/components/RNCImageCropPickerSpec/ComponentDescriptors.h>
++#include <react/renderer/core/ConcreteComponentDescriptor.h>
++#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
++
++namespace facebook::react {
++
++void RNCImageCropPickerSpec_registerComponentDescriptorsFromCodegen(
++  std::shared_ptr<const ComponentDescriptorProviderRegistry> registry) {
++
++}
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ComponentDescriptors.h b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ComponentDescriptors.h
+new file mode 100644
+index 0000000..59f6b4a
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ComponentDescriptors.h
+@@ -0,0 +1,24 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateComponentDescriptorH.js
++ */
++
++#pragma once
++
++#include <react/renderer/components/RNCImageCropPickerSpec/ShadowNodes.h>
++#include <react/renderer/core/ConcreteComponentDescriptor.h>
++#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
++
++namespace facebook::react {
++
++
++
++void RNCImageCropPickerSpec_registerComponentDescriptorsFromCodegen(
++  std::shared_ptr<const ComponentDescriptorProviderRegistry> registry);
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/EventEmitters.cpp b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/EventEmitters.cpp
+new file mode 100644
+index 0000000..5913a40
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/EventEmitters.cpp
+@@ -0,0 +1,16 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateEventEmitterCpp.js
++ */
++
++#include <react/renderer/components/RNCImageCropPickerSpec/EventEmitters.h>
++
++
++namespace facebook::react {
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/EventEmitters.h b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/EventEmitters.h
+new file mode 100644
+index 0000000..2845a63
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/EventEmitters.h
+@@ -0,0 +1,17 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateEventEmitterH.js
++ */
++#pragma once
++
++#include <react/renderer/components/view/ViewEventEmitter.h>
++
++
++namespace facebook::react {
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/Props.cpp b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/Props.cpp
+new file mode 100644
+index 0000000..112dd2e
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/Props.cpp
+@@ -0,0 +1,19 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GeneratePropsCpp.js
++ */
++
++#include <react/renderer/components/RNCImageCropPickerSpec/Props.h>
++#include <react/renderer/core/PropsParserContext.h>
++#include <react/renderer/core/propsConversions.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/Props.h b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/Props.h
+new file mode 100644
+index 0000000..870864b
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/Props.h
+@@ -0,0 +1,18 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GeneratePropsH.js
++ */
++#pragma once
++
++
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/RNCImageCropPickerSpecJSI.h b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/RNCImageCropPickerSpecJSI.h
+new file mode 100644
+index 0000000..25d4ac5
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/RNCImageCropPickerSpecJSI.h
+@@ -0,0 +1,412 @@
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleH.js
++ */
++
++#pragma once
++
++#include <ReactCommon/TurboModule.h>
++#include <react/bridging/Bridging.h>
++
++namespace facebook::react {
++
++
++#pragma mark - NativeImageCropPickerPickerOptions
++
++template <typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename P9, typename P10, typename P11, typename P12, typename P13, typename P14, typename P15, typename P16, typename P17, typename P18, typename P19, typename P20>
++struct NativeImageCropPickerPickerOptions {
++  P0 mediaType{};
++  P1 multiple{};
++  P2 includeBase64{};
++  P3 includeExif{};
++  P4 cropping{};
++  P5 width{};
++  P6 height{};
++  P7 cropperActiveWidgetColor{};
++  P8 cropperStatusBarLight{};
++  P9 cropperNavigationBarLight{};
++  P10 cropperToolbarColor{};
++  P11 cropperToolbarTitle{};
++  P12 cropperToolbarWidgetColor{};
++  P13 cropperCircleOverlay{};
++  P14 freeStyleCropEnabled{};
++  P15 showCropGuidelines{};
++  P16 showCropFrame{};
++  P17 hideBottomControls{};
++  P18 enableRotationGesture{};
++  P19 disableCropperColorSetters{};
++  P20 useFrontCamera;
++  bool operator==(const NativeImageCropPickerPickerOptions &other) const {
++    return mediaType == other.mediaType && multiple == other.multiple && includeBase64 == other.includeBase64 && includeExif == other.includeExif && cropping == other.cropping && width == other.width && height == other.height && cropperActiveWidgetColor == other.cropperActiveWidgetColor && cropperStatusBarLight == other.cropperStatusBarLight && cropperNavigationBarLight == other.cropperNavigationBarLight && cropperToolbarColor == other.cropperToolbarColor && cropperToolbarTitle == other.cropperToolbarTitle && cropperToolbarWidgetColor == other.cropperToolbarWidgetColor && cropperCircleOverlay == other.cropperCircleOverlay && freeStyleCropEnabled == other.freeStyleCropEnabled && showCropGuidelines == other.showCropGuidelines && showCropFrame == other.showCropFrame && hideBottomControls == other.hideBottomControls && enableRotationGesture == other.enableRotationGesture && disableCropperColorSetters == other.disableCropperColorSetters && useFrontCamera == other.useFrontCamera;
++  }
++};
++
++template <typename T>
++struct NativeImageCropPickerPickerOptionsBridging {
++  static T types;
++
++  static T fromJs(
++      jsi::Runtime &rt,
++      const jsi::Object &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    T result{
++      bridging::fromJs<decltype(types.mediaType)>(rt, value.getProperty(rt, "mediaType"), jsInvoker),
++      bridging::fromJs<decltype(types.multiple)>(rt, value.getProperty(rt, "multiple"), jsInvoker),
++      bridging::fromJs<decltype(types.includeBase64)>(rt, value.getProperty(rt, "includeBase64"), jsInvoker),
++      bridging::fromJs<decltype(types.includeExif)>(rt, value.getProperty(rt, "includeExif"), jsInvoker),
++      bridging::fromJs<decltype(types.cropping)>(rt, value.getProperty(rt, "cropping"), jsInvoker),
++      bridging::fromJs<decltype(types.width)>(rt, value.getProperty(rt, "width"), jsInvoker),
++      bridging::fromJs<decltype(types.height)>(rt, value.getProperty(rt, "height"), jsInvoker),
++      bridging::fromJs<decltype(types.cropperActiveWidgetColor)>(rt, value.getProperty(rt, "cropperActiveWidgetColor"), jsInvoker),
++      bridging::fromJs<decltype(types.cropperStatusBarLight)>(rt, value.getProperty(rt, "cropperStatusBarLight"), jsInvoker),
++      bridging::fromJs<decltype(types.cropperNavigationBarLight)>(rt, value.getProperty(rt, "cropperNavigationBarLight"), jsInvoker),
++      bridging::fromJs<decltype(types.cropperToolbarColor)>(rt, value.getProperty(rt, "cropperToolbarColor"), jsInvoker),
++      bridging::fromJs<decltype(types.cropperToolbarTitle)>(rt, value.getProperty(rt, "cropperToolbarTitle"), jsInvoker),
++      bridging::fromJs<decltype(types.cropperToolbarWidgetColor)>(rt, value.getProperty(rt, "cropperToolbarWidgetColor"), jsInvoker),
++      bridging::fromJs<decltype(types.cropperCircleOverlay)>(rt, value.getProperty(rt, "cropperCircleOverlay"), jsInvoker),
++      bridging::fromJs<decltype(types.freeStyleCropEnabled)>(rt, value.getProperty(rt, "freeStyleCropEnabled"), jsInvoker),
++      bridging::fromJs<decltype(types.showCropGuidelines)>(rt, value.getProperty(rt, "showCropGuidelines"), jsInvoker),
++      bridging::fromJs<decltype(types.showCropFrame)>(rt, value.getProperty(rt, "showCropFrame"), jsInvoker),
++      bridging::fromJs<decltype(types.hideBottomControls)>(rt, value.getProperty(rt, "hideBottomControls"), jsInvoker),
++      bridging::fromJs<decltype(types.enableRotationGesture)>(rt, value.getProperty(rt, "enableRotationGesture"), jsInvoker),
++      bridging::fromJs<decltype(types.disableCropperColorSetters)>(rt, value.getProperty(rt, "disableCropperColorSetters"), jsInvoker),
++      bridging::fromJs<decltype(types.useFrontCamera)>(rt, value.getProperty(rt, "useFrontCamera"), jsInvoker)};
++    return result;
++  }
++
++#ifdef DEBUG
++  static jsi::String mediaTypeToJs(jsi::Runtime &rt, decltype(types.mediaType) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool multipleToJs(jsi::Runtime &rt, decltype(types.multiple) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool includeBase64ToJs(jsi::Runtime &rt, decltype(types.includeBase64) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool includeExifToJs(jsi::Runtime &rt, decltype(types.includeExif) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool croppingToJs(jsi::Runtime &rt, decltype(types.cropping) value) {
++    return bridging::toJs(rt, value);
++  }
++  static double widthToJs(jsi::Runtime &rt, decltype(types.width) value) {
++    return bridging::toJs(rt, value);
++  }
++  static double heightToJs(jsi::Runtime &rt, decltype(types.height) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String cropperActiveWidgetColorToJs(jsi::Runtime &rt, decltype(types.cropperActiveWidgetColor) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool cropperStatusBarLightToJs(jsi::Runtime &rt, decltype(types.cropperStatusBarLight) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool cropperNavigationBarLightToJs(jsi::Runtime &rt, decltype(types.cropperNavigationBarLight) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String cropperToolbarColorToJs(jsi::Runtime &rt, decltype(types.cropperToolbarColor) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String cropperToolbarTitleToJs(jsi::Runtime &rt, decltype(types.cropperToolbarTitle) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String cropperToolbarWidgetColorToJs(jsi::Runtime &rt, decltype(types.cropperToolbarWidgetColor) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool cropperCircleOverlayToJs(jsi::Runtime &rt, decltype(types.cropperCircleOverlay) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool freeStyleCropEnabledToJs(jsi::Runtime &rt, decltype(types.freeStyleCropEnabled) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool showCropGuidelinesToJs(jsi::Runtime &rt, decltype(types.showCropGuidelines) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool showCropFrameToJs(jsi::Runtime &rt, decltype(types.showCropFrame) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool hideBottomControlsToJs(jsi::Runtime &rt, decltype(types.hideBottomControls) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool enableRotationGestureToJs(jsi::Runtime &rt, decltype(types.enableRotationGesture) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool disableCropperColorSettersToJs(jsi::Runtime &rt, decltype(types.disableCropperColorSetters) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool useFrontCameraToJs(jsi::Runtime &rt, decltype(types.useFrontCamera) value) {
++    return bridging::toJs(rt, value);
++  }
++#endif
++
++  static jsi::Object toJs(
++      jsi::Runtime &rt,
++      const T &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    auto result = facebook::jsi::Object(rt);
++    if (value.mediaType) {
++      result.setProperty(rt, "mediaType", bridging::toJs(rt, value.mediaType.value(), jsInvoker));
++    }
++    if (value.multiple) {
++      result.setProperty(rt, "multiple", bridging::toJs(rt, value.multiple.value(), jsInvoker));
++    }
++    if (value.includeBase64) {
++      result.setProperty(rt, "includeBase64", bridging::toJs(rt, value.includeBase64.value(), jsInvoker));
++    }
++    if (value.includeExif) {
++      result.setProperty(rt, "includeExif", bridging::toJs(rt, value.includeExif.value(), jsInvoker));
++    }
++    if (value.cropping) {
++      result.setProperty(rt, "cropping", bridging::toJs(rt, value.cropping.value(), jsInvoker));
++    }
++    if (value.width) {
++      result.setProperty(rt, "width", bridging::toJs(rt, value.width.value(), jsInvoker));
++    }
++    if (value.height) {
++      result.setProperty(rt, "height", bridging::toJs(rt, value.height.value(), jsInvoker));
++    }
++    if (value.cropperActiveWidgetColor) {
++      result.setProperty(rt, "cropperActiveWidgetColor", bridging::toJs(rt, value.cropperActiveWidgetColor.value(), jsInvoker));
++    }
++    if (value.cropperStatusBarLight) {
++      result.setProperty(rt, "cropperStatusBarLight", bridging::toJs(rt, value.cropperStatusBarLight.value(), jsInvoker));
++    }
++    if (value.cropperNavigationBarLight) {
++      result.setProperty(rt, "cropperNavigationBarLight", bridging::toJs(rt, value.cropperNavigationBarLight.value(), jsInvoker));
++    }
++    if (value.cropperToolbarColor) {
++      result.setProperty(rt, "cropperToolbarColor", bridging::toJs(rt, value.cropperToolbarColor.value(), jsInvoker));
++    }
++    if (value.cropperToolbarTitle) {
++      result.setProperty(rt, "cropperToolbarTitle", bridging::toJs(rt, value.cropperToolbarTitle.value(), jsInvoker));
++    }
++    if (value.cropperToolbarWidgetColor) {
++      result.setProperty(rt, "cropperToolbarWidgetColor", bridging::toJs(rt, value.cropperToolbarWidgetColor.value(), jsInvoker));
++    }
++    if (value.cropperCircleOverlay) {
++      result.setProperty(rt, "cropperCircleOverlay", bridging::toJs(rt, value.cropperCircleOverlay.value(), jsInvoker));
++    }
++    if (value.freeStyleCropEnabled) {
++      result.setProperty(rt, "freeStyleCropEnabled", bridging::toJs(rt, value.freeStyleCropEnabled.value(), jsInvoker));
++    }
++    if (value.showCropGuidelines) {
++      result.setProperty(rt, "showCropGuidelines", bridging::toJs(rt, value.showCropGuidelines.value(), jsInvoker));
++    }
++    if (value.showCropFrame) {
++      result.setProperty(rt, "showCropFrame", bridging::toJs(rt, value.showCropFrame.value(), jsInvoker));
++    }
++    if (value.hideBottomControls) {
++      result.setProperty(rt, "hideBottomControls", bridging::toJs(rt, value.hideBottomControls.value(), jsInvoker));
++    }
++    if (value.enableRotationGesture) {
++      result.setProperty(rt, "enableRotationGesture", bridging::toJs(rt, value.enableRotationGesture.value(), jsInvoker));
++    }
++    if (value.disableCropperColorSetters) {
++      result.setProperty(rt, "disableCropperColorSetters", bridging::toJs(rt, value.disableCropperColorSetters.value(), jsInvoker));
++    }
++    if (value.useFrontCamera) {
++      result.setProperty(rt, "useFrontCamera", bridging::toJs(rt, value.useFrontCamera.value(), jsInvoker));
++    }
++    return result;
++  }
++};
++
++
++
++#pragma mark - NativeImageCropPickerPickerResponse
++
++template <typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename P9, typename P10, typename P11, typename P12, typename P13>
++struct NativeImageCropPickerPickerResponse {
++  P0 path{};
++  P1 localIdentifier{};
++  P2 sourceURL{};
++  P3 filename{};
++  P4 width{};
++  P5 height{};
++  P6 mime{};
++  P7 size{};
++  P8 duration{};
++  P9 data{};
++  P10 exif{};
++  P11 cropRect{};
++  P12 creationDate{};
++  P13 modificationDate;
++  bool operator==(const NativeImageCropPickerPickerResponse &other) const {
++    return path == other.path && localIdentifier == other.localIdentifier && sourceURL == other.sourceURL && filename == other.filename && width == other.width && height == other.height && mime == other.mime && size == other.size && duration == other.duration && data == other.data && exif == other.exif && cropRect == other.cropRect && creationDate == other.creationDate && modificationDate == other.modificationDate;
++  }
++};
++
++template <typename T>
++struct NativeImageCropPickerPickerResponseBridging {
++  static T types;
++
++  static T fromJs(
++      jsi::Runtime &rt,
++      const jsi::Object &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    T result{
++      bridging::fromJs<decltype(types.path)>(rt, value.getProperty(rt, "path"), jsInvoker),
++      bridging::fromJs<decltype(types.localIdentifier)>(rt, value.getProperty(rt, "localIdentifier"), jsInvoker),
++      bridging::fromJs<decltype(types.sourceURL)>(rt, value.getProperty(rt, "sourceURL"), jsInvoker),
++      bridging::fromJs<decltype(types.filename)>(rt, value.getProperty(rt, "filename"), jsInvoker),
++      bridging::fromJs<decltype(types.width)>(rt, value.getProperty(rt, "width"), jsInvoker),
++      bridging::fromJs<decltype(types.height)>(rt, value.getProperty(rt, "height"), jsInvoker),
++      bridging::fromJs<decltype(types.mime)>(rt, value.getProperty(rt, "mime"), jsInvoker),
++      bridging::fromJs<decltype(types.size)>(rt, value.getProperty(rt, "size"), jsInvoker),
++      bridging::fromJs<decltype(types.duration)>(rt, value.getProperty(rt, "duration"), jsInvoker),
++      bridging::fromJs<decltype(types.data)>(rt, value.getProperty(rt, "data"), jsInvoker),
++      bridging::fromJs<decltype(types.exif)>(rt, value.getProperty(rt, "exif"), jsInvoker),
++      bridging::fromJs<decltype(types.cropRect)>(rt, value.getProperty(rt, "cropRect"), jsInvoker),
++      bridging::fromJs<decltype(types.creationDate)>(rt, value.getProperty(rt, "creationDate"), jsInvoker),
++      bridging::fromJs<decltype(types.modificationDate)>(rt, value.getProperty(rt, "modificationDate"), jsInvoker)};
++    return result;
++  }
++
++#ifdef DEBUG
++  static jsi::String pathToJs(jsi::Runtime &rt, decltype(types.path) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String localIdentifierToJs(jsi::Runtime &rt, decltype(types.localIdentifier) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String sourceURLToJs(jsi::Runtime &rt, decltype(types.sourceURL) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String filenameToJs(jsi::Runtime &rt, decltype(types.filename) value) {
++    return bridging::toJs(rt, value);
++  }
++  static double widthToJs(jsi::Runtime &rt, decltype(types.width) value) {
++    return bridging::toJs(rt, value);
++  }
++  static double heightToJs(jsi::Runtime &rt, decltype(types.height) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String mimeToJs(jsi::Runtime &rt, decltype(types.mime) value) {
++    return bridging::toJs(rt, value);
++  }
++  static double sizeToJs(jsi::Runtime &rt, decltype(types.size) value) {
++    return bridging::toJs(rt, value);
++  }
++  static double durationToJs(jsi::Runtime &rt, decltype(types.duration) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String dataToJs(jsi::Runtime &rt, decltype(types.data) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::Object exifToJs(jsi::Runtime &rt, decltype(types.exif) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::Object cropRectToJs(jsi::Runtime &rt, decltype(types.cropRect) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String creationDateToJs(jsi::Runtime &rt, decltype(types.creationDate) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String modificationDateToJs(jsi::Runtime &rt, decltype(types.modificationDate) value) {
++    return bridging::toJs(rt, value);
++  }
++#endif
++
++  static jsi::Object toJs(
++      jsi::Runtime &rt,
++      const T &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    auto result = facebook::jsi::Object(rt);
++    result.setProperty(rt, "path", bridging::toJs(rt, value.path, jsInvoker));
++    if (value.localIdentifier) {
++      result.setProperty(rt, "localIdentifier", bridging::toJs(rt, value.localIdentifier.value(), jsInvoker));
++    }
++    if (value.sourceURL) {
++      result.setProperty(rt, "sourceURL", bridging::toJs(rt, value.sourceURL.value(), jsInvoker));
++    }
++    if (value.filename) {
++      result.setProperty(rt, "filename", bridging::toJs(rt, value.filename.value(), jsInvoker));
++    }
++    result.setProperty(rt, "width", bridging::toJs(rt, value.width, jsInvoker));
++    result.setProperty(rt, "height", bridging::toJs(rt, value.height, jsInvoker));
++    result.setProperty(rt, "mime", bridging::toJs(rt, value.mime, jsInvoker));
++    result.setProperty(rt, "size", bridging::toJs(rt, value.size, jsInvoker));
++    if (value.duration) {
++      result.setProperty(rt, "duration", bridging::toJs(rt, value.duration.value(), jsInvoker));
++    }
++    if (value.data) {
++      result.setProperty(rt, "data", bridging::toJs(rt, value.data.value(), jsInvoker));
++    }
++    if (value.exif) {
++      result.setProperty(rt, "exif", bridging::toJs(rt, value.exif.value(), jsInvoker));
++    }
++    if (value.cropRect) {
++      result.setProperty(rt, "cropRect", bridging::toJs(rt, value.cropRect.value(), jsInvoker));
++    }
++    if (value.creationDate) {
++      result.setProperty(rt, "creationDate", bridging::toJs(rt, value.creationDate.value(), jsInvoker));
++    }
++    if (value.modificationDate) {
++      result.setProperty(rt, "modificationDate", bridging::toJs(rt, value.modificationDate.value(), jsInvoker));
++    }
++    return result;
++  }
++};
++
++
++template <typename T>
++class JSI_EXPORT NativeImageCropPickerCxxSpec : public TurboModule {
++public:
++  static constexpr std::string_view kModuleName = "RNCImageCropPicker";
++
++protected:
++  NativeImageCropPickerCxxSpec(std::shared_ptr<CallInvoker> jsInvoker) : TurboModule(std::string{NativeImageCropPickerCxxSpec::kModuleName}, jsInvoker) {
++    methodMap_["openPicker"] = MethodMetadata {.argCount = 1, .invoker = __openPicker};
++    methodMap_["openCamera"] = MethodMetadata {.argCount = 1, .invoker = __openCamera};
++    methodMap_["openCropper"] = MethodMetadata {.argCount = 1, .invoker = __openCropper};
++    methodMap_["clean"] = MethodMetadata {.argCount = 0, .invoker = __clean};
++    methodMap_["cleanSingle"] = MethodMetadata {.argCount = 1, .invoker = __cleanSingle};
++  }
++  
++private:
++  static jsi::Value __openPicker(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::openPicker) == 2,
++      "Expected openPicker(...) to have 2 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::openPicker,  static_cast<NativeImageCropPickerCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt));
++  }
++
++  static jsi::Value __openCamera(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::openCamera) == 2,
++      "Expected openCamera(...) to have 2 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::openCamera,  static_cast<NativeImageCropPickerCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt));
++  }
++
++  static jsi::Value __openCropper(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::openCropper) == 2,
++      "Expected openCropper(...) to have 2 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::openCropper,  static_cast<NativeImageCropPickerCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt));
++  }
++
++  static jsi::Value __clean(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
++    static_assert(
++      bridging::getParameterCount(&T::clean) == 1,
++      "Expected clean(...) to have 1 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::clean,  static_cast<NativeImageCropPickerCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
++  }
++
++  static jsi::Value __cleanSingle(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::cleanSingle) == 2,
++      "Expected cleanSingle(...) to have 2 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::cleanSingle,  static_cast<NativeImageCropPickerCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt));
++  }
++};
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ShadowNodes.cpp b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ShadowNodes.cpp
+new file mode 100644
+index 0000000..64b3d57
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ShadowNodes.cpp
+@@ -0,0 +1,17 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateShadowNodeCpp.js
++ */
++
++#include <react/renderer/components/RNCImageCropPickerSpec/ShadowNodes.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ShadowNodes.h b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ShadowNodes.h
+new file mode 100644
+index 0000000..dd5d528
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/ShadowNodes.h
+@@ -0,0 +1,23 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateShadowNodeH.js
++ */
++
++#pragma once
++
++#include <react/renderer/components/RNCImageCropPickerSpec/EventEmitters.h>
++#include <react/renderer/components/RNCImageCropPickerSpec/Props.h>
++#include <react/renderer/components/RNCImageCropPickerSpec/States.h>
++#include <react/renderer/components/view/ConcreteViewShadowNode.h>
++#include <jsi/jsi.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/States.cpp b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/States.cpp
+new file mode 100644
+index 0000000..172c1b8
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/States.cpp
+@@ -0,0 +1,16 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateStateCpp.js
++ */
++#include <react/renderer/components/RNCImageCropPickerSpec/States.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/States.h b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/States.h
+new file mode 100644
+index 0000000..2e55bce
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNCImageCropPickerSpec/States.h
+@@ -0,0 +1,20 @@
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateStateH.js
++ */
++#pragma once
++
++#include <react/renderer/core/StateData.h>
++#ifdef RN_SERIALIZABLE_STATE
++#include <folly/dynamic.h>
++#endif
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/schema.json b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/schema.json
+new file mode 100644
+index 0000000..180ebdc
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/generated/source/codegen/schema.json
+@@ -0,0 +1 @@
++{"libraryName":"","modules":{"NativeImageCropPicker":{"type":"NativeModule","aliasMap":{"PickerOptions":{"type":"ObjectTypeAnnotation","properties":[{"name":"mediaType","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"multiple","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"includeBase64","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"includeExif","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"cropping","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"width","optional":true,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"height","optional":true,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"cropperActiveWidgetColor","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"cropperStatusBarLight","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"cropperNavigationBarLight","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"cropperToolbarColor","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"cropperToolbarTitle","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"cropperToolbarWidgetColor","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"cropperCircleOverlay","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"freeStyleCropEnabled","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"showCropGuidelines","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"showCropFrame","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"hideBottomControls","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"enableRotationGesture","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"disableCropperColorSetters","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"useFrontCamera","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}}]},"PickerResponse":{"type":"ObjectTypeAnnotation","properties":[{"name":"path","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"localIdentifier","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"sourceURL","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"filename","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"width","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"height","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"mime","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"size","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"duration","optional":true,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"data","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"exif","optional":true,"typeAnnotation":{"type":"GenericObjectTypeAnnotation","dictionaryValueType":{"type":"StringTypeAnnotation"}}},{"name":"cropRect","optional":true,"typeAnnotation":{"type":"ObjectTypeAnnotation","properties":[{"name":"width","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"height","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"x","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"y","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}}]}},{"name":"creationDate","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"modificationDate","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}}]}},"enumMap":{},"spec":{"eventEmitters":[],"methods":[{"name":"openPicker","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"TypeAliasTypeAnnotation","name":"PickerResponse"}},"params":[{"name":"options","optional":false,"typeAnnotation":{"type":"TypeAliasTypeAnnotation","name":"PickerOptions"}}]}},{"name":"openCamera","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"TypeAliasTypeAnnotation","name":"PickerResponse"}},"params":[{"name":"options","optional":false,"typeAnnotation":{"type":"TypeAliasTypeAnnotation","name":"PickerOptions"}}]}},{"name":"openCropper","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"TypeAliasTypeAnnotation","name":"PickerResponse"}},"params":[{"name":"options","optional":false,"typeAnnotation":{"type":"TypeAliasTypeAnnotation","name":"PickerOptions"}}]}},{"name":"clean","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"VoidTypeAnnotation"}},"params":[]}},{"name":"cleanSingle","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"VoidTypeAnnotation"}},"params":[{"name":"path","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}}]}}]},"moduleName":"RNCImageCropPicker"}}}
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..a21e2ea
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,48 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnative.ivpusic.imagepicker" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++    <queries>
++        <intent>
++            <action android:name="android.media.action.IMAGE_CAPTURE" />
++        </intent>
++    </queries>
++
++    <uses-permission
++        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
++        android:maxSdkVersion="29" />
++
++    <application>
++        <provider
++            android:name="com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider"
++            android:authorities="dollar_openBracket_applicationId_closeBracket.provider"
++            android:exported="false"
++            android:grantUriPermissions="true" >
++            <meta-data
++                android:name="android.support.FILE_PROVIDER_PATHS"
++                android:resource="@xml/ivpusic_imagepicker_provider_paths" />
++        </provider>
++
++        <activity
++            android:name="com.yalantis.ucrop.UCropActivity"
++            android:exported="false"
++            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
++
++        <!-- Prompt Google Play services to install the backported photo picker module -->
++        <service
++            android:name="com.google.android.gms.metadata.ModuleDependencies"
++            android:enabled="false"
++            android:exported="false" >
++            <intent-filter>
++                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
++            </intent-filter>
++
++            <meta-data
++                android:name="photopicker_activity:0:required"
++                android:value="" />
++        </service>
++    </application>
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json b/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..a34b0f9
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "com.reactnative.ivpusic.imagepicker",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties b/node_modules/react-native-image-crop-picker/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..b4c821b
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+@@ -0,0 +1,7 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=37
++minCompileMinorSdk=0
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/android_res_source_set_path_map/debug/mapDebugSourceSetPaths/file-map.txt b/node_modules/react-native-image-crop-picker/android/build/intermediates/android_res_source_set_path_map/debug/mapDebugSourceSetPaths/file-map.txt
+new file mode 100644
+index 0000000..62bbde2
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/android_res_source_set_path_map/debug/mapDebugSourceSetPaths/file-map.txt
+@@ -0,0 +1,9 @@
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-pngs-0 /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/build/generated/res/pngs/debug
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-updated_navigation_xml-1 /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/build/generated/updated_navigation_xml/debug
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-mergeDebugResources-2 /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/mergeDebugResources/merged.dir
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-mergeDebugResources-3 /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/mergeDebugResources/stripped.dir
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-debug-4 /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/build/intermediates/merged_res/debug/mergeDebugResources
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-debug-5 /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/build/intermediates/packaged_res/debug/packageDebugResources
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-debug-6 /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/debug/res
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-main-7 /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/res
++gradleHome-0 /Users/itoasis/.gradle
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json b/node_modules/react-native-image-crop-picker/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar b/node_modules/react-native-image-crop-picker/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar
+new file mode 100644
+index 0000000..7899952
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar b/node_modules/react-native-image-crop-picker/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar
+new file mode 100644
+index 0000000..7ed4d47
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt b/node_modules/react-native-image-crop-picker/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt
+new file mode 100644
+index 0000000..c3aa536
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt
+@@ -0,0 +1 @@
++int xml ivpusic_imagepicker_provider_paths 0x0
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/compiled_local_resources/debug/compileDebugLibraryResources/out/xml_ivpusic_imagepicker_provider_paths.xml.flat b/node_modules/react-native-image-crop-picker/android/build/intermediates/compiled_local_resources/debug/compileDebugLibraryResources/out/xml_ivpusic_imagepicker_provider_paths.xml.flat
+new file mode 100644
+index 0000000..090de9e
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/compiled_local_resources/debug/compileDebugLibraryResources/out/xml_ivpusic_imagepicker_provider_paths.xml.flat differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..29ad2ce
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1,2 @@
++#Fri Sep 18 18:16:44 PKT 2026
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-main-5\:/xml/ivpusic_imagepicker_provider_paths.xml=/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/build/intermediates/packaged_res/debug/packageDebugResources/xml/ivpusic_imagepicker_provider_paths.xml
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..b05632e
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"><source path="/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/res"><file name="ivpusic_imagepicker_provider_paths" path="/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/res/xml/ivpusic_imagepicker_provider_paths.xml" qualifiers="" type="xml"/></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"><source path="/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"/><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"/><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/mergeDebugAssets/merger.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+new file mode 100644
+index 0000000..2ec734d
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/assets"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/debug/assets"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+new file mode 100644
+index 0000000..f918aa0
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/debug/jniLibs"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/BuildConfig.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/BuildConfig.class
+new file mode 100644
+index 0000000..b2e83e2
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/BuildConfig.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/Compression.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/Compression.class
+new file mode 100644
+index 0000000..afc6e1e
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/Compression.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ExifExtractor.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ExifExtractor.class
+new file mode 100644
+index 0000000..39904dc
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ExifExtractor.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/GeoDegree.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/GeoDegree.class
+new file mode 100644
+index 0000000..cd9bdba
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/GeoDegree.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$1.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$1.class
+new file mode 100644
+index 0000000..06ecc7c
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$1.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$2.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$2.class
+new file mode 100644
+index 0000000..fe45a87
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$2.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$3.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$3.class
+new file mode 100644
+index 0000000..40eeac4
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$3.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$4.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$4.class
+new file mode 100644
+index 0000000..7b0645b
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$4.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$5.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$5.class
+new file mode 100644
+index 0000000..6c73797
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$5.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$6.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$6.class
+new file mode 100644
+index 0000000..bc5d29b
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker$6.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker.class
+new file mode 100644
+index 0000000..1eb276b
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ImageCropPicker.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/IvpusicImagePickerFileProvider.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/IvpusicImagePickerFileProvider.class
+new file mode 100644
+index 0000000..d7d59de
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/IvpusicImagePickerFileProvider.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.class
+new file mode 100644
+index 0000000..0b431ff
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/PickerModule.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/PickerModule.class
+new file mode 100644
+index 0000000..c3d510e
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/PickerModule.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/PickerPackage.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/PickerPackage.class
+new file mode 100644
+index 0000000..b175ab5
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/PickerPackage.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/RealPathUtil.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/RealPathUtil.class
+new file mode 100644
+index 0000000..e229606
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/RealPathUtil.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ResultCollector.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ResultCollector.class
+new file mode 100644
+index 0000000..068c812
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnative/ivpusic/imagepicker/ResultCollector.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt b/node_modules/react-native-image-crop-picker/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+new file mode 100644
+index 0000000..192ed14
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+@@ -0,0 +1,3 @@
++R_DEF: Internal format may change without notice
++local
++xml ivpusic_imagepicker_provider_paths
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt b/node_modules/react-native-image-crop-picker/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..a801802
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,80 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="com.reactnative.ivpusic.imagepicker" >
++4
++5    <uses-sdk android:minSdkVersion="24" />
++5-->INJECTED
++5-->INJECTED
++6
++7    <queries>
++7-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:4:5-8:15
++8        <intent>
++8-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:5:9-7:18
++9            <action android:name="android.media.action.IMAGE_CAPTURE" />
++9-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:6:13-73
++9-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:6:21-70
++10        </intent>
++11    </queries>
++12
++13    <uses-permission
++13-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:10:5-11:38
++14        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
++14-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:10:22-78
++15        android:maxSdkVersion="29" />
++15-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:11:9-35
++16
++17    <application>
++17-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:13:5-39:19
++18        <provider
++18-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:15:9-23:20
++19            android:name="com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider"
++19-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:16:13-59
++20            android:authorities="${applicationId}.provider"
++20-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:17:13-60
++21            android:exported="false"
++21-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:18:13-37
++22            android:grantUriPermissions="true" >
++22-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:19:13-47
++23            <meta-data
++23-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:20:13-22:78
++24                android:name="android.support.FILE_PROVIDER_PATHS"
++24-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:21:17-67
++25                android:resource="@xml/ivpusic_imagepicker_provider_paths" />
++25-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:22:17-75
++26        </provider>
++27
++28        <activity
++28-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:25:9-28:40
++29            android:name="com.yalantis.ucrop.UCropActivity"
++29-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:26:13-60
++30            android:exported="false"
++30-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:28:13-37
++31            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
++31-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:27:13-69
++32
++33        <!-- Prompt Google Play services to install the backported photo picker module -->
++34        <service
++34-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:32:9-38:19
++35            android:name="com.google.android.gms.metadata.ModuleDependencies"
++35-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:32:18-83
++36            android:enabled="false"
++36-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:32:84-107
++37            android:exported="false" >
++37-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:32:108-132
++38            <intent-filter>
++38-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:33:13-35:29
++39                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
++39-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:34:17-94
++39-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:34:25-91
++40            </intent-filter>
++41
++42            <meta-data
++42-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:37:13-90
++43                android:name="photopicker_activity:0:required"
++43-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:37:24-70
++44                android:value="" />
++44-->/Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:37:71-87
++45        </service>
++46    </application>
++47
++48</manifest>
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..2ac3031
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+@@ -0,0 +1,48 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnative.ivpusic.imagepicker" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++    <queries>
++        <intent>
++            <action android:name="android.media.action.IMAGE_CAPTURE" />
++        </intent>
++    </queries>
++
++    <uses-permission
++        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
++        android:maxSdkVersion="29" />
++
++    <application>
++        <provider
++            android:name="com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider"
++            android:authorities="${applicationId}.provider"
++            android:exported="false"
++            android:grantUriPermissions="true" >
++            <meta-data
++                android:name="android.support.FILE_PROVIDER_PATHS"
++                android:resource="@xml/ivpusic_imagepicker_provider_paths" />
++        </provider>
++
++        <activity
++            android:name="com.yalantis.ucrop.UCropActivity"
++            android:exported="false"
++            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
++
++        <!-- Prompt Google Play services to install the backported photo picker module -->
++        <service
++            android:name="com.google.android.gms.metadata.ModuleDependencies"
++            android:enabled="false"
++            android:exported="false" >
++            <intent-filter>
++                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
++            </intent-filter>
++
++            <meta-data
++                android:name="photopicker_activity:0:required"
++                android:value="" />
++        </service>
++    </application>
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json b/node_modules/react-native-image-crop-picker/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt b/node_modules/react-native-image-crop-picker/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/packaged_res/debug/packageDebugResources/xml/ivpusic_imagepicker_provider_paths.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/packaged_res/debug/packageDebugResources/xml/ivpusic_imagepicker_provider_paths.xml
+new file mode 100644
+index 0000000..ffa74ab
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/packaged_res/debug/packageDebugResources/xml/ivpusic_imagepicker_provider_paths.xml
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<paths xmlns:android="http://schemas.android.com/apk/res/android">
++    <external-path name="external_files" path="."/>
++</paths>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/BuildConfig.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/BuildConfig.class
+new file mode 100644
+index 0000000..b2e83e2
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/BuildConfig.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/Compression.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/Compression.class
+new file mode 100644
+index 0000000..afc6e1e
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/Compression.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ExifExtractor.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ExifExtractor.class
+new file mode 100644
+index 0000000..39904dc
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ExifExtractor.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/GeoDegree.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/GeoDegree.class
+new file mode 100644
+index 0000000..cd9bdba
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/GeoDegree.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$1.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$1.class
+new file mode 100644
+index 0000000..06ecc7c
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$1.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$2.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$2.class
+new file mode 100644
+index 0000000..fe45a87
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$2.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$3.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$3.class
+new file mode 100644
+index 0000000..40eeac4
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$3.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$4.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$4.class
+new file mode 100644
+index 0000000..7b0645b
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$4.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$5.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$5.class
+new file mode 100644
+index 0000000..6c73797
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$5.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$6.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$6.class
+new file mode 100644
+index 0000000..bc5d29b
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker$6.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker.class
+new file mode 100644
+index 0000000..1eb276b
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ImageCropPicker.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/IvpusicImagePickerFileProvider.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/IvpusicImagePickerFileProvider.class
+new file mode 100644
+index 0000000..d7d59de
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/IvpusicImagePickerFileProvider.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.class
+new file mode 100644
+index 0000000..0b431ff
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/NativeImageCropPickerSpec.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/PickerModule.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/PickerModule.class
+new file mode 100644
+index 0000000..c3d510e
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/PickerModule.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/PickerPackage.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/PickerPackage.class
+new file mode 100644
+index 0000000..b175ab5
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/PickerPackage.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/RealPathUtil.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/RealPathUtil.class
+new file mode 100644
+index 0000000..e229606
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/RealPathUtil.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ResultCollector.class b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ResultCollector.class
+new file mode 100644
+index 0000000..068c812
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnative/ivpusic/imagepicker/ResultCollector.class differ
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt b/node_modules/react-native-image-crop-picker/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+new file mode 100644
+index 0000000..9cc946a
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+@@ -0,0 +1,2 @@
++com.reactnative.ivpusic.imagepicker
++xml ivpusic_imagepicker_provider_paths
+diff --git a/node_modules/react-native-image-crop-picker/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-image-crop-picker/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..79d5007
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,77 @@
++-- Merging decision tree log ---
++manifest
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:1:1-41:12
++INJECTED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:1:1-41:12
++	package
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:2:5-50
++		INJECTED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml
++	xmlns:android
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:1:11-69
++queries
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:4:5-8:15
++intent#action:name:android.media.action.IMAGE_CAPTURE
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:5:9-7:18
++action#android.media.action.IMAGE_CAPTURE
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:6:13-73
++	android:name
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:6:21-70
++uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:10:5-11:38
++	android:maxSdkVersion
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:11:9-35
++	android:name
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:10:22-78
++application
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:13:5-39:19
++provider#com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:15:9-23:20
++	android:grantUriPermissions
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:19:13-47
++	android:authorities
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:17:13-60
++	android:exported
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:18:13-37
++	android:name
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:16:13-59
++meta-data#android.support.FILE_PROVIDER_PATHS
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:20:13-22:78
++	android:resource
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:22:17-75
++	android:name
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:21:17-67
++activity#com.yalantis.ucrop.UCropActivity
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:25:9-28:40
++	android:exported
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:28:13-37
++	android:theme
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:27:13-69
++	android:name
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:26:13-60
++service#com.google.android.gms.metadata.ModuleDependencies
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:32:9-38:19
++	android:enabled
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:32:84-107
++	android:exported
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:32:108-132
++	android:name
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:32:18-83
++intent-filter#action:name:com.google.android.gms.metadata.MODULE_DEPENDENCIES
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:33:13-35:29
++action#com.google.android.gms.metadata.MODULE_DEPENDENCIES
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:34:17-94
++	android:name
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:34:25-91
++meta-data#photopicker_activity:0:required
++ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:37:13-90
++	android:value
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:37:71-87
++	android:name
++		ADDED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml:37:24-70
++uses-sdk
++INJECTED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml
++INJECTED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from /Users/itoasis/Documents/GitHub/theroyalaccomodation_APP/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/react-native-image-crop-picker/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/react-native-image-crop-picker/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
+new file mode 100644
+index 0000000..e7b4ef6
+Binary files /dev/null and b/node_modules/react-native-image-crop-picker/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
+diff --git a/node_modules/react-native-image-crop-picker/ios/src/ImageCropPicker.h b/node_modules/react-native-image-crop-picker/ios/src/ImageCropPicker.h
+index b6a925a..8e4da56 100644
+--- a/node_modules/react-native-image-crop-picker/ios/src/ImageCropPicker.h
++++ b/node_modules/react-native-image-crop-picker/ios/src/ImageCropPicker.h
+@@ -12,11 +12,20 @@
+ 
+ #if __has_include(<React/RCTBridgeModule.h>)
+ #import <React/RCTBridgeModule.h>
++#if __has_include(<React/RCTImageURLLoader.h>)
+ #import <React/RCTImageURLLoader.h>
++#endif
++#if __has_include(<React/RCTImageShadowView.h>)
+ #import <React/RCTImageShadowView.h>
++#endif
++#if __has_include(<React/RCTImageView.h>)
+ #import <React/RCTImageView.h>
++#endif
++#if __has_include(<React/RCTImageLoaderProtocol.h>)
+ #import <React/RCTImageLoaderProtocol.h>
++#endif
+ #else
++// (leave the else branch as-is — it doesn't run on autolinked RN)
+ #import "RCTBridgeModule.h"
+ #import "RCTImageURLLoader.h"
+ #import "RCTImageShadowView.h"
