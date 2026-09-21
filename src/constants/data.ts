@@ -14,6 +14,11 @@ type PropertyImages = {
     bathrooms: ImageSourcePropType[][];  // one array of photos per bathroom
 };
 
+export const POLICY_URLS = {
+    privacy: 'https://theroyalaccommodation.com/policy/privacy-policy/',
+    terms: 'https://theroyalaccommodation.com/policy/terms-and-conditions/',
+};
+
 // Demo occupied dates: given days of the CURRENT month, as ISO strings.
 // This is placeholder data — real availability will come from Firebase later.
 const occupiedThisMonth = (days: number[]): string[] => {

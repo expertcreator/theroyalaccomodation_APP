@@ -1386,6 +1386,28 @@ PODS:
     - Yoga
   - react-native-vector-icons-feather (13.1.4)
   - react-native-vector-icons-material-design-icons (13.1.4)
+  - react-native-webview (14.0.1):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - React-NativeModulesApple (0.87.1):
     - hermes-engine
     - React-bridging
@@ -2226,6 +2248,7 @@ DEPENDENCIES:
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-vector-icons-feather (from `../node_modules/@react-native-vector-icons/feather`)"
   - "react-native-vector-icons-material-design-icons (from `../node_modules/@react-native-vector-icons/material-design-icons`)"
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-networking (from `../node_modules/react-native/ReactCommon/react/networking`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
@@ -2394,6 +2417,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-vector-icons/feather"
   react-native-vector-icons-material-design-icons:
     :path: "../node_modules/@react-native-vector-icons/material-design-icons"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   React-NativeModulesApple:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-networking:
@@ -2539,6 +2564,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: f17f4ec987ecdd130820a4a850498b874fb70388
   react-native-vector-icons-feather: ce6037c8381f97c4f40941bc518b24dccc604dd8
   react-native-vector-icons-material-design-icons: 9e98e87947156bfe95135fb523b62821486044e3
+  react-native-webview: f189adab64d5d71cec3b9e9ec3261355376ec7a2
   React-NativeModulesApple: adb1dd8361dff80e9f6652fb3fdbf033cfbe2a89
   React-networking: c00b437c4408f0640ba0d4158357133488521eca
   React-oscompat: 3175a287dd7175d1a20fdce5048a4b9e11f4b915

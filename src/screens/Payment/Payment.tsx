@@ -5,7 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { useTheme } from '../../context/ThemeContext';
 import { nightsBetween } from '../../utils/date';
-import { getPropertyById } from '../../constants/data';
+import { getPropertyById, POLICY_URLS } from '../../constants/data';
 import { calculateStayPrice } from '../../utils/pricing';
 import type { RootStackParamList } from '../../navigation/types';
 import { STACK_ROUTES } from '../../navigation/routes';
@@ -16,6 +16,7 @@ import ReservationSummary from './components/ReservationSummary';
 import TermsCheckboxes from './components/TermsCheckboxes';
 import { styles } from './styles';
 import PaymentCard from './components/PaymentCard';
+import WebViewModal from '../../components/Modals/WebViewModal';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.PaymentReview>;
@@ -37,6 +38,7 @@ const Payment: React.FC = () => {
 
     const [cardComplete, setCardComplete] = useState<boolean>(false);
     const [cardholderName, setCardholderName] = useState<string>('');
+    const [policy, setPolicy] = useState<{ title: string; url: string } | null>(null);
 
     const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
     const [acceptPrivacy, setAcceptPrivacy] = useState<boolean>(false);
@@ -75,10 +77,19 @@ const Payment: React.FC = () => {
                     acceptPrivacy={acceptPrivacy}
                     onToggleTerms={() => setAcceptTerms((v) => !v)}
                     onTogglePrivacy={() => setAcceptPrivacy((v) => !v)}
+                    onOpenTerms={() => setPolicy({ title: 'Terms & Conditions', url: POLICY_URLS.terms })}
+                    onOpenPrivacy={() => setPolicy({ title: 'Privacy Policy', url: POLICY_URLS.privacy })}
                 />
 
                 <Button title="Book Now" rightIcon="arrow-right" disabled={!canBook} onPress={onBookNow} />
             </ScrollView>
+
+            <WebViewModal
+                visible={!!policy}
+                title={policy?.title ?? ''}
+                url={policy?.url ?? null}
+                onClose={() => setPolicy(null)}
+            />
         </View>
     );
 };
