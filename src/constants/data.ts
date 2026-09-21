@@ -8,6 +8,12 @@ import { Booking } from '../interfaces/booking';
 export const ASCOT_BASE_RATE = 1250;
 export const WINDSOR_BASE_RATE = 995;
 
+type PropertyImages = {
+    gallery: ImageSourcePropType[];
+    bedrooms: ImageSourcePropType[][];   // one array of photos per bedroom
+    bathrooms: ImageSourcePropType[][];  // one array of photos per bathroom
+};
+
 // Demo occupied dates: given days of the CURRENT month, as ISO strings.
 // This is placeholder data — real availability will come from Firebase later.
 const occupiedThisMonth = (days: number[]): string[] => {
@@ -15,21 +21,29 @@ const occupiedThisMonth = (days: number[]): string[] => {
     return days.map((day) => toISO(new Date(now.getFullYear(), now.getMonth(), day)));
 };
 
-// Build a simple room list from a gallery (design placeholder data).
-const buildRooms = (g: ImageSourcePropType[]): Room[] => [
-    { id: 'overview', name: 'Overview', image: g[0], gallery: [g[0], g[1], g[2]] },
-    { id: 'bed1', name: 'Bedroom 1', image: g[1], gallery: [g[1], g[2], g[3]] },
-    { id: 'bed2', name: 'Bedroom 2', image: g[2], gallery: [g[2], g[3], g[4]] },
-    { id: 'bed3', name: 'Bedroom 3', image: g[3], gallery: [g[3], g[4], g[5]] },
-];
+// Overview + one tab per bedroom + one tab per bathroom, each with its OWN photos.
+const buildRooms = (img: PropertyImages): Room[] => {
+    const rooms: Room[] = [
+        { id: 'overview', name: 'Overview', image: img.gallery[0], gallery: img.gallery },
+    ];
+
+    img.bedrooms.forEach((photos, i) => {
+        rooms.push({ id: `bed${i + 1}`, name: `Bedroom ${i + 1}`, image: photos[0], gallery: photos });
+    });
+
+    img.bathrooms.forEach((photos, i) => {
+        rooms.push({ id: `bath${i + 1}`, name: `Bathroom ${i + 1}`, image: photos[0], gallery: photos });
+    });
+
+    return rooms;
+};
 
 // Nearby attractions — shared by both properties (regional).
-// NOTE: images are placeholders reusing property photos (no attraction photos yet).
 const ATTRACTIONS: Attraction[] = [
-    { name: 'Sunningdale Golf Club', subtitle: 'World-class championship golf', image: imagePath.ascot[2] },
-    { name: 'Ascot Racecourse', subtitle: 'World-renowned racecourse & meetings', image: imagePath.ascot[4] },
-    { name: 'Windsor Great Park', subtitle: 'Ancient royal deer park & parkland', image: imagePath.windsor[3] },
-    { name: 'Legoland Windsor', subtitle: 'Family theme park and resort', image: imagePath.windsor[5] },
+    { name: 'Sunningdale Golf Club', subtitle: '...', image: imagePath.ascot.gallery[2] },
+    { name: 'Ascot Racecourse', subtitle: '...', image: imagePath.ascot.gallery[4] },
+    { name: 'Windsor Great Park', subtitle: '...', image: imagePath.windsor.gallery[3] },
+    { name: 'Legoland Windsor', subtitle: '...', image: imagePath.windsor.gallery[5] },
 ];
 
 const ATTRACTIONS_NARRATIVE =
@@ -52,8 +66,8 @@ export const PROPERTIES: Property[] = [
             'Five-bedroom detached residence in Sunningdale, opposite Sunningdale Golf Club, with an indoor heated pool and jacuzzi.',
         narrative:
             "The Luxury Ascot Golf & Spa Retreat is a five-bedroom detached residence in one of Ascot's most prestigious areas, directly opposite Sunningdale Golf Club. It features an indoor heated swimming pool, a heated jacuzzi, two elegant living rooms, a formal dining room, a designer kitchen and a landscaped garden bordered by a stream — ideal for family holidays, golf breaks, Ascot race weekends and special occasions.",
-        image: imagePath.ascot[0],
-        gallery: imagePath.ascot,
+        image: imagePath.ascot.gallery[0],
+        gallery: imagePath.ascot.gallery,
         rooms: buildRooms(imagePath.ascot),
         amenities: [
             { icon: 'pool', name: 'Indoor Heated Pool' },
@@ -85,8 +99,8 @@ export const PROPERTIES: Property[] = [
             'Five-bedroom private estate set in five acres near Windsor Castle, with a helipad and tennis court.',
         narrative:
             'The Royal Windsor Residence is a five-bedroom private estate set in five acres of grounds near Windsor Castle. It offers a private helipad, a tennis court, extensive landscaped gardens and refined interiors throughout — a serene retreat for family gatherings, corporate stays and royal-occasion weekends.',
-        image: imagePath.windsor[0],
-        gallery: imagePath.windsor,
+        image: imagePath.windsor.gallery[0],
+        gallery: imagePath.windsor.gallery,
         rooms: buildRooms(imagePath.windsor),
         amenities: [
             { icon: 'tennis', name: 'Private Tennis' },
@@ -106,9 +120,9 @@ export const PROPERTIES: Property[] = [
 ];
 
 export const HERO_SLIDES = [
-    { image: imagePath.windsor[0], caption: 'Windsor Great Park • Berkshire' },
-    { image: imagePath.ascot[1], caption: 'Sunningdale • Ascot' },
-    { image: imagePath.windsor[3], caption: 'Crown Estate Grounds • Berkshire' },
+    { image: imagePath.windsor.gallery[0], caption: 'Windsor Great Park • Berkshire' },
+    { image: imagePath.ascot.gallery[1], caption: 'Sunningdale • Ascot' },
+    { image: imagePath.windsor.gallery[3], caption: 'Crown Estate Grounds • Berkshire' },
 ];
 
 // Look up one property by id (used by the detail screen).
