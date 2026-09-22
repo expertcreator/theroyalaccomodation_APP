@@ -64,21 +64,21 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                 </Pressable>
             </View>
 
-            {/* Wordmark */}
-            <View style={styles.wordmark}>
-                <View style={{ marginBottom: spacing.md }}>
-                    <Icon name="crown" size={26} color={p.accent.main} />
-                </View>
-                <Text style={[typography.title, { color: p.primary.contrastText, letterSpacing: moderateScale(2.5) }]}>
-                    The Royal Accommodation
-                </Text>
-                <Text style={[typography.overline, { color: p.accent.main, marginTop: spacing.xs, letterSpacing: moderateScale(4) }]}>
-                    Luxury Living
-                </Text>
-            </View>
-
             {/* Nav */}
             <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.navContent} showsVerticalScrollIndicator={false}>
+                {/* Wordmark */}
+                <View style={styles.wordmark}>
+                    <View style={{ marginBottom: spacing.md }}>
+                        <Icon name="crown" size={26} color={p.accent.main} />
+                    </View>
+                    <Text style={[typography.title, { color: p.primary.contrastText, letterSpacing: moderateScale(2.5) }]}>
+                        The Royal Accommodation
+                    </Text>
+                    <Text style={[typography.overline, { color: p.accent.main, marginTop: spacing.xs, letterSpacing: moderateScale(4) }]}>
+                        Luxury Living
+                    </Text>
+                </View>
+
                 {items.map((it, i) => (
                     <Pressable key={i} onPress={it.onPress} style={styles.navRow}>
                         <Text
@@ -143,7 +143,10 @@ const styles = StyleSheet.create({
         width: moderateScale(40), height: moderateScale(40), borderRadius: moderateScale(20),
         borderWidth: borderWidth.thin, alignItems: 'center', justifyContent: 'center',
     },
-    wordmark: { paddingHorizontal: spacing.xl3, marginBottom: spacing.xl3 },
+    wordmark: {
+        // paddingHorizontal: spacing.xl3,
+        marginBottom: spacing.xl3
+    },
     navContent: { paddingHorizontal: spacing.xl3, paddingVertical: spacing.xs },
     navRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm },
     account: {
