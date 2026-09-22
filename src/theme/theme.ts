@@ -45,10 +45,10 @@ const baselightTheme: ITheme = {
 const basedarkTheme: ITheme = {
     palette: {
         primary: {
-            main: '#8FB89C',        // lighter sage so it's visible on dark
+            main: '#A9CBB4',        // sage — primary text/icons on dark; lifted for contrast
             light: '#CDECDC',
             dark: '#0B2A12',
-            contrastText: '#0E1710',
+            contrastText: '#0E1710', // dark text on the sage (e.g. on a sage button)
         },
         secondary: {
             main: '#FAF8F3',
@@ -56,31 +56,31 @@ const basedarkTheme: ITheme = {
             dark: '#0B2A12',
         },
         accent: {
-            main: '#C7AC66',
+            main: '#C7AC66',        // champagne gold — unchanged, reads well on dark
             light: '#E9DE90',
-            dark: '#916029',
+            dark: '#B8935A',        // ← lifted from #916029 (too dim on dark)
             contrastText: '#0E1710',
         },
-        success: { main: '#2F751D', light: '#EBFAF2', dark: '#008000', contrastText: '#ffffff' },
-        info: { main: '#3862A7', light: '#A7E3F4', dark: '#0000FF', contrastText: '#ffffff' },
-        error: { main: '#CE5057', light: '#F6DFE0', dark: '#FF0000', contrastText: '#ffffff' },
-        warning: { main: '#B38900', light: '#FFDBBB', dark: '#FFA500', contrastText: '#ffffff' },
+        success: { main: '#6BbF8A', light: '#16211A', dark: '#4B9E6A', contrastText: '#0E1710' },
+        info: { main: '#6FA8D8', light: '#16211A', dark: '#3862A7', contrastText: '#0E1710' },
+        error: { main: '#E0727A', light: '#2A1A1B', dark: '#CE5057', contrastText: '#0E1710' },
+        warning: { main: '#D6A93A', light: '#2A2313', dark: '#B38900', contrastText: '#0E1710' },
         text: {
-            primary: '#F2EFE8',     // off-white cream
-            secondary: '#14261A',
-            placeHolder: '#9A9A9A',
+            primary: '#F2EFE8',     // off-white cream — good
+            secondary: '#C9D2CC',   // ← was #14261A (near-black, invisible on dark). Now light-muted
+            placeHolder: '#8A938C', // ← slightly green-grey to sit in the palette
         },
-        divider: '#2A322B',
+        divider: '#2E3730',         // ← lifted from #2A322B so dividers are actually visible
         background: {
-            default: '#0E1710',     // near-black forest (warmer than #121212)
-            card: '#16211A',
+            default: '#0E1710',     // near-black forest — good
+            card: '#18241C',        // ← nudged up from #16211A for a touch more card separation
             bottomTab: '#16211A',
-            dark: '#0E1710',
-            light: '#16211A',
+            dark: '#0B140E',
+            light: '#1E2A21',
         },
-        modalBackDrop: 'rgba(255,255,255,0.2)',
+        modalBackDrop: 'rgba(0,0,0,0.6)',  // ← was rgba(255,255,255,0.2) — see note
         transparent: 'transparent',
-        borderColor: '#38423A',
+        borderColor: '#3A443C',     // ← lifted so borders read on dark cards
     },
 };
 
