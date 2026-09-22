@@ -15,6 +15,8 @@ import Icon from '../Icon/Icon';
 
 type NavItem = { label: string; onPress: () => void; emphasized?: boolean; chevron?: boolean };
 
+const CREAM = '#FAF8F3';
+
 const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     const { theme } = useTheme();
     const { user, isLoggedIn, signOut } = useAuth();
@@ -22,7 +24,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     const p = theme.palette;
     const nav: any = props.navigation;
 
-    const white = (a: number) => withAlpha(p.primary.contrastText, a);
+    const white = (a: number) => withAlpha(CREAM, a)
     const go = (name: string, params?: object) => { nav.navigate(name, params); nav.closeDrawer(); };
 
     const items: NavItem[] = [
@@ -71,7 +73,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                     <View style={{ marginBottom: spacing.md }}>
                         <Icon name="crown" size={26} color={p.accent.main} />
                     </View>
-                    <Text style={[typography.title, { color: p.primary.contrastText, letterSpacing: moderateScale(2.5) }]}>
+                    <Text style={[typography.title, { color: CREAM, letterSpacing: moderateScale(2.5) }]}>
                         The Royal Accommodation
                     </Text>
                     <Text style={[typography.overline, { color: p.accent.main, marginTop: spacing.xs, letterSpacing: moderateScale(4) }]}>
@@ -85,7 +87,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                             style={[
                                 typography.label,
                                 {
-                                    color: it.emphasized ? p.primary.contrastText : white(0.85),
+                                    color: it.emphasized ? CREAM : white(0.85),
                                     fontWeight: it.emphasized ? '600' : '300',
                                     letterSpacing: moderateScale(2.5),
                                     textTransform: 'uppercase',
@@ -106,7 +108,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                     <View style={[styles.account, { borderTopColor: white(0.1) }]}>
                         <View style={{ flex: 1 }}>
                             <Text style={[typography.overline, { color: p.accent.main, marginBottom: spacing.xxs }]}>Account</Text>
-                            <Text style={[typography.label, { color: p.primary.contrastText }]}>{user?.name}</Text>
+                            <Text style={[typography.label, { color: CREAM }]}>{user?.name}</Text>
                         </View>
                         <Pressable onPress={() => signOut()}>
                             <Text style={[typography.caption, { color: white(0.5), textDecorationLine: 'underline' }]}>Sign out</Text>
