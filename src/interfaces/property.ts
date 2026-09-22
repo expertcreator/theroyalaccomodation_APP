@@ -32,6 +32,7 @@ export interface Attraction {
     name: string;
     subtitle: string;
     image: ImageSourcePropType;
+    url?: string;
 }
 
 export interface Pricing {

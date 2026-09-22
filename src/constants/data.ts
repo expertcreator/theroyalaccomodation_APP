@@ -43,12 +43,12 @@ const buildRooms = (img: PropertyImages): Room[] => {
     return rooms;
 };
 
-// Nearby attractions — shared by both properties (regional).
+// Nearby attractions — shown on the Property Detail "Surrounding Attractions" list.
 const ATTRACTIONS: Attraction[] = [
-    { name: 'Sunningdale Golf Club', subtitle: '...', image: imagePath.ascot.gallery[2] },
-    { name: 'Ascot Racecourse', subtitle: '...', image: imagePath.ascot.gallery[4] },
-    { name: 'Windsor Great Park', subtitle: '...', image: imagePath.windsor.gallery[3] },
-    { name: 'Legoland Windsor', subtitle: '...', image: imagePath.windsor.gallery[5] },
+    { name: 'Sunningdale Golf Club', subtitle: 'World-class championship heathland golf', image: imagePath.thingsToDo.sunningdaleGolf, url: 'https://www.sunningdalegolfclub.co.uk' },
+    { name: 'Ascot Racecourse', subtitle: 'World-renowned racecourse & home of Royal Ascot', image: imagePath.thingsToDo.ascotRacecourse, url: 'https://www.ascot.com' },
+    { name: 'Windsor Great Park', subtitle: 'Ancient royal deer park & sweeping parkland', image: imagePath.thingsToDo.windsorGreatPark, url: 'https://www.windsorgreatpark.co.uk' },
+    { name: 'Legoland Windsor', subtitle: 'Family theme park & resort in Berkshire', image: imagePath.thingsToDo.legoland, url: 'https://www.legoland.co.uk' },
 ];
 
 const ATTRACTIONS_NARRATIVE =

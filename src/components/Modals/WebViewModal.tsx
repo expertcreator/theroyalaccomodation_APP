@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Modal, View, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,25 +21,27 @@ const WebViewModal: React.FC<Props> = ({ visible, title, url, onClose }) => {
     const insets = useSafeAreaInsets();
     const p = theme.palette;
 
+    const webRef = useRef<WebView>(null);
+
     const HIDE_CHROME = `
   (function() {
     var css = \`
-      header, nav, footer,
-      .site-header, .site-footer, .main-header, .main-navigation,
-      #masthead, #header, #footer, #site-header {
-        display: none !important;
-      }
-      body { padding-top: 0 !important; margin-top: 0 !important; }
+      #brx-header, header#brx-header,
+      #brx-footer, footer#brx-footer,
+      .skip-link { display: none !important; }
+      body { opacity: 1 !important; padding-top: 0 !important; margin-top: 0 !important; }
+      #brx-content, main#brx-content { padding-top: 0 !important; margin-top: 0 !important; }
     \`;
     var style = document.createElement('style');
+    style.setAttribute('id', 'rn-hide-chrome');
     style.innerHTML = css;
-    document.head.appendChild(style);
-    true; // required — injectedJavaScript must end with a truthy statement
+    (document.head || document.documentElement).appendChild(style);
+    true;
   })();
 `;
 
     return (
-        <Modal visible={visible} animationType="slide" onRequestClose={onClose} presentationStyle="pageSheet">
+        <Modal visible={visible} animationType="slide" onRequestClose={onClose} presentationStyle="fullScreen">
             <View style={[styles.container, { backgroundColor: p.background.default }]}>
                 {/* Header */}
                 <View style={[styles.header, { paddingTop: insets.top + spacing.sm, borderBottomColor: p.borderColor }]}>
@@ -64,6 +66,9 @@ const WebViewModal: React.FC<Props> = ({ visible, title, url, onClose }) => {
                         style={{ backgroundColor: p.background.default }}
                         injectedJavaScriptBeforeContentLoaded={HIDE_CHROME}
                         injectedJavaScript={HIDE_CHROME}
+                        injectedJavaScriptForMainFrameOnly={true}                    // iOS: run after load
+                        injectedJavaScriptBeforeContentLoadedForMainFrameOnly={true} // iOS: run early
+                        onLoadEnd={() => webRef.current?.injectJavaScript(HIDE_CHROME)}  // re-apply once loaded
                     />
                 )}
             </View>

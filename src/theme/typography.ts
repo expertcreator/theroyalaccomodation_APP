@@ -1,4 +1,4 @@
-import type { TextStyle } from 'react-native';
+import { Platform, type TextStyle } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 // Scale helper — every size/spacing/line-height runs through this so the
@@ -64,7 +64,7 @@ export const typography = {
     },
     bodySmall: {
         fontFamily: FONT_FAMILY.body, fontSize: ms(fontSizes.sm),
-        fontWeight: '400', letterSpacing: ms(0.2), lineHeight: ms(20),
+        fontWeight: '400', letterSpacing: ms(0.2), lineHeight: ms(Platform.OS === "ios" ? 0 : 20),
     },
     caption: {
         fontFamily: FONT_FAMILY.body, fontSize: ms(fontSizes.xs),
