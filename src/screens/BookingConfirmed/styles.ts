@@ -1,10 +1,14 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 import { spacing, radius, borderWidth } from '../../theme';
 
 export const styles = StyleSheet.create({
     container: { flex: 1 },
-    scrollContent: { paddingHorizontal: spacing.xl2, paddingTop: spacing.xxxl, paddingBottom: spacing.xxxl },
+    scrollContent: {
+        paddingHorizontal: spacing.xl2,
+        paddingTop: spacing.xxxl + (Platform.OS === "ios" ? spacing.md : 0),
+        paddingBottom: spacing.xxxl
+    },
 
     // Crest
     crest: {

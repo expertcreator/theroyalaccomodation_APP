@@ -23,18 +23,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     window = UIWindow(frame: UIScreen.main.bounds)
 
+    // Match native launch appearance to the saved theme (avoids white flash in dark mode).
+    // Flag is written by ThemePreference.swift when the user toggles the theme.
+    let darkModeEnabled = UserDefaults.standard.bool(forKey: "darkMode")
+    window?.backgroundColor = darkModeEnabled
+      ? UIColor(red: 0.055, green: 0.09, blue: 0.063, alpha: 1)   // near-black forest (dark bg)
+      : UIColor(red: 0.98, green: 0.972, blue: 0.953, alpha: 1)    // cream (#FAF8F3, light bg)
+    window?.overrideUserInterfaceStyle = darkModeEnabled ? .dark : .light
+
     factory.startReactNative(
       withModuleName: "TheRoyalAccommodation",
       in: window,
       launchOptions: launchOptions
     )
 
-    showSplashScreen() // <-- ADDED: show the splash after RN starts
+    showSplashScreen()
 
     return true
   }
 
-  // <-- ADDED: reflection-based call into react-native-splash-view
   private func showSplashScreen() {
     if let splashClass = NSClassFromString("SplashView") as? NSObject.Type,
        let splashInstance = splashClass.perform(NSSelectorFromString("sharedInstance"))?.takeUnretainedValue() as? NSObject {

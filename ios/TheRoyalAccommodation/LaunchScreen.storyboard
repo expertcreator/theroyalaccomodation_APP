@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,18 +14,18 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash_logo" translatesAutoresizingMaskIntoConstraints="NO" id="Lg1-oR-cr0">
-                                <rect key="frame" x="44" y="424.33333333333331" width="352" height="107.33333333333331"/>
+                                <rect key="frame" x="39.333333333333343" y="378" width="314.33333333333326" height="96"/>
                                 <constraints>
                                     <constraint firstAttribute="height" secondItem="Lg1-oR-cr0" secondAttribute="width" multiplier="78:256" id="asp-ct-000"/>
                                 </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" red="0.98039215686274506" green="0.97254901960784312" blue="0.95294117647058818" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="SplashBackground"/>
                         <constraints>
                             <constraint firstItem="Lg1-oR-cr0" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="ctr-x1-000"/>
                             <constraint firstItem="Lg1-oR-cr0" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="ctr-y1-000"/>
@@ -39,5 +40,8 @@
     </scenes>
     <resources>
         <image name="splash_logo" width="256" height="78"/>
+        <namedColor name="SplashBackground">
+            <color red="0.98000001907348633" green="0.97299998998641968" blue="0.95300000905990601" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
     </resources>
 </document>

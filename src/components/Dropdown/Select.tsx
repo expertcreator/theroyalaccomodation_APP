@@ -39,7 +39,7 @@ const Select: React.FC<Props> = ({ label, value, options, onSelect }) => {
             </TouchableOpacity>
 
             {/* The options popup */}
-            <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+            <Modal visible={open} transparent animationType="fade" supportedOrientations={['portrait', 'landscape']} onRequestClose={() => setOpen(false)}>
                 <Pressable style={[styles.backdrop, { backgroundColor: p.modalBackDrop }]} onPress={() => setOpen(false)}>
                     <View style={[styles.sheet, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
                         {options.map((option) => {

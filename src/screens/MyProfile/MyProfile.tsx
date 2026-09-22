@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, BackHandler } from 'react-native';
+import { View, Image, TouchableOpacity, BackHandler, Switch } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -27,7 +27,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const MyProfile: React.FC = () => {
     const navigation = useNavigation<Nav>();
-    const { theme } = useTheme();
+    const { theme, isDarkMode, toggleTheme } = useTheme();
     const { user, updateUser } = useAuth();
     const p = theme.palette;
 
@@ -187,6 +187,34 @@ const MyProfile: React.FC = () => {
                 <View style={styles.saveWrap}>
                     <Button title="Save Changes" rightIcon="check" disabled={!isDirty} onPress={onSave} />
                 </View>
+
+                {/* Preferences */}
+                {/* <View style={{ marginTop: spacing.xl }}>
+                    <SectionEyebrow label="Preferences" />
+
+                    <View style={[styles.prefCard, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
+                        <View style={styles.prefRow}>
+                            <View style={styles.prefLeft}>
+                                <Icon name="moon" size={18} color={p.accent.main} />
+                                <View>
+                                    <Text style={[typography.label, { color: p.primary.main }]}>Dark Mode</Text>
+                                    <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
+                                        Switch appearance
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <Switch
+                                value={isDarkMode}
+                                onValueChange={toggleTheme}
+                                trackColor={{ false: p.borderColor, true: p.primary.main }}
+                                thumbColor={isDarkMode ? p.accent.light : '#FFFFFF'}
+                                ios_backgroundColor={p.borderColor}
+                                style={styles.switchStyles}
+                            />
+                        </View>
+                    </View>
+                </View> */}
             </KeyboardAwareScrollView>
 
             <ConfirmModal

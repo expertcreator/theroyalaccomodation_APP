@@ -41,7 +41,7 @@ const WebViewModal: React.FC<Props> = ({ visible, title, url, onClose }) => {
 `;
 
     return (
-        <Modal visible={visible} animationType="slide" onRequestClose={onClose} presentationStyle="fullScreen">
+        <Modal visible={visible} supportedOrientations={['portrait', 'landscape']} animationType="slide" onRequestClose={onClose} presentationStyle="fullScreen">
             <View style={[styles.container, { backgroundColor: p.background.default }]}>
                 {/* Header */}
                 <View style={[styles.header, { paddingTop: insets.top + spacing.sm, borderBottomColor: p.borderColor }]}>

@@ -26,4 +26,25 @@ export const styles = StyleSheet.create({
     fields: { rowGap: spacing.md, marginTop: spacing.xs },
 
     saveWrap: { marginTop: spacing.xl },
+
+    // Preferences
+    prefCard: {
+        borderRadius: radius.lg,
+        borderWidth: borderWidth.thin,
+        padding: spacing.lg,
+        marginTop: spacing.md,
+    },
+    prefRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    prefLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        columnGap: spacing.md,
+    },
+    switchStyles: {
+        alignSelf: "center"
+    }
 });
