@@ -61,14 +61,14 @@ const BookingConfirmed: React.FC = () => {
                 {/* Header */}
                 <View style={styles.header}>
                     <SectionEyebrow label="Reservation Confirmed" />
-                    <Text style={[typography.h2, { color: p.primary.main, marginTop: spacing.sm, textAlign: 'center' }]}>
+                    <Text style={[typography.h2, { color: p.text.primary, marginTop: spacing.sm, textAlign: 'center' }]}>
                         Booking Confirmed
                     </Text>
                     <View style={{ marginTop: spacing.sm }}>
                         <DiamondDivider />
                     </View>
                     <Text style={[typography.caption, styles.ref, { color: p.text.placeHolder }]}>
-                        REFERENCE: <Text style={{ color: p.primary.main, fontWeight: '600' }}>{bookingRef}</Text>
+                        REFERENCE: <Text style={{ color: p.text.primary, fontWeight: '600' }}>{bookingRef}</Text>
                     </Text>
                 </View>
 
@@ -77,7 +77,7 @@ const BookingConfirmed: React.FC = () => {
                     <Image source={property.image} style={styles.thumb} resizeMode="cover" />
                     <View style={styles.cardBody}>
                         <Text style={[typography.overline, { color: p.accent.dark }]} numberOfLines={1}>{property.tag}</Text>
-                        <Text style={[typography.title, { color: p.primary.main, marginTop: spacing.xxs }]} numberOfLines={1}>
+                        <Text style={[typography.title, { color: p.text.primary, marginTop: spacing.xxs }]} numberOfLines={1}>
                             {property.name}
                         </Text>
                         <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
@@ -89,7 +89,7 @@ const BookingConfirmed: React.FC = () => {
                         </Text>
                         <View style={[styles.totalRow, { borderTopColor: p.divider }]}>
                             <Text style={[typography.overline, { color: p.text.placeHolder }]}>TOTAL PAID</Text>
-                            <Text style={[typography.title, { color: p.primary.main }]}>{formatGBP(total)}</Text>
+                            <Text style={[typography.title, { color: p.text.primary }]}>{formatGBP(total)}</Text>
                         </View>
                     </View>
                 </View>
@@ -97,7 +97,7 @@ const BookingConfirmed: React.FC = () => {
                 {/* Arrival prep */}
                 <View style={[styles.stepsCard, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
                     <View style={[styles.stepsHeader, { borderBottomColor: p.divider }]}>
-                        <Text style={[typography.overline, { color: p.primary.main }]}>ARRIVAL PREPARATION</Text>
+                        <Text style={[typography.overline, { color: p.text.primary }]}>ARRIVAL PREPARATION</Text>
                     </View>
                     {STEPS.map((step, i) => (
                         <View key={i} style={[styles.stepRow, i === STEPS.length - 1 && { marginBottom: 0 }]}>

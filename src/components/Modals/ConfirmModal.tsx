@@ -122,7 +122,7 @@ const createStyles = (theme: ITheme) => {
 
         title: {
             ...typography.headerTitle,
-            color: p.primary.main,
+            color: p.text.primary,
             marginTop: spacing.md,
             textAlign: 'center',
         },
@@ -148,11 +148,11 @@ const createStyles = (theme: ITheme) => {
         },
         cancelBtn: {
             borderWidth: borderWidth.thin,
-            borderColor: p.primary.main,
+            borderColor: p.text.primary,
         },
         cancelText: {
             ...typography.button,
-            color: p.primary.main,
+            color: p.text.primary,
         },
         confirmText: {
             ...typography.button,

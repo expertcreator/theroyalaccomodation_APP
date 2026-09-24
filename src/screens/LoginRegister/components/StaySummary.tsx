@@ -31,7 +31,7 @@ const StaySummary: React.FC<Props> = ({ property, booking }) => {
                 <Image source={property.image} style={styles.thumb} resizeMode="cover" />
                 <View style={{ flex: 1 }}>
                     <Text style={[typography.overline, { color: p.accent.dark }]}>YOUR STAY</Text>
-                    <Text style={[typography.title, { color: p.primary.main, marginTop: spacing.xxs }]}>
+                    <Text style={[typography.title, { color: p.text.primary, marginTop: spacing.xxs }]}>
                         {property.name}
                     </Text>
                 </View>

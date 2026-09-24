@@ -45,10 +45,10 @@ const baselightTheme: ITheme = {
 const basedarkTheme: ITheme = {
     palette: {
         primary: {
-            main: '#A9CBB4',        // sage — primary text/icons on dark; lifted for contrast
-            light: '#CDECDC',
+            main: '#0B2A12',        // ← dark green FILL (buttons/header), NOT sage
+            light: '#A9CBB4',       // sage kept here in case you need a light green
             dark: '#0B2A12',
-            contrastText: '#0E1710', // dark text on the sage (e.g. on a sage button)
+            contrastText: '#E9DE90', // ← gold text on green buttons
         },
         secondary: {
             main: '#FAF8F3',

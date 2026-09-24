@@ -29,7 +29,7 @@ const ThingsToDo: React.FC = () => {
                 {/* Title block */}
                 <View style={styles.titleBlock}>
                     <DiamondDivider />
-                    <Text style={[typography.h2, { color: p.primary.main, marginTop: spacing.md, textAlign: 'center' }]}>
+                    <Text style={[typography.h2, { color: p.text.primary, marginTop: spacing.md, textAlign: 'center' }]}>
                         Windsor & Ascot
                     </Text>
                     <Text style={[typography.body, styles.subtitle, { color: p.text.placeHolder }]}>

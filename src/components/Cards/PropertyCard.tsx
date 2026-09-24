@@ -72,13 +72,13 @@ const PropertyCard: React.FC<Props> = ({ property, onPress }) => {
                     <Stat icon="bathrooms" label={`${property.stats.bathrooms} baths`} />
                 </View>
 
-                <Text style={[typography.title, { color: p.primary.main, marginBottom: spacing.xs }]}>
+                <Text style={[typography.title, { color: p.text.primary, marginBottom: spacing.xs }]}>
                     {property.name}
                 </Text>
 
                 <View style={styles.ratingRow}>
                     <Text style={{ color: p.accent.main, fontSize: moderateScale(11), letterSpacing: 1 }}>★★★★★</Text>
-                    <Text style={[typography.caption, { color: p.primary.main, fontWeight: '600', marginLeft: spacing.xs }]}>
+                    <Text style={[typography.caption, { color: p.text.primary, fontWeight: '600', marginLeft: spacing.xs }]}>
                         {property.rating.toFixed(1)}
                     </Text>
                     <Text style={[typography.caption, { color: p.text.placeHolder, marginLeft: spacing.xs }]}>

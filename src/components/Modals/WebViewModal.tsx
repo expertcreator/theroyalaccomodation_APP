@@ -45,11 +45,11 @@ const WebViewModal: React.FC<Props> = ({ visible, title, url, onClose }) => {
             <View style={[styles.container, { backgroundColor: p.background.default }]}>
                 {/* Header */}
                 <View style={[styles.header, { paddingTop: insets.top + spacing.sm, borderBottomColor: p.borderColor }]}>
-                    <Text style={[typography.headerTitle, { color: p.primary.main, flex: 1 }]} numberOfLines={1}>
+                    <Text style={[typography.headerTitle, { color: p.text.primary, flex: 1 }]} numberOfLines={1}>
                         {title}
                     </Text>
                     <TouchableOpacity onPress={onClose} hitSlop={8} style={[styles.close, { borderColor: p.borderColor, backgroundColor: p.background.card }]}>
-                        <Icon name="close" size={16} color={p.primary.main} />
+                        <Icon name="close" size={16} color={p.text.primary} />
                     </TouchableOpacity>
                 </View>
 

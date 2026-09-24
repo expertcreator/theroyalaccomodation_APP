@@ -19,7 +19,7 @@ const BottomBar: React.FC<Props> = ({ total, nights, rangeComplete, onProceed })
                 <>
                     <Text style={[typography.overline, { color: p.text.placeHolder }]}>RESIDENCE TOTAL</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-                        <Text style={[typography.h2, { color: p.primary.main }]}>{rangeComplete ? formatGBP(total) : '£—'}</Text>
+                        <Text style={[typography.h2, { color: p.text.primary }]}>{rangeComplete ? formatGBP(total) : '£—'}</Text>
                         <Text style={[typography.caption, { color: p.text.placeHolder }]}> / {nights} nights</Text>
                     </View>
                 </>

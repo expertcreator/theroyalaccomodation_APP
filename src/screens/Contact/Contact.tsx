@@ -100,12 +100,12 @@ const Contact: React.FC = () => {
                     <Image source={imagePath.map} style={styles.mapImage} resizeMode="cover" />
                     <View style={[styles.mapTag, { backgroundColor: withAlpha(p.background.card, 0.95), borderColor: p.borderColor }]}>
                         <View style={[styles.mapTagDot, { backgroundColor: p.accent.main }]} />
-                        <Text style={[typography.overline, { color: p.primary.main }]}>WINDSOR & ASCOT ESTATES</Text>
+                        <Text style={[typography.overline, { color: p.text.primary }]}>WINDSOR & ASCOT ESTATES</Text>
                     </View>
                 </TouchableOpacity>
 
                 {/* Get in touch */}
-                <Text style={[typography.overline, { color: p.primary.main, marginBottom: spacing.sm }]}>GET IN TOUCH</Text>
+                <Text style={[typography.overline, { color: p.text.primary, marginBottom: spacing.sm }]}>GET IN TOUCH</Text>
                 <View style={[styles.contactCard, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
                     <ContactRow icon="mail" label="EMAIL US" onPress={() => Linking.openURL(`mailto:${CONTACT.email}`)}>
                         <Text style={[typography.bodySmall, { color: p.text.primary }]}>{CONTACT.email}</Text>
@@ -134,7 +134,7 @@ const Contact: React.FC = () => {
                 {/* Enquiry form */}
                 <View style={[styles.formCard, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
                     <View style={[styles.formHeader, { borderBottomColor: p.divider }]}>
-                        <Text style={[typography.overline, { color: p.primary.main }]}>SEND AN ENQUIRY</Text>
+                        <Text style={[typography.overline, { color: p.text.primary }]}>SEND AN ENQUIRY</Text>
                         <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
                             We'll get back to you as soon as possible.
                         </Text>

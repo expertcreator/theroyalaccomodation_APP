@@ -48,7 +48,7 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
                 <View style={[styles.card, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
                     {/* Close */}
                     <TouchableOpacity onPress={onClose} hitSlop={8} style={[styles.close, { borderColor: p.borderColor }]}>
-                        <Icon name="close" size={16} color={p.primary.main} />
+                        <Icon name="close" size={16} color={p.text.primary} />
                     </TouchableOpacity>
 
                     {/* Crest */}
@@ -59,7 +59,7 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
                     <Text style={[typography.overline, { color: p.accent.dark, textAlign: 'center', marginTop: spacing.md }]}>
                         {isUpcoming ? 'RESERVATION CONFIRMED' : 'COMPLETED STAY'}
                     </Text>
-                    <Text style={[typography.h2, { color: p.primary.main, textAlign: 'center', marginTop: spacing.xxs }]}>
+                    <Text style={[typography.h2, { color: p.text.primary, textAlign: 'center', marginTop: spacing.xxs }]}>
                         Booking Summary
                     </Text>
                     <Text style={[typography.caption, { color: p.text.placeHolder, textAlign: 'center', marginTop: spacing.xs }]}>
@@ -70,7 +70,7 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
                     <View style={[styles.propRow, { borderTopColor: p.divider, borderBottomColor: p.divider }]}>
                         <Image source={property.image} style={styles.thumb} resizeMode="cover" />
                         <View style={{ flex: 1 }}>
-                            <Text style={[typography.title, { color: p.primary.main }]} numberOfLines={2}>{property.name}</Text>
+                            <Text style={[typography.title, { color: p.text.primary }]} numberOfLines={2}>{property.name}</Text>
                             <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
                                 {property.location}, Berkshire
                             </Text>
@@ -87,8 +87,8 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
                         <Row label="Pets" value={`${booking.pets} ${booking.pets === 1 ? 'pet' : 'pets'}`} />
                     )}
                     <View style={[styles.totalRow, { borderTopColor: p.divider }]}>
-                        <Text style={[typography.label, { color: p.primary.main }]}>Total Paid (VAT incl.)</Text>
-                        <Text style={[typography.h2, { color: p.primary.main }]}>{formatGBP(booking.totalPaid)}</Text>
+                        <Text style={[typography.label, { color: p.text.primary }]}>Total Paid (VAT incl.)</Text>
+                        <Text style={[typography.h2, { color: p.text.primary }]}>{formatGBP(booking.totalPaid)}</Text>
                     </View>
 
                     {/* Actions */}

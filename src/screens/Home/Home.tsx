@@ -53,7 +53,7 @@ const Home: React.FC = () => {
                 {/* Intro */}
                 <View style={styles.intro}>
                     <SectionEyebrow label="Curated Sanctuary" />
-                    <Text style={[typography.h2, styles.heading, { color: p.primary.main }]}>
+                    <Text style={[typography.h2, styles.heading, { color: p.text.primary }]}>
                         Luxury Holiday Homes{'\n'}In Ascot & Windsor
                     </Text>
                     <Text style={[typography.body, styles.subtitle, { color: p.text.placeHolder }]}>

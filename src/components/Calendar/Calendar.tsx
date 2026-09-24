@@ -49,7 +49,7 @@ const Day = React.memo(function Day({
     if (isEnd) textColor = p.primary.contrastText;
     else if (isOccupied) textColor = p.text.placeHolder;
     else if (isPast) textColor = withAlpha(p.text.placeHolder, 0.5);
-    else if (isInRange) textColor = p.primary.main;
+    else if (isInRange) textColor = p.text.primary;
 
     return (
         <View style={styles.cell}>
@@ -63,7 +63,7 @@ const Day = React.memo(function Day({
                 disabled={disabled}
                 activeOpacity={0.7}
                 onPress={() => onPress(date)}
-                style={[styles.dayTouch, isEnd && { backgroundColor: p.primary.main, borderRadius: radius.pill }]}
+                style={[styles.dayTouch, isEnd && { backgroundColor: p.primary.main, borderRadius: radius.pill, borderWidth: borderWidth.thin, borderColor: p.accent.main }]}
             >
                 <Text
                     style={[
@@ -86,7 +86,7 @@ const Day = React.memo(function Day({
 const LegendItem = ({ color, label, border, p }: { color: string; label: string; border?: string; p: IThemePalette }) => (
     <View style={styles.legendItem}>
         <View style={[styles.legendDot, { backgroundColor: color, borderWidth: border ? borderWidth.thin : 0, borderColor: border }]} />
-        <Text style={[typography.caption, { color: p.primary.main }]}>{label}</Text>
+        <Text style={[typography.caption, { color: p.text.primary }]}>{label}</Text>
     </View>
 );
 
@@ -118,11 +118,11 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, on
             {/* Month navigation */}
             <View style={styles.navRow}>
                 <TouchableOpacity disabled={!canGoPrev} onPress={() => onChangeMonth(-1)} hitSlop={8} style={styles.navBtn}>
-                    <Icon name="back" size={18} color={canGoPrev ? p.primary.main : withAlpha(p.text.placeHolder, 0.4)} />
+                    <Icon name="back" size={18} color={canGoPrev ? p.text.primary : withAlpha(p.text.placeHolder, 0.4)} />
                 </TouchableOpacity>
-                <Text style={[typography.title, { color: p.primary.main }]}>{formatMonthLabel(month)}</Text>
+                <Text style={[typography.title, { color: p.text.primary }]}>{formatMonthLabel(month)}</Text>
                 <TouchableOpacity onPress={() => onChangeMonth(1)} hitSlop={8} style={styles.navBtn}>
-                    <Icon name="chevron-right" size={18} color={p.primary.main} />
+                    <Icon name="chevron-right" size={18} color={p.text.primary} />
                 </TouchableOpacity>
             </View>
 
@@ -158,7 +158,7 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, on
 
             {/* Legend */}
             <View style={[styles.legend, { borderTopColor: p.divider }]}>
-                <LegendItem color={p.primary.main} label="Selected" p={p} />
+                <LegendItem color={p.primary.main} border={p.accent.main} label="Selected" p={p} />
                 <LegendItem color={withAlpha(p.accent.main, 0.3)} border={p.accent.main} label="In Range" p={p} />
                 <View style={[styles.occupiedTag, { backgroundColor: p.background.default, borderColor: p.borderColor }]}>
                     <View style={[styles.legendDot, { backgroundColor: p.text.placeHolder }]} />

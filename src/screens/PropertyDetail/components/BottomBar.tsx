@@ -20,7 +20,7 @@ const BottomBar: React.FC<Props> = ({ property, onCheck }) => {
                 <>
                     <Text style={[typography.overline, { color: p.text.placeHolder }]}>FROM</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-                        <Text style={[typography.h2, { color: p.primary.main }]}>{formatGBP(property.baseRate)}</Text>
+                        <Text style={[typography.h2, { color: p.text.primary }]}>{formatGBP(property.baseRate)}</Text>
                         <Text style={[typography.caption, { color: p.text.placeHolder }]}> / night</Text>
                     </View>
                 </>

@@ -27,7 +27,7 @@ const PaymentCard: React.FC<Props> = ({ cardholderName, onCardholderNameChange, 
             <View style={styles.payHeader}>
                 <View>
                     <Text style={[typography.overline, { color: p.accent.dark }]}>PAYMENT METHOD</Text>
-                    <Text style={[typography.title, { color: p.primary.main, marginTop: spacing.xxs }]}>
+                    <Text style={[typography.title, { color: p.text.primary, marginTop: spacing.xxs }]}>
                         Credit / Debit Card
                     </Text>
                 </View>

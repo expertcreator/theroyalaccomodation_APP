@@ -28,7 +28,7 @@ const Button: React.FC<Props> = ({
     const isSmall = size === 'sm';
 
     const bg = isOutline ? p.transparent : p.primary.main;
-    const textColor = isOutline ? p.primary.main : p.accent.light;
+    const textColor = isOutline ? p.text.primary : p.accent.light;
 
     return (
         <TouchableOpacity
@@ -40,7 +40,10 @@ const Button: React.FC<Props> = ({
             style={[
                 styles.base,
                 isSmall ? styles.sizeSm : styles.sizeMd,
-                { backgroundColor: bg, borderWidth: isOutline ? borderWidth.thin : 0, borderColor: p.primary.main },
+                {
+                    backgroundColor: bg, borderWidth: isOutline ? borderWidth.thin : 0,
+                    borderColor: isOutline ? p.text.primary : p.primary.main,
+                },
                 fullWidth && { alignSelf: 'stretch' },
                 disabled && { opacity: 0.5 },
                 style,

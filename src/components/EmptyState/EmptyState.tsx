@@ -36,7 +36,7 @@ const EmptyState: React.FC<Props> = ({
                 <DiamondDivider />
             </View>
 
-            <Text style={[typography.h2, { color: p.primary.main, marginTop: spacing.md, textAlign: 'center' }]}>
+            <Text style={[typography.h2, { color: p.text.primary, marginTop: spacing.md, textAlign: 'center' }]}>
                 {title}
             </Text>
             <Text style={[typography.bodySmall, { color: p.text.placeHolder, marginTop: spacing.sm, textAlign: 'center' }]}>

@@ -141,7 +141,7 @@ const MyProfile: React.FC = () => {
                         </View>
                     </TouchableOpacity>
 
-                    <Text style={[typography.title, styles.name, { color: p.primary.main }]}>
+                    <Text style={[typography.title, styles.name, { color: p.text.primary }]}>
                         {name.trim() || 'Your Name'}
                     </Text>
                     <Text style={[typography.caption, styles.email, { color: p.text.placeHolder }]}>
@@ -189,7 +189,7 @@ const MyProfile: React.FC = () => {
                 </View>
 
                 {/* Preferences */}
-                {/* <View style={{ marginTop: spacing.xl }}>
+                <View style={{ marginTop: spacing.xl }}>
                     <SectionEyebrow label="Preferences" />
 
                     <View style={[styles.prefCard, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
@@ -197,7 +197,7 @@ const MyProfile: React.FC = () => {
                             <View style={styles.prefLeft}>
                                 <Icon name="moon" size={18} color={p.accent.main} />
                                 <View>
-                                    <Text style={[typography.label, { color: p.primary.main }]}>Dark Mode</Text>
+                                    <Text style={[typography.label, { color: p.text.primary }]}>Dark Mode</Text>
                                     <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
                                         Switch appearance
                                     </Text>
@@ -214,7 +214,7 @@ const MyProfile: React.FC = () => {
                             />
                         </View>
                     </View>
-                </View> */}
+                </View>
             </KeyboardAwareScrollView>
 
             <ConfirmModal

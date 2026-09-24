@@ -35,7 +35,7 @@ const AttractionCard: React.FC<Props> = ({ attraction }) => {
 
             {/* Content */}
             <View style={styles.body}>
-                <Text style={[typography.title, { color: p.primary.main, marginBottom: spacing.sm }]}>
+                <Text style={[typography.title, { color: p.text.primary, marginBottom: spacing.sm }]}>
                     {attraction.name}
                 </Text>
                 <Text style={[typography.bodySmall, { color: p.text.placeHolder, marginBottom: spacing.md }]}>

@@ -37,8 +37,6 @@
 	<string>Allow access to your camera to take a profile picture.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow access to your photos to set your profile picture.</string>
-	<key>UIUserInterfaceStyle</key>
-	<string>Light</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>

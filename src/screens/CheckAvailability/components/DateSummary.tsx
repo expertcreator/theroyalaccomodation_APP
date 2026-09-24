@@ -20,7 +20,7 @@ const DateSummary: React.FC<Props> = ({ checkIn, checkOut, nights }) => {
             {/* Check-in */}
             <View style={styles.summaryCol}>
                 <Text style={[typography.overline, { color: p.text.placeHolder }]}>CHECK-IN</Text>
-                <Text style={[typography.subtitle, { color: p.primary.main, marginTop: spacing.xxs }]}>{label(checkIn)}</Text>
+                <Text style={[typography.subtitle, { color: p.text.primary, marginTop: spacing.xxs }]}>{label(checkIn)}</Text>
             </View>
 
             {/* Nights + arrow */}
@@ -36,7 +36,7 @@ const DateSummary: React.FC<Props> = ({ checkIn, checkOut, nights }) => {
             {/* Check-out */}
             <View style={[styles.summaryCol, { alignItems: 'flex-end' }]}>
                 <Text style={[typography.overline, { color: p.text.placeHolder }]}>CHECK-OUT</Text>
-                <Text style={[typography.subtitle, { color: p.primary.main, marginTop: spacing.xxs }]}>{label(checkOut)}</Text>
+                <Text style={[typography.subtitle, { color: p.text.primary, marginTop: spacing.xxs }]}>{label(checkOut)}</Text>
             </View>
         </View>
     );

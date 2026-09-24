@@ -43,7 +43,7 @@ const BookingCard: React.FC<Props> = ({ booking, onViewSummary }) => {
                         <Text style={[typography.caption, { color: p.text.placeHolder }]}>{booking.ref}</Text>
                     </View>
 
-                    <Text style={[typography.title, { color: p.primary.main }]} numberOfLines={1}>
+                    <Text style={[typography.title, { color: p.text.primary }]} numberOfLines={1}>
                         {property.name}
                     </Text>
 
@@ -66,7 +66,7 @@ const BookingCard: React.FC<Props> = ({ booking, onViewSummary }) => {
                         </View>
                         <View style={{ alignItems: 'flex-end' }}>
                             <Text style={[typography.overline, { color: p.text.placeHolder }]}>TOTAL PAID</Text>
-                            <Text style={[typography.title, { color: p.primary.main, marginTop: spacing.xxs }]}>
+                            <Text style={[typography.title, { color: p.text.primary, marginTop: spacing.xxs }]}>
                                 {formatGBP(booking.totalPaid)}
                             </Text>
                         </View>
@@ -81,7 +81,7 @@ const BookingCard: React.FC<Props> = ({ booking, onViewSummary }) => {
                     <Text style={[typography.caption, { color: p.text.placeHolder }]} numberOfLines={1}>{footerText}</Text>
                 </View>
                 <TouchableOpacity style={styles.viewSummary} onPress={onViewSummary} activeOpacity={0.7}>
-                    <Text style={[typography.overline, { color: p.primary.main }]}>VIEW SUMMARY</Text>
+                    <Text style={[typography.overline, { color: p.text.primary }]}>VIEW SUMMARY</Text>
                     <Icon name="arrow-right" size={13} color={p.accent.main} />
                 </TouchableOpacity>
             </View>

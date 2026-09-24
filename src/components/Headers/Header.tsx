@@ -44,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({
     const p = theme.palette;
     const overlay = variant === 'overlay';
 
-    const iconColor = overlay ? p.accent.light : p.primary.main;
+    const iconColor = overlay ? p.accent.light : p.text.primary;
     const showBorder = bordered ?? (!overlay);
 
     const CircleButton = ({ icon, onPress, label }: HeaderAction) => (
@@ -113,7 +113,7 @@ const Header: React.FC<HeaderProps> = ({
                             {overline}
                         </Text>
                     )}
-                    <Text numberOfLines={2} style={[typography.headerTitle, { color: overlay ? p.primary.contrastText : p.primary.main, textAlign: 'center' }]}>
+                    <Text numberOfLines={2} style={[typography.headerTitle, { color: overlay ? p.primary.contrastText : p.text.primary, textAlign: 'center' }]}>
                         {title}
                     </Text>
                 </View>

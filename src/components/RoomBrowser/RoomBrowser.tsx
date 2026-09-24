@@ -28,7 +28,7 @@ const RoomBrowser: React.FC<Props> = ({ rooms }) => {
         <View>
             {/* Heading */}
             <View style={styles.headingRow}>
-                <Text style={[typography.overline, { color: p.primary.main }]}>THE RESIDENCE</Text>
+                <Text style={[typography.overline, { color: p.text.primary }]}>THE RESIDENCE</Text>
                 <View style={[styles.dot, { backgroundColor: p.accent.main }]} />
             </View>
             <Text style={[typography.caption, { color: p.text.placeHolder, marginBottom: spacing.md }]}>
@@ -46,7 +46,7 @@ const RoomBrowser: React.FC<Props> = ({ rooms }) => {
                     const active = i === roomIndex;
                     return (
                         <TouchableOpacity key={r.id} onPress={() => selectRoom(i)} activeOpacity={0.7} style={styles.tab}>
-                            <Text style={[typography.overline, { color: active ? p.primary.main : p.text.placeHolder }]}>
+                            <Text style={[typography.overline, { color: active ? p.text.primary : p.text.placeHolder }]}>
                                 {r.name}
                             </Text>
                             {active && <View style={[styles.tabUnderline, { backgroundColor: p.accent.main }]} />}
@@ -59,7 +59,7 @@ const RoomBrowser: React.FC<Props> = ({ rooms }) => {
             <View style={[styles.card, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
                 <Image source={mainImage} style={styles.mainImage} resizeMode="cover" />
 
-                <Text style={[typography.title, { color: p.primary.main, marginTop: spacing.md }]}>
+                <Text style={[typography.title, { color: p.text.primary, marginTop: spacing.md }]}>
                     {room.name}
                 </Text>
 

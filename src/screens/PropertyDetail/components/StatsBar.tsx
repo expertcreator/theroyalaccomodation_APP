@@ -26,7 +26,7 @@ const StatsBar: React.FC<Props> = ({ property }) => {
                     key={i}
                     style={[styles.statCol, i < 3 && { borderRightWidth: borderWidth.thin, borderRightColor: p.divider }]}
                 >
-                    <Text style={[typography.headerTitle, { color: it.gold ? p.accent.dark : p.primary.main }]}>
+                    <Text style={[typography.headerTitle, { color: it.gold ? p.accent.dark : p.text.primary }]}>
                         {it.value}
                     </Text>
                     <Text style={[typography.overline, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>

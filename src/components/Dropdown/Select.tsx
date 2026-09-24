@@ -46,7 +46,7 @@ const Select: React.FC<Props> = ({ label, value, options, onSelect }) => {
                             const selected = option === value;
                             return (
                                 <TouchableOpacity key={option} activeOpacity={0.7} onPress={() => choose(option)} style={styles.option}>
-                                    <Text style={[typography.body, { color: selected ? p.primary.main : p.text.primary, fontWeight: selected ? '600' : '400' }]}>
+                                    <Text style={[typography.body, { color: p.text.primary, fontWeight: selected ? '600' : '400' }]}>
                                         {option}
                                     </Text>
                                     {selected && <Icon name="chevron-right" size={16} color={p.accent.main} />}

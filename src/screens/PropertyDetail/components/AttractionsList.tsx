@@ -30,7 +30,7 @@ const AttractionsList: React.FC<Props> = ({ property }) => {
                     >
                         <Image source={a.image} style={styles.attractionImg} resizeMode="cover" />
                         <View style={{ flex: 1 }}>
-                            <Text style={[typography.overline, { color: p.primary.main }]} numberOfLines={1}>{a.name}</Text>
+                            <Text style={[typography.overline, { color: p.text.primary }]} numberOfLines={1}>{a.name}</Text>
                             <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]} numberOfLines={2}>
                                 {a.subtitle}
                             </Text>

@@ -40,7 +40,7 @@ const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nigh
                 <Image source={property.image} style={styles.thumb} resizeMode="cover" />
                 <View style={{ flex: 1 }}>
                     <Text style={[typography.overline, { color: p.accent.dark }]}>YOUR STAY</Text>
-                    <Text style={[typography.title, { color: p.primary.main, marginTop: spacing.xxs }]} numberOfLines={1}>
+                    <Text style={[typography.title, { color: p.text.primary, marginTop: spacing.xxs }]} numberOfLines={1}>
                         {property.name}
                     </Text>
                     <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]} numberOfLines={1}>
@@ -97,7 +97,7 @@ const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nigh
                     <Text style={[typography.overline, { color: p.text.placeHolder }]}>TOTAL DUE (GBP)</Text>
                     <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>Includes taxes and VAT</Text>
                 </View>
-                <Text style={[typography.h1, { color: p.primary.main }]}>{formatGBP(total)}</Text>
+                <Text style={[typography.h1, { color: p.text.primary }]}>{formatGBP(total)}</Text>
             </View>
         </View>
     );

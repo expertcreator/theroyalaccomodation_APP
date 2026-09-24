@@ -129,7 +129,7 @@ const CheckAvailability: React.FC = () => {
         {/* Title block */}
         <View style={styles.titleBlock}>
           <Text style={[typography.overline, { color: p.accent.main }]}>RESIDENCE RESERVATION</Text>
-          <Text style={[typography.h2, { color: p.primary.main, marginTop: spacing.xs }]}>CHECK AVAILABILITY</Text>
+          <Text style={[typography.h2, { color: p.text.primary, marginTop: spacing.xs }]}>CHECK AVAILABILITY</Text>
           <LinearGradient
             colors={['transparent', p.accent.main, 'transparent']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
@@ -159,7 +159,7 @@ const CheckAvailability: React.FC = () => {
         {/* Guests */}
         <View style={[styles.guestsCard, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
           <View style={[styles.guestsHeader, { borderBottomColor: p.divider }]}>
-            <Text style={[typography.overline, { color: p.primary.main }]}>GUESTS</Text>
+            <Text style={[typography.overline, { color: p.text.primary }]}>GUESTS</Text>
             <Text style={[typography.caption, { color: p.text.placeHolder }]}>Up to {maxGuests} guests allowed</Text>
           </View>
 
@@ -187,7 +187,7 @@ const CheckAvailability: React.FC = () => {
         {/* Pets — separate card; not counted in guests, max 2, flat £295 each */}
         <View style={[styles.guestsCard, { backgroundColor: p.background.card, borderColor: p.borderColor, marginTop: spacing.lg }]}>
           <View style={[styles.guestsHeader, { borderBottomColor: p.divider }]}>
-            <Text style={[typography.overline, { color: p.primary.main }]}>PETS</Text>
+            <Text style={[typography.overline, { color: p.text.primary }]}>PETS</Text>
             <Text style={[typography.caption, { color: p.text.placeHolder }]}>£295 per pet · max 2</Text>
           </View>
 

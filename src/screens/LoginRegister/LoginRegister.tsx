@@ -108,7 +108,7 @@ const LoginRegister: React.FC = () => {
               <Icon name="lock" size={13} color={p.accent.dark} />
               <Text style={[typography.overline, { color: p.accent.dark }]}>SECURE BOOKING</Text>
             </View>
-            <Text style={[typography.h1, { color: p.primary.main, textAlign: 'center' }]}>
+            <Text style={[typography.h1, { color: p.text.primary, textAlign: 'center' }]}>
               Sign In or Register
             </Text>
             <Text style={[typography.bodySmall, styles.subtitle, { color: p.text.placeHolder }]}>
@@ -127,7 +127,7 @@ const LoginRegister: React.FC = () => {
               const active = m === mode;
               return (
                 <TouchableOpacity key={m} onPress={() => { setMode(m); setErrors({}); }} activeOpacity={0.7} style={styles.tab}>
-                  <Text style={[typography.label, { color: active ? p.primary.main : p.text.placeHolder }]}>
+                  <Text style={[typography.label, { color: active ? p.text.primary : p.text.placeHolder }]}>
                     {m === 'login' ? 'SIGN IN' : 'REGISTER'}
                   </Text>
                   <View style={[styles.tabBar, { backgroundColor: active ? p.accent.main : 'transparent' }]} />
@@ -204,7 +204,7 @@ const LoginRegister: React.FC = () => {
           <View style={styles.footer}>
             <View style={[styles.badge, { backgroundColor: withAlpha(p.accent.main, 0.12) }]}>
               <Icon name="shield" size={13} color={p.accent.dark} />
-              <Text style={[typography.overline, { color: p.primary.main }]}>SECURE & ENCRYPTED</Text>
+              <Text style={[typography.overline, { color: p.text.primary }]}>SECURE & ENCRYPTED</Text>
             </View>
             <Text style={[typography.caption, { color: p.text.placeHolder, textAlign: 'center' }]}>
               Your details are encrypted and kept private.
@@ -219,7 +219,7 @@ const LoginRegister: React.FC = () => {
           >
             <View style={styles.helpLeft}>
               <Icon name="phone" size={16} color={p.accent.main} />
-              <Text style={[typography.label, { color: p.primary.main }]}>Need help booking?</Text>
+              <Text style={[typography.label, { color: p.text.primary }]}>Need help booking?</Text>
             </View>
             <View style={styles.helpRight}>
               <Text style={[typography.overline, { color: p.accent.dark }]}>CONTACT</Text>

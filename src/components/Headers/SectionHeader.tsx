@@ -17,7 +17,7 @@ const SectionHeader: React.FC<Props> = ({ title, rightText }) => {
         <View style={styles.row}>
             <View style={styles.left}>
                 <View style={[styles.line, { backgroundColor: p.accent.main }]} />
-                <Text style={[typography.overline, { color: p.primary.main }]}>{title}</Text>
+                <Text style={[typography.overline, { color: p.text.primary }]}>{title}</Text>
             </View>
 
             {!!rightText && (
