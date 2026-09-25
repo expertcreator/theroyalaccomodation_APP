@@ -58,7 +58,8 @@ const Payment: React.FC = () => {
         if (!canBook) return;
         // Static phase: mock a booking reference. Later: Cloud Function → Stripe → confirm.
         const bookingRef = `RA-${Date.now().toString().slice(-8)}`;
-        navigation.replace(STACK_ROUTES.BookingConfirmed, { ...booking, bookingRef });
+        // Carry the REAL OWcal total through so BookingConfirmed shows the charged amount. ← CHANGED
+        navigation.replace(STACK_ROUTES.BookingConfirmed, { ...booking, bookingRef, total });
     };
 
     return (

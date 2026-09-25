@@ -11,7 +11,7 @@ import { withAlpha } from '../../utils/color';
 import { formatGBP } from '../../utils/format';
 import { formatDayLabel, nightsBetween } from '../../utils/date';
 import { getPropertyById } from '../../constants/data';
-import { calculateStayPrice } from '../../utils/pricing';
+// ← REMOVED: import { calculateStayPrice } from '../../utils/pricing';
 import type { RootStackParamList } from '../../navigation/types';
 import { STACK_ROUTES, DRAWER_ROUTES } from '../../navigation/routes';
 
@@ -39,11 +39,12 @@ const BookingConfirmed: React.FC = () => {
     const { user } = useAuth();
     const p = theme.palette;
 
-    const { bookingRef, propertyId, checkIn, checkOut, adults, children, pets } = route.params;
+    // total is the REAL amount charged, carried over from the Payment screen. ← CHANGED
+    const { bookingRef, propertyId, checkIn, checkOut, adults, children, pets, total } = route.params;
     const property = getPropertyById(propertyId);
     const nights = nightsBetween(new Date(checkIn), new Date(checkOut));
     const guests = adults + children;
-    const total = calculateStayPrice(property, nights, adults, pets).total;
+    // ← REMOVED: const total = calculateStayPrice(property, nights, adults, pets).total;
 
     const goHome = () =>
         navigation.reset({ index: 0, routes: [{ name: STACK_ROUTES.DrawerRoot, params: { screen: DRAWER_ROUTES.Home } }] });

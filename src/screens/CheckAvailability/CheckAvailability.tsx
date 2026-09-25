@@ -21,6 +21,7 @@ import BottomBar from './components/BottomBar';
 import { styles } from './styles';
 import { useAuth } from '../../context/AuthContext';
 import { useOwcalSummary } from '../../hooks/useOwcalSummary';
+import { useOccupiedDates } from '../../hooks/useOccupiedDates';   // ← NEW
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.CheckAvailability>;
@@ -50,8 +51,22 @@ const CheckAvailability: React.FC = () => {
   const [children, setChildren] = useState<number>(0);
   const [pets, setPets] = useState<number>(0);
 
+  // ← NEW: fetch the REAL occupied dates for this property (~12 months out).
+  // Stable window (useMemo, no deps) so the hook fetches once, not on every render.
+  const availWindow = useMemo(() => {
+    const from = startOfDay(new Date());
+    const to = addMonths(from, 12);
+    return { from: toISO(from), to: toISO(to) };
+  }, []);
+  // Re-fetches when the property changes (new screen mount per property).
+  const { occupied: occupiedDates } = useOccupiedDates(
+    property.owAccomId,
+    availWindow.from,
+    availWindow.to,
+  );
+
   // O(1) occupied lookups for the rule checks.
-  const occupiedSet = useMemo(() => new Set(property.occupiedDates), [property.occupiedDates]);
+  const occupiedSet = useMemo(() => new Set(occupiedDates), [occupiedDates]);   // ← CHANGED
 
   // True if any night in [start, end) is already booked (can't span it).
   const hasOccupiedInRange = (start: Date, end: Date): boolean => {
@@ -155,7 +170,7 @@ const CheckAvailability: React.FC = () => {
           month={month}
           checkIn={checkIn}
           checkOut={checkOut}
-          occupiedDates={property.occupiedDates}
+          occupiedDates={occupiedDates}      // ← CHANGED
           onSelectDay={handleSelectDay}
           onChangeMonth={(dir) => setMonth(addMonths(month, dir))}
         />

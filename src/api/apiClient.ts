@@ -2,11 +2,18 @@ import axios from "axios";
 import { showToast } from "../utils/ToastNotifier";
 
 //Get Method
-export const getAPIData = async (url: string, params?: Record<string, any>, skipAuth?: boolean, signal?: AbortSignal) => {
+export const getAPIData = async (
+    url: string,
+    params?: Record<string, any>,
+    skipAuth?: boolean,
+    signal?: AbortSignal,
+    extraHeaders?: Record<string, string>,   // ← NEW: per-call headers (e.g. WAF recipe)
+) => {
 
-    // Build headers
+    // Build headers — caller's extras win over the defaults.
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
+        ...(extraHeaders ?? {}),               // ← NEW: merge in anything passed
     };
 
     console.log('[GET API] params in fetchData = ', params ? params : undefined)
@@ -22,8 +29,6 @@ export const getAPIData = async (url: string, params?: Record<string, any>, skip
             signal: signal,
             validateStatus: () => true,
         });
-
-        // const response = await axios.get(url, postData);
 
         console.log(`Response of ${url} = `, JSON.stringify(response.data));
         return response.data;
@@ -41,7 +46,6 @@ export const getAPIData = async (url: string, params?: Record<string, any>, skip
         showToast(serverMessage || error?.message, 'warning');
         return null;
     }
-
 };
 
 // POST Method

@@ -1,6 +1,9 @@
 export const live_BaseUrl = "https://theroyalaccommodation.com/wp-admin/admin-ajax.php";
 
 export const baseUrl = live_BaseUrl;
+// RA App API — our companion WordPress plugin (read-only, public availability/occupied dates).
+// Note: this is the wp-json REST base, NOT admin-ajax.
+export const raAppBaseUrl = "https://theroyalaccommodation.com/wp-json/ra-app/v1";
 
 export const headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
