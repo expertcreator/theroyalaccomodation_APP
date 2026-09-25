@@ -58,6 +58,7 @@ const ATTRACTIONS_NARRATIVE =
 export const PROPERTIES: Property[] = [
     {
         id: 'ascot',
+        owAccomId: 1680,
         name: 'Luxury Ascot Golf & Spa Retreat',
         tag: 'Opposite Sunningdale Golf',
         location: 'Ascot',
@@ -91,6 +92,7 @@ export const PROPERTIES: Property[] = [
     },
     {
         id: 'windsor',
+        owAccomId: 1225,
         name: 'Royal Windsor Residence',
         tag: '5-Acre Private Estate',
         location: 'Windsor',
@@ -199,6 +201,7 @@ export const AREA_ATTRACTIONS: AreaAttraction[] = [
 // Static demo bookings (placeholder). Real bookings come from Firestore later.
 export const BOOKINGS: Booking[] = [
     {
+        accomId: 1225,
         ref: 'RA-84029-WN',
         propertyId: 'windsor',
         status: 'upcoming',
@@ -210,6 +213,7 @@ export const BOOKINGS: Booking[] = [
         totalPaid: 2985,   // Windsor £995 × 3 nights
     },
     {
+        accomId: 1680,
         ref: 'RA-61904-AS',
         propertyId: 'ascot',
         status: 'past',

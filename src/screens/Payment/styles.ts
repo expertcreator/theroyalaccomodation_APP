@@ -26,8 +26,13 @@ export const styles = StyleSheet.create({
     goldHairline: { height: borderWidth.thin, marginVertical: spacing.xs },
 
     // Arrival / departure grid
-    datesRow: { flexDirection: 'row', paddingVertical: spacing.md, columnGap: spacing.lg },
-    dateCol: { flex: 1 },
+    datesRow: {
+        flexDirection: 'row',
+        paddingVertical: spacing.md,
+        // columnGap: spacing.lg,
+        justifyContent: "space-between"
+    },
+    dateCol: { flex: 1, alignItems: 'center' },
 
     // Nights + guests strip
     strip: {

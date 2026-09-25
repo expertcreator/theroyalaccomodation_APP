@@ -7,7 +7,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { typography, spacing } from '../../theme';
 import { getPropertyById } from '../../constants/data';
-import { calculateStayPrice } from '../../utils/pricing';
 import { toISO, startOfDay, addMonths, nightsBetween } from '../../utils/date';
 import type { RootStackParamList } from '../../navigation/types';
 import { STACK_ROUTES } from '../../navigation/routes';
@@ -21,6 +20,7 @@ import GuestStepper from './components/GuestStepper';
 import BottomBar from './components/BottomBar';
 import { styles } from './styles';
 import { useAuth } from '../../context/AuthContext';
+import { useOwcalSummary } from '../../hooks/useOwcalSummary';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.CheckAvailability>;
@@ -91,7 +91,19 @@ const CheckAvailability: React.FC = () => {
 
   const rangeComplete = !!(checkIn && checkOut);
   const nights = rangeComplete ? nightsBetween(checkIn!, checkOut!) : 0;
-  const price = calculateStayPrice(property, nights, adults, pets);
+
+  // Real price from OWcal (accommodation + fees like the £295 cleaning fee)
+  const priceState = useOwcalSummary({
+    accomId: property.owAccomId,
+    checkIn: checkIn ? toISO(checkIn) : null,
+    checkOut: checkOut ? toISO(checkOut) : null,
+    adults,
+    children,
+    pets,                    // ← the pets stepper value
+    enabled: rangeComplete,
+  });
+  const total = priceState.summary?.total ?? 0;
+  const priceReady = rangeComplete && !priceState.loading && !!priceState.summary?.ok;
 
   const totalGuests = adults + children;
 
@@ -204,7 +216,14 @@ const CheckAvailability: React.FC = () => {
 
       </ScrollView>
 
-      <BottomBar total={price.total} nights={nights} rangeComplete={rangeComplete} onProceed={onProceed} />
+      <BottomBar
+        total={total}
+        nights={nights}
+        rangeComplete={rangeComplete}
+        loading={priceState.loading}
+        priceReady={priceReady}
+        onProceed={onProceed}
+      />
     </View>
   );
 };

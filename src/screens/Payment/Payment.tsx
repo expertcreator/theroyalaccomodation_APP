@@ -17,6 +17,7 @@ import TermsCheckboxes from './components/TermsCheckboxes';
 import { styles } from './styles';
 import PaymentCard from './components/PaymentCard';
 import WebViewModal from '../../components/Modals/WebViewModal';
+import { useOwcalSummary } from '../../hooks/useOwcalSummary';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.PaymentReview>;
@@ -34,7 +35,16 @@ const Payment: React.FC = () => {
     const checkOut = new Date(booking.checkOut);
     const nights = nightsBetween(checkIn, checkOut);
     const guests = booking.adults + booking.children;
-    const price = calculateStayPrice(property, nights, booking.adults, booking.pets);
+    const priceState = useOwcalSummary({
+        accomId: property.owAccomId,
+        checkIn: booking.checkIn,     // already ISO strings from the nav params
+        checkOut: booking.checkOut,
+        adults: booking.adults,
+        children: booking.children,
+        pets: booking.pets,
+    });
+    const total = priceState.summary?.total ?? 0;
+    const priceReady = !priceState.loading && !!priceState.summary?.ok;
 
     const [cardComplete, setCardComplete] = useState<boolean>(false);
     const [cardholderName, setCardholderName] = useState<string>('');
@@ -42,7 +52,7 @@ const Payment: React.FC = () => {
 
     const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
     const [acceptPrivacy, setAcceptPrivacy] = useState<boolean>(false);
-    const canBook = acceptTerms && acceptPrivacy && cardComplete && cardholderName.trim().length > 0;
+    const canBook = acceptTerms && acceptPrivacy && cardComplete && cardholderName.trim().length > 0 && priceReady; // ← + priceReady
 
     const onBookNow = () => {
         if (!canBook) return;
@@ -63,7 +73,8 @@ const Payment: React.FC = () => {
                     nights={nights}
                     guests={guests}
                     pets={booking.pets}
-                    total={price.total}
+                    total={total}
+                    loading={priceState.loading}   // ← new
                 />
 
                 <PaymentCard

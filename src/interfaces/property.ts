@@ -44,6 +44,7 @@ export interface Pricing {
 
 export interface Property {
     id: PropertyId;
+    owAccomId: number;              // OWcal accommodation ID (Ascot 1680, Windsor 1225)
     name: string;
     tag: string;                     // "Opposite Sunningdale Golf"
     location: string;               // "Ascot" / "Windsor" (hero badge)

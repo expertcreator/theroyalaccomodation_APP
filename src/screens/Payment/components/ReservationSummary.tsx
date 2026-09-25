@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../../../context/ThemeContext';
 import { typography, spacing } from '../../../theme';
@@ -19,9 +19,10 @@ type Props = {
     guests: number;
     pets: number;
     total: number;
+    loading?: boolean;
 };
 
-const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nights, guests, pets, total }) => {
+const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nights, guests, pets, total, loading }) => {
     const { theme } = useTheme();
     const p = theme.palette;
 
@@ -53,13 +54,13 @@ const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nigh
 
             {/* Arrival / departure */}
             <View style={styles.datesRow}>
-                <View style={styles.dateCol}>
+                <View>
                     <Text style={[typography.overline, { color: p.text.placeHolder }]}>ARRIVAL</Text>
                     <Text style={[typography.bodySmall, { color: p.text.primary, fontWeight: '600', marginTop: spacing.xxs }]}>
                         {formatDayLabel(checkIn)}
                     </Text>
                 </View>
-                <View style={styles.dateCol}>
+                <View>
                     <Text style={[typography.overline, { color: p.text.placeHolder }]}>DEPARTURE</Text>
                     <Text style={[typography.bodySmall, { color: p.text.primary, fontWeight: '600', marginTop: spacing.xxs }]}>
                         {formatDayLabel(checkOut)}
@@ -97,7 +98,9 @@ const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nigh
                     <Text style={[typography.overline, { color: p.text.placeHolder }]}>TOTAL DUE (GBP)</Text>
                     <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>Includes taxes and VAT</Text>
                 </View>
-                <Text style={[typography.h1, { color: p.text.primary }]}>{formatGBP(total)}</Text>
+                {loading
+                    ? <ActivityIndicator size="small" color={p.primary.main} style={{ alignSelf: "center" }} />
+                    : <Text style={[typography.h1, { color: p.primary.main }]}>{formatGBP(total)}</Text>}
             </View>
         </View>
     );

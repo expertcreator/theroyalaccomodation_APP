@@ -3,6 +3,7 @@ import type { PropertyId } from './property';
 export type BookingStatus = 'upcoming' | 'past';
 
 export interface Booking {
+    accomId: number;
     ref: string;                 // "RA-84029-WN"
     propertyId: PropertyId;
     status: BookingStatus;
