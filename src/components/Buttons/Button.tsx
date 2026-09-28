@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { TouchableOpacity, View, StyleSheet, StyleProp, ViewStyle, ActivityIndicator } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { typography, radius, spacing, borderWidth } from '../../theme';
 import Text from '../Text/Text';
@@ -16,11 +16,14 @@ type Props = {
     rightIcon?: IconName;
     fullWidth?: boolean;
     disabled?: boolean;
+    loading?: boolean;         // ← NEW: show a spinner + loadingTitle, and block presses
+    loadingTitle?: string;     // ← NEW: general label shown while loading
     style?: StyleProp<ViewStyle>;
 };
 
 const Button: React.FC<Props> = ({
-    title, onPress, variant = 'primary', size = 'md', rightIcon, fullWidth = true, disabled, style,
+    title, onPress, variant = 'primary', size = 'md', rightIcon,
+    fullWidth = true, disabled, loading = false, loadingTitle = 'Please wait…', style,
 }) => {
     const { theme } = useTheme();
     const p = theme.palette;
@@ -30,13 +33,16 @@ const Button: React.FC<Props> = ({
     const bg = isOutline ? p.transparent : p.primary.main;
     const textColor = isOutline ? p.text.primary : p.accent.light;
 
+    const isDisabled = disabled || loading;   // can't press while loading
+
     return (
         <TouchableOpacity
             onPress={onPress}
-            disabled={disabled}
+            disabled={isDisabled}
             activeOpacity={0.85}
             accessibilityRole="button"
-            accessibilityLabel={title}
+            accessibilityLabel={loading ? loadingTitle : title}
+            accessibilityState={{ disabled: isDisabled, busy: loading }}
             style={[
                 styles.base,
                 isSmall ? styles.sizeSm : styles.sizeMd,
@@ -45,12 +51,19 @@ const Button: React.FC<Props> = ({
                     borderColor: isOutline ? p.text.primary : p.primary.main,
                 },
                 fullWidth && { alignSelf: 'stretch' },
-                disabled && { opacity: 0.5 },
+                isDisabled && { opacity: 0.5 },
                 style,
             ]}
         >
-            <Text style={[isSmall ? typography.buttonSmall : typography.button, { color: textColor }]}>{title}</Text>
-            {rightIcon && (
+            {loading && (
+                <View style={{ marginRight: spacing.sm }}>
+                    <ActivityIndicator size="small" color={textColor} />
+                </View>
+            )}
+            <Text style={[isSmall ? typography.buttonSmall : typography.button, { color: textColor }]}>
+                {loading ? loadingTitle : title}
+            </Text>
+            {!loading && rightIcon && (
                 <View style={{ marginLeft: spacing.sm }}>
                     <Icon name={rightIcon} size={isSmall ? 14 : 16} color={p.accent.main} />
                 </View>

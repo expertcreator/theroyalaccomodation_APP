@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,7 +21,9 @@ import BottomBar from './components/BottomBar';
 import { styles } from './styles';
 import { useAuth } from '../../context/AuthContext';
 import { useOwcalSummary } from '../../hooks/useOwcalSummary';
-import { useOccupiedDates } from '../../hooks/useOccupiedDates';   // ← NEW
+import { useOccupiedDates } from '../../hooks/useOccupiedDates';
+import { getOccupiedDates } from '../../api/raApi';   // ← NEW: fresh re-check on Proceed
+import { showToast } from '../../utils/ToastNotifier';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.CheckAvailability>;
@@ -50,23 +52,18 @@ const CheckAvailability: React.FC = () => {
   const [adults, setAdults] = useState<number>(2);
   const [children, setChildren] = useState<number>(0);
   const [pets, setPets] = useState<number>(0);
+  const [checking, setChecking] = useState<boolean>(false);   // ← NEW: Proceed re-check in flight
 
-  // ← NEW: fetch the REAL occupied dates for this property (~12 months out).
-  // Stable window (useMemo, no deps) so the hook fetches once, not on every render.
-  const availWindow = useMemo(() => {
-    const from = startOfDay(new Date());
-    const to = addMonths(from, 12);
-    return { from: toISO(from), to: toISO(to) };
-  }, []);
-  // Re-fetches when the property changes (new screen mount per property).
+  // Real occupied dates — loaded for the viewed month and extended as the user
+  // pages the calendar, so far-future bookings (2027, 2028…) show correctly
+  // without loading years of data up front.
   const { occupied: occupiedDates } = useOccupiedDates(
     property.owAccomId,
-    availWindow.from,
-    availWindow.to,
+    month
   );
 
   // O(1) occupied lookups for the rule checks.
-  const occupiedSet = useMemo(() => new Set(occupiedDates), [occupiedDates]);   // ← CHANGED
+  const occupiedSet = useMemo(() => new Set(occupiedDates), [occupiedDates]);
 
   // True if any night in [start, end) is already booked (can't span it).
   const hasOccupiedInRange = (start: Date, end: Date): boolean => {
@@ -77,6 +74,15 @@ const CheckAvailability: React.FC = () => {
     }
     return false;
   };
+
+  // If occupied data arrives after a selection was made, drop a now-invalid range.
+  useEffect(() => {
+    if (checkIn && checkOut && hasOccupiedInRange(checkIn, checkOut)) {
+      setCheckOut(null);
+      // optional: showToast('Some of those nights are already booked — please pick again.', 'warning');
+    }
+    // occupiedSet is recomputed from occupiedDates, so this runs when new data lands
+  }, [occupiedDates]);
 
   // Booking rules for tapping a day.
   const handleSelectDay = (date: Date) => {
@@ -122,29 +128,47 @@ const CheckAvailability: React.FC = () => {
 
   const totalGuests = adults + children;
 
-  const onProceed = () => {
-    if (!checkIn || !checkOut) return;
+  const onProceed = async () => {
+    if (!checkIn || !checkOut || checking) return;   // ignore taps while a check is running
 
-    // Fast client-side re-check (real, authoritative check happens server-side at payment).
-    if (hasOccupiedInRange(checkIn, checkOut)) {
-      // Those nights were taken — restart the range so the user re-picks.
-      setCheckOut(null);
-      return;
-    }
+    setChecking(true);   // ← button shows the loader from here
+    try {
+      // Fresh, authoritative-enough re-check for THIS exact range: covers stale or
+      // not-yet-loaded calendar data, and anything booked by someone else meanwhile.
+      const freshOccupied = await getOccupiedDates(
+        property.owAccomId,
+        toISO(checkIn),
+        toISO(checkOut),
+      );
+      const set = new Set(freshOccupied);
+      let spansBooked = false;
+      const d = new Date(checkIn);
+      while (d < checkOut) {
+        if (set.has(toISO(d))) { spansBooked = true; break; }
+        d.setDate(d.getDate() + 1);
+      }
+      if (spansBooked) {
+        setCheckOut(null);   // those nights are taken — make the user re-pick
+        showToast('warning', 'Those dates were just booked — please pick again.');
+        return;
+      }
 
-    const booking = {
-      propertyId: property.id,
-      checkIn: toISO(checkIn),
-      checkOut: toISO(checkOut),
-      adults,
-      children,
-      pets
-    };
+      const booking = {
+        propertyId: property.id,
+        checkIn: toISO(checkIn),
+        checkOut: toISO(checkOut),
+        adults,
+        children,
+        pets,
+      };
 
-    if (isLoggedIn) {
-      navigation.navigate(STACK_ROUTES.PaymentReview, booking);
-    } else {
-      navigation.navigate(STACK_ROUTES.LoginRegister, { entry: 'booking', booking });
+      if (isLoggedIn) {
+        navigation.navigate(STACK_ROUTES.PaymentReview, booking);
+      } else {
+        navigation.navigate(STACK_ROUTES.LoginRegister, { entry: 'booking', booking });
+      }
+    } finally {
+      setChecking(false);   // clear the loader (screen stays mounted under Payment)
     }
   };
 
@@ -170,7 +194,7 @@ const CheckAvailability: React.FC = () => {
           month={month}
           checkIn={checkIn}
           checkOut={checkOut}
-          occupiedDates={occupiedDates}      // ← CHANGED
+          occupiedDates={occupiedDates}
           onSelectDay={handleSelectDay}
           onChangeMonth={(dir) => setMonth(addMonths(month, dir))}
         />
@@ -235,8 +259,9 @@ const CheckAvailability: React.FC = () => {
         total={total}
         nights={nights}
         rangeComplete={rangeComplete}
-        loading={priceState.loading}
+        loading={priceState.loading}   // ← price only again (not combined with checking)
         priceReady={priceReady}
+        submitting={checking}          // ← NEW: drives the Proceed button's loader
         onProceed={onProceed}
       />
     </View>

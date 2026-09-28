@@ -11,12 +11,13 @@ type Props = {
     total: number;
     nights: number;
     rangeComplete: boolean;
-    loading: boolean;
+    loading: boolean;       // price loading → left side
     priceReady: boolean;
+    submitting: boolean;    // Proceed re-check in flight → button loader
     onProceed: () => void;
 };
 
-const BottomBar: React.FC<Props> = ({ total, nights, rangeComplete, loading, priceReady, onProceed }) => {
+const BottomBar: React.FC<Props> = ({ total, nights, rangeComplete, loading, priceReady, submitting, onProceed }) => {
     const { theme } = useTheme();
     const p = theme.palette;
 
@@ -27,12 +28,10 @@ const BottomBar: React.FC<Props> = ({ total, nights, rangeComplete, loading, pri
                     <Text style={[typography.overline, { color: p.text.placeHolder }]}>RESIDENCE TOTAL</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
                         {rangeComplete && loading
-                            ?
-                            (
+                            ? (
                                 <ActivityIndicator size="small" color={p.primary.main} />
                             )
-                            :
-                            (
+                            : (
                                 <Text style={[typography.h2, { color: p.text.primary }]}>
                                     {priceReady ? formatGBP(total) : '£—'}
                                 </Text>
@@ -42,7 +41,18 @@ const BottomBar: React.FC<Props> = ({ total, nights, rangeComplete, loading, pri
                     </View>
                 </>
             }
-            right={<Button title="Proceed" size="sm" rightIcon="arrow-right" fullWidth={false} disabled={!priceReady} onPress={onProceed} />}
+            right={
+                <Button
+                    title="Proceed"
+                    loadingTitle="Checking…"
+                    loading={submitting}
+                    size="sm"
+                    rightIcon="arrow-right"
+                    fullWidth={false}
+                    disabled={!priceReady}
+                    onPress={onProceed}
+                />
+            }
         />
     );
 };
