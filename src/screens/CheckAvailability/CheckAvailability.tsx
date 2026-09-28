@@ -75,14 +75,24 @@ const CheckAvailability: React.FC = () => {
     return false;
   };
 
-  // If occupied data arrives after a selection was made, drop a now-invalid range.
+  // When occupied data lands, reconcile any selection made before it arrived.
   useEffect(() => {
-    if (checkIn && checkOut && hasOccupiedInRange(checkIn, checkOut)) {
+    if (!checkIn) return;
+
+    // The start day itself is booked → drop the whole selection.
+    if (occupiedSet.has(toISO(checkIn))) {
+      setCheckIn(null);
       setCheckOut(null);
-      // optional: showToast('Some of those nights are already booked — please pick again.', 'warning');
+      showToast('warning', 'That date is already booked — please pick again.');
+      return;
     }
-    // occupiedSet is recomputed from occupiedDates, so this runs when new data lands
-  }, [occupiedDates]);
+
+    // Start is fine, but the span hits a booked night → drop just the end.
+    if (checkOut && hasOccupiedInRange(checkIn, checkOut)) {
+      setCheckOut(null);
+      showToast('warning', 'Some of those nights are booked — please pick an earlier checkout.');
+    }
+  }, [occupiedDates]);   // eslint may want checkIn/checkOut/occupiedSet — safe to add
 
   // Booking rules for tapping a day.
   const handleSelectDay = (date: Date) => {
