@@ -19,6 +19,7 @@ import AmenitiesGrid from './components/AmenitiesGrid';
 import AttractionsList from './components/AttractionsList';
 import BottomBar from './components/BottomBar';
 import { styles } from './styles';
+import ReviewsSection from './components/ReviewsSection';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type DetailRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.PropertyDetail>;
@@ -46,6 +47,7 @@ const PropertyDetail: React.FC = () => {
                     <RoomBrowser rooms={property.rooms} />
                     <AmenitiesGrid property={property} />
                     <AttractionsList property={property} />
+                    <ReviewsSection accomId={property.owAccomId} />
                 </View>
             </ScrollView>
 

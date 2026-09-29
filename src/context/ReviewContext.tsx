@@ -56,3 +56,10 @@ export const ReviewsProvider: React.FC<{ children: ReactNode }> = ({ children })
         </ReviewsContext.Provider>
     );
 };
+
+// Convenience lookup for one residence — used by ReviewsSection (and can replace
+// PropertyCard's manual map indexing). Pass the accom id, get its reviews or null.
+export const useResidenceReviews = (accomId: number) => {
+    const { reviews } = useReviews();
+    return reviews?.[String(accomId)] ?? null; // { accomId, property, average, count, reviews[] } | null
+};
