@@ -35,6 +35,8 @@ export async function getOccupiedDatesAPI(
     return [];
 }
 
+
+////////////////////////////////////////////
 export type ResidenceRate = {
     accomId: number;
     property: string;      // 'ascot' | 'windsor'
@@ -63,6 +65,48 @@ export async function getRatesAPI(): Promise<RatesMap | null> {
     );
     if (res?.success === true && res.data && typeof res.data === 'object') {
         return res.data as RatesMap;
+    }
+    return null;
+}
+
+
+////////////////////////////////////////////
+export type Review = {
+    headline: string;
+    reviewer: string;
+    date: string;     // e.g. 'July 2025'
+    rating: number;   // 0..5
+    text: string;
+    agency: string;   // e.g. 'Airbnb'
+};
+
+export type ResidenceReviews = {
+    accomId: number;
+    property: string;   // 'ascot' | 'windsor'
+    average: number;    // 0 when no reviews
+    count: number;      // number of published reviews
+    reviews: Review[];
+};
+
+// Keyed by accomId as a string, e.g. { "1680": {...}, "1225": {...} }
+export type ReviewsMap = Record<string, ResidenceReviews>;
+
+/**
+ * Fetch per-residence average rating + count + list from the RA App plugin.
+ * Returns the map on success, or null on ANY failure (envelope success:false,
+ * or a transport/WAF/500 error). getAPIData never throws — it returns null on
+ * network error — so callers just check for null and fall back to cache / hide.
+ */
+export async function getReviewsAPI(): Promise<ReviewsMap | null> {
+    const res = await getAPIData(
+        `${RA_APP_BASE}/reviews`,
+        undefined,
+        undefined,
+        undefined,
+        OW_HEADERS,
+    );
+    if (res?.success === true && res.data && typeof res.data === 'object') {
+        return res.data as ReviewsMap;
     }
     return null;
 }

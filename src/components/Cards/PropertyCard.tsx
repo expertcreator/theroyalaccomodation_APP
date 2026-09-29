@@ -11,6 +11,7 @@ import Icon, { IconName } from '../Icon/Icon';
 import Button from '../Buttons/Button';
 import type { Property } from '../../interfaces/property';
 import { useRates } from '../../context/RatesContext';
+import { useReviews } from '../../context/ReviewContext';
 
 type Props = { property: Property; onPress: () => void };
 
@@ -25,6 +26,13 @@ const PropertyCard: React.FC<Props> = ({ property, onPress }) => {
     // Live "from" for this residence, else the static baseRate as fallback.
     const liveFrom = rates?.[String(property.owAccomId)]?.from;
     const fromRate = typeof liveFrom === 'number' && liveFrom > 0 ? liveFrom : property.baseRate;
+
+    const { reviews } = useReviews();
+    const review = reviews?.[String(property.owAccomId)];
+    const hasReviews = !!review && review.count > 0;
+    // filled stars reflect the real average (5.0 → ★★★★★, 4.0 → ★★★★☆)
+    const filled = review ? Math.max(0, Math.min(5, Math.round(review.average))) : 0;
+    const starStr = '★'.repeat(filled) + '☆'.repeat(5 - filled);
 
     const pillBg = withAlpha(p.primary.main, 0.85);
     const pillBorder = withAlpha(p.accent.main, 0.3);
@@ -82,15 +90,18 @@ const PropertyCard: React.FC<Props> = ({ property, onPress }) => {
                     {property.name}
                 </Text>
 
-                <View style={styles.ratingRow}>
-                    <Text style={{ color: p.accent.main, fontSize: moderateScale(11), letterSpacing: 1 }}>★★★★★</Text>
-                    <Text style={[typography.caption, { color: p.text.primary, fontWeight: '600', marginLeft: spacing.xs }]}>
-                        {property.rating.toFixed(1)}
-                    </Text>
-                    <Text style={[typography.caption, { color: p.text.placeHolder, marginLeft: spacing.xs }]}>
-                        ({property.reviews} reviews)
-                    </Text>
-                </View>
+                {/* Review Section */}
+                {hasReviews && (
+                    <View style={styles.ratingRow}>
+                        <Text style={{ color: p.accent.main, fontSize: moderateScale(11), letterSpacing: 1 }}>{starStr}</Text>
+                        <Text style={[typography.caption, { color: p.text.primary, fontWeight: '600', marginLeft: spacing.xs }]}>
+                            {review!.average.toFixed(1)}
+                        </Text>
+                        <Text style={[typography.caption, { color: p.text.placeHolder, marginLeft: spacing.xs }]}>
+                            ({review!.count} {review!.count === 1 ? 'review' : 'reviews'})
+                        </Text>
+                    </View>
+                )}
 
                 <Text style={[typography.bodySmall, { color: p.text.placeHolder, marginBottom: spacing.lg }]}>
                     {property.description}

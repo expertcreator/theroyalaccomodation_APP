@@ -9,6 +9,7 @@ import { ToastProvider } from 'react-native-toast-notifications';
 import { STRIPE_PUBLISHABLE_KEY } from './src/constants/stripe';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { RatesProvider } from './src/context/RatesContext';
+import { ReviewsProvider } from './src/context/ReviewContext';
 
 export default function App() {
   return (
@@ -20,9 +21,11 @@ export default function App() {
               <ToastProvider>
                 <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
                   <RatesProvider>
-                    <NavigationContainer>
-                      <RootNavigator />
-                    </NavigationContainer>
+                    <ReviewsProvider>
+                      <NavigationContainer>
+                        <RootNavigator />
+                      </NavigationContainer>
+                    </ReviewsProvider>
                   </RatesProvider>
                 </StripeProvider>
               </ToastProvider>

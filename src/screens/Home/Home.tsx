@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, ScrollView } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, ScrollView, RefreshControl } from 'react-native';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../../context/ThemeContext';
@@ -16,6 +16,8 @@ import DiamondDivider from '../../components/Dividers/DiamondDivider';
 import PropertyCard from '../../components/Cards/PropertyCard';
 import { createStyles } from './styles';
 import { Property } from '../../interfaces/property';
+import { useRates } from '../../context/RatesContext';
+import { useReviews } from '../../context/ReviewContext';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -25,6 +27,19 @@ const Home: React.FC = () => {
     const { theme } = useTheme();
     const styles = createStyles(theme);
     const p = theme.palette;
+
+    const { refresh: refreshRates } = useRates();
+    const { refresh: refreshReviews } = useReviews();
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        try {
+            await Promise.all([refreshRates(), refreshReviews()]); // both in parallel
+        } finally {
+            setRefreshing(false);
+        }
+    }, [refreshRates, refreshReviews]);
 
     const onMenuPress = () => {
         navigation.dispatch(DrawerActions.openDrawer());
@@ -46,6 +61,14 @@ const Home: React.FC = () => {
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: spacing.xxl }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={p.accent.main}      // iOS spinner
+                        colors={[p.primary.main]}      // Android spinner
+                    />
+                }
             >
                 <HeroCarousel slides={HERO_SLIDES} />
 
