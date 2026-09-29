@@ -8,6 +8,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { ToastProvider } from 'react-native-toast-notifications';
 import { STRIPE_PUBLISHABLE_KEY } from './src/constants/stripe';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import { RatesProvider } from './src/context/RatesContext';
 
 export default function App() {
   return (
@@ -18,9 +19,11 @@ export default function App() {
             <AuthProvider>
               <ToastProvider>
                 <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
-                  <NavigationContainer>
-                    <RootNavigator />
-                  </NavigationContainer>
+                  <RatesProvider>
+                    <NavigationContainer>
+                      <RootNavigator />
+                    </NavigationContainer>
+                  </RatesProvider>
                 </StripeProvider>
               </ToastProvider>
             </AuthProvider>

@@ -22,7 +22,7 @@ import { styles } from './styles';
 import { useAuth } from '../../context/AuthContext';
 import { useOwcalSummary } from '../../hooks/useOwcalSummary';
 import { useOccupiedDates } from '../../hooks/useOccupiedDates';
-import { getOccupiedDates } from '../../api/raApi';   // ← NEW: fresh re-check on Proceed
+import { getOccupiedDatesAPI } from '../../api/raApi';   // ← NEW: fresh re-check on Proceed
 import { showToast } from '../../utils/ToastNotifier';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -145,7 +145,7 @@ const CheckAvailability: React.FC = () => {
     try {
       // Fresh, authoritative-enough re-check for THIS exact range: covers stale or
       // not-yet-loaded calendar data, and anything booked by someone else meanwhile.
-      const freshOccupied = await getOccupiedDates(
+      const freshOccupied = await getOccupiedDatesAPI(
         property.owAccomId,
         toISO(checkIn),
         toISO(checkOut),

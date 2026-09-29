@@ -10,6 +10,7 @@ import Text from '../Text/Text';
 import Icon, { IconName } from '../Icon/Icon';
 import Button from '../Buttons/Button';
 import type { Property } from '../../interfaces/property';
+import { useRates } from '../../context/RatesContext';
 
 type Props = { property: Property; onPress: () => void };
 
@@ -19,6 +20,11 @@ const PropertyCard: React.FC<Props> = ({ property, onPress }) => {
     const { theme } = useTheme();
     const styles = createStyles(theme);
     const p = theme.palette;
+
+    const { rates } = useRates();
+    // Live "from" for this residence, else the static baseRate as fallback.
+    const liveFrom = rates?.[String(property.owAccomId)]?.from;
+    const fromRate = typeof liveFrom === 'number' && liveFrom > 0 ? liveFrom : property.baseRate;
 
     const pillBg = withAlpha(p.primary.main, 0.85);
     const pillBorder = withAlpha(p.accent.main, 0.3);
@@ -56,7 +62,7 @@ const PropertyCard: React.FC<Props> = ({ property, onPress }) => {
                 <View style={[styles.pill, styles.pricePos, { backgroundColor: pillBg, borderColor: pillBorder }]}>
                     <Text style={[typography.caption, { color: withAlpha(p.primary.contrastText, 0.8) }]}>from </Text>
                     <Text style={[typography.headerTitle, { color: p.primary.contrastText }]}>
-                        {formatGBP(property.baseRate)}
+                        {formatGBP(fromRate)}
                     </Text>
                     <Text style={[typography.caption, { color: withAlpha(p.primary.contrastText, 0.7) }]}> / night</Text>
                 </View>

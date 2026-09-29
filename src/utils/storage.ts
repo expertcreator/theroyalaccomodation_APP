@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const ASYNC_KEYS = {
     USER: 'user',
     DARK_MODE: 'darkMode',
+    RATES: 'rates',        // cached lowest/highest nightly rates
 };
 
 /**

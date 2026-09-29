@@ -12,6 +12,7 @@ import Payment from '../screens/Payment/Payment';
 import BookingConfirmed from '../screens/BookingConfirmed/BookingConfirmed';
 import { useEffect } from 'react';
 import { hideSplash } from 'react-native-splash-view';
+import { useRates } from '../context/RatesContext';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,11 +20,14 @@ export default function RootNavigator() {
     const { theme, isDarkMode } = useTheme();
     const bg = theme.palette.background.default; // cream in light mode
 
+    // Hold the native splash until the rates API has given a definitive
+    // response (success or failure), so Home never paints before rates resolve.
+    const { ready } = useRates();
     useEffect(() => {
-        setTimeout(() => {
-            hideSplash(); // Hide after some time
-        }, 2000);
-    }, []);
+        if (ready) {
+            hideSplash();
+        }
+    }, [ready]);
 
     return (
         <>
@@ -32,8 +36,6 @@ export default function RootNavigator() {
                 backgroundColor={bg}
             />
 
-            {/* TEMP: booting into DrawerRoot until Splash is built.
-                Switch initialRouteName back to STACK_ROUTES.Splash then. */}
             <Stack.Navigator initialRouteName={STACK_ROUTES.DrawerRoot}>
                 <Stack.Screen name={STACK_ROUTES.DrawerRoot} component={DrawerNavigator} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.PropertyDetail} component={PropertyDetail} options={{ headerShown: false }} />

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getOccupiedDates } from '../api/raApi';
+import { getOccupiedDatesAPI } from '../api/raApi';
 import { toISO, startOfDay, addMonths } from '../utils/date';
 
 // How many months to fetch per request (the viewed month + the rest as a buffer).
@@ -56,7 +56,7 @@ export function useOccupiedDates(accomId: number, focusMonth: Date) {
         const forAccom = accomId;
 
         setLoading(true);
-        getOccupiedDates(accomId, from, to)
+        getOccupiedDatesAPI(accomId, from, to)
             .then(list => {
                 if (!mounted.current || accomRef.current !== forAccom) return;
                 for (const d of list) occ.current.add(d);
