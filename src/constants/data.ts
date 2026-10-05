@@ -89,6 +89,7 @@ export const PROPERTIES: Property[] = [
         attractionsNarrative: ATTRACTIONS_NARRATIVE,
         pricing: { baseRate: ASCOT_BASE_RATE, includedAdults: 7, extraAdultRate: 100, minNights: 2 },
         occupiedDates: occupiedThisMonth([2, 3, 4, 15, 16, 24, 25]),
+        websiteUrl: 'https://theroyalaccommodation.com/ascot/',
     },
     {
         id: 'windsor',
@@ -123,6 +124,7 @@ export const PROPERTIES: Property[] = [
         attractionsNarrative: ATTRACTIONS_NARRATIVE,
         pricing: { baseRate: WINDSOR_BASE_RATE, includedAdults: 4, extraAdultRate: 50, minNights: 2 },
         occupiedDates: occupiedThisMonth([6, 7, 12, 13, 20, 21]),
+        websiteUrl: 'https://theroyalaccommodation.com/royal-windsor-stately-home/',
     },
 ];
 

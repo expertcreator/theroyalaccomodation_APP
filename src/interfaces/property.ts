@@ -64,4 +64,5 @@ export interface Property {
     attractionsNarrative: string;
     pricing: Pricing;
     occupiedDates: string[];   // ISO 'YYYY-MM-DD' dates already booked
+    websiteUrl: string;   // public property page on theroyalaccommodation.com
 }

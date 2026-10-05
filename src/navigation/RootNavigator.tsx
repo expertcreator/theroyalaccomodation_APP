@@ -13,6 +13,7 @@ import BookingConfirmed from '../screens/BookingConfirmed/BookingConfirmed';
 import { useEffect } from 'react';
 import { hideSplash } from 'react-native-splash-view';
 import { useRates } from '../context/RatesContext';
+import { useAuth } from '../context/AuthContext';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -20,14 +21,17 @@ export default function RootNavigator() {
     const { theme, isDarkMode } = useTheme();
     const bg = theme.palette.background.default; // cream in light mode
 
-    // Hold the native splash until the rates API has given a definitive
-    // response (success or failure), so Home never paints before rates resolve.
+    // Hold the native splash until BOTH are settled:
+    //  - rates: the rates API has given a definitive answer (success or fail)
+    //  - auth:  Firebase has restored any saved session, so the drawer shows
+    //           the right state (signed-in name vs "Sign in") on first paint.
     const { ready } = useRates();
+    const { initializing } = useAuth();
     useEffect(() => {
-        if (ready) {
+        if (ready && !initializing) {
             hideSplash();
         }
-    }, [ready]);
+    }, [ready, initializing]);
 
     return (
         <>

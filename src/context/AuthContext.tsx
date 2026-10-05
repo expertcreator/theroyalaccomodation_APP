@@ -1,52 +1,166 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { onAuthStateChanged, sendEmailVerification } from '@react-native-firebase/auth';
+import { auth } from '../firebase/config';
 import {
-    ASYNC_KEYS, getItemFromAsyncStorage, setItemInAsyncStorage, removeItemFromAsyncStorage,
-} from '../utils/storage';
+    signUp as authSignUp,
+    signIn as authSignIn,
+    signOut as authSignOut,
+    resetPassword as authResetPassword,
+    SignUpParams,
+} from '../firebase/auth';
+import { getUserProfile, updateUserProfile } from '../firebase/users';
+import { IUserProfile, EditableProfile } from '../interfaces/user';
 
-export type AuthUser = { name: string; email?: string; avatarUri?: string; phone?: string } | null;
+// A small, display-friendly view of the user — kept so screens that already
+// read user.name / user.email / user.avatarUri / user.phone keep working.
+export type AuthUser =
+    | { name: string; email?: string; avatarUri?: string; phone?: string }
+    | null;
 
-interface AuthContextType {
-    user: AuthUser;
+interface IAuthContextType {
+    initializing: boolean;        // true until we know if someone is signed in
     isLoggedIn: boolean;
-    signIn: (user: NonNullable<AuthUser>) => Promise<void>;
+    emailVerified: boolean;
+
+    profile: IUserProfile | null; // the real Firestore profile
+    user: AuthUser;               // derived, read-only convenience view
+
+    signUp: (params: SignUpParams) => Promise<void>;
+    signIn: (email: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
-    updateUser: (patch: Partial<NonNullable<AuthUser>>) => Promise<void>;
+    resetPassword: (email: string) => Promise<void>;
+
+    updateProfile: (changes: EditableProfile) => Promise<void>;
+    refreshProfile: () => Promise<void>;
+    reloadEmailVerified: () => Promise<void>;
+    resendVerification: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({
-    user: null, isLoggedIn: false, signIn: async () => { }, signOut: async () => { }, updateUser: async () => { },
+const AuthContext = createContext<IAuthContextType>({
+    initializing: true,
+    isLoggedIn: false,
+    emailVerified: false,
+    profile: null,
+    user: null,
+    signUp: async () => { },
+    signIn: async () => { },
+    signOut: async () => { },
+    resetPassword: async () => { },
+    updateProfile: async () => { },
+    refreshProfile: async () => { },
+    reloadEmailVerified: async () => { },
+    resendVerification: async () => { },
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<AuthUser>({ name: 'Alexander Windsor' });
+    const [initializing, setInitializing] = useState(true);
+    const [uid, setUid] = useState<string | null>(null);
+    const [emailVerified, setEmailVerified] = useState(false);
+    const [profile, setProfile] = useState<IUserProfile | null>(null);
 
+    // Load (or clear) the Firestore profile for a given user id.
+    const loadProfile = async (userId: string | null) => {
+        if (!userId) { setProfile(null); return; }
+        const p = await getUserProfile(userId);
+        setProfile(p);
+    };
+
+    // Re-read the current user's profile into state.
+    const refreshProfile = async () => {
+        const current = auth.currentUser;
+        await loadProfile(current ? current.uid : null);
+    };
+
+    // Firebase tells us who is signed in — now, on every change, and once on
+    // app start (it restores a saved session for us, so no AsyncStorage needed).
     useEffect(() => {
-        (async () => {
-            const saved = await getItemFromAsyncStorage<AuthUser>(ASYNC_KEYS.USER);
-            if (saved) setUser(saved);
-        })();
+        const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+            console.log("[AuthContext] fbUser: ", fbUser)
+            if (fbUser) {
+                setUid(fbUser.uid);
+                setEmailVerified(fbUser.emailVerified);
+                await loadProfile(fbUser.uid);
+            } else {
+                setUid(null);
+                setEmailVerified(false);
+                setProfile(null);
+            }
+            setInitializing(false);
+        });
+        return unsubscribe; // stop listening when the provider unmounts
     }, []);
 
-    const signIn = async (u: NonNullable<AuthUser>) => {
-        setUser(u);
-        await setItemInAsyncStorage(ASYNC_KEYS.USER, u);
+    // --- actions ---
+
+    const signUp = async (params: SignUpParams) => {
+        await authSignUp(params); // creates the Auth user + Firestore profile
+        // onAuthStateChanged fires on the new user, but it can run before the
+        // profile doc is written — so load it again to be sure we have it.
+        await refreshProfile();
+    };
+
+    const signIn = async (email: string, password: string) => {
+        await authSignIn(email, password);
+        // onAuthStateChanged sets uid + loads the profile automatically.
     };
 
     const signOut = async () => {
-        setUser(null);
-        await removeItemFromAsyncStorage(ASYNC_KEYS.USER);
+        await authSignOut();
+        // onAuthStateChanged clears everything.
     };
 
-    const updateUser = async (patch: Partial<NonNullable<AuthUser>>) => {
-        setUser((current) => {
-            const next = { ...(current ?? { name: '' }), ...patch };
-            setItemInAsyncStorage(ASYNC_KEYS.USER, next);
-            return next;
-        });
+    const resetPassword = async (email: string) => {
+        await authResetPassword(email);
     };
+
+    const updateProfile = async (changes: EditableProfile) => {
+        const current = auth.currentUser;
+        if (!current) return;
+        await updateUserProfile(current.uid, changes);
+        await refreshProfile(); // pull the merged result back into state
+    };
+
+    // Call after the user taps the verification link to refresh the flag.
+    const reloadEmailVerified = async () => {
+        const current = auth.currentUser;
+        if (!current) return;
+        await current.reload();
+        setEmailVerified(auth.currentUser?.emailVerified ?? false);
+    };
+
+    const resendVerification = async () => {
+        const current = auth.currentUser;
+        if (current) await sendEmailVerification(current);
+    };
+
+    // Derived convenience view for existing screens.
+    const user: AuthUser = profile
+        ? {
+            name: `${profile.firstName} ${profile.lastName}`.trim(),
+            email: profile.email,
+            avatarUri: profile.photoURL ?? undefined,
+            phone: profile.phone ?? undefined,
+        }
+        : null;
 
     return (
-        <AuthContext.Provider value={{ user, isLoggedIn: !!user, signIn, signOut, updateUser }}>
+        <AuthContext.Provider
+            value={{
+                initializing,
+                isLoggedIn: !!uid,
+                emailVerified,
+                profile,
+                user,
+                signUp,
+                signIn,
+                signOut,
+                resetPassword,
+                updateProfile,
+                refreshProfile,
+                reloadEmailVerified,
+                resendVerification,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

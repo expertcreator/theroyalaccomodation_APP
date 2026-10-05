@@ -10,6 +10,7 @@ import { withAlpha } from '../../utils/color';
 import { getPropertyById } from '../../constants/data';
 import type { RootStackParamList } from '../../navigation/types';
 import { STACK_ROUTES, DRAWER_ROUTES } from '../../navigation/routes';
+import { authErrorMessage } from '../../firebase/authErrors';
 
 import Text from '../../components/Text/Text';
 import Header from '../../components/Headers/Header';
@@ -20,6 +21,7 @@ import DiamondDivider from '../../components/Dividers/DiamondDivider';
 import StaySummary from './components/StaySummary';
 import { styles } from './styles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { showToast } from '../../utils/ToastNotifier';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.LoginRegister>;
@@ -27,13 +29,13 @@ type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.LoginRegist
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type Mode = 'login' | 'register';
-type Errors = { name?: string; email?: string; password?: string };
+type Errors = { firstName?: string; lastName?: string; email?: string; country?: string; password?: string };
 
 const LoginRegister: React.FC = () => {
   const navigation = useNavigation<Nav>();
   const route = useRoute<ScreenRoute>();
   const { theme } = useTheme();
-  const { signIn } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
   const p = theme.palette;
 
   // Entry context — booking shows the "Your Stay" card and returns to Payment.
@@ -42,44 +44,79 @@ const LoginRegister: React.FC = () => {
   const property = booking ? getPropertyById(booking.propertyId) : undefined;
 
   const [mode, setMode] = useState<Mode>('login');
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [country, setCountry] = useState('United Kingdom');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [keepSignedIn, setKeepSignedIn] = useState(true);
   const [errors, setErrors] = useState<Errors>({});
+  const [submitting, setSubmitting] = useState(false); // button loader
 
   const clearError = (key: keyof Errors) => setErrors((e) => ({ ...e, [key]: undefined }));
 
   const validate = (): boolean => {
     const next: Errors = {};
-    if (mode === 'register' && !name.trim()) next.name = 'Please enter your name';
+    if (mode === 'register') {
+      if (!firstName.trim()) next.firstName = 'Please enter your first name';
+      if (!lastName.trim()) next.lastName = 'Please enter your last name';
+      if (!country.trim()) next.country = 'Please enter your country';
+    }
     if (!email.trim()) next.email = 'Please enter your email';
     else if (!EMAIL_RE.test(email.trim())) next.email = 'Please enter a valid email';
     if (!password) next.password = 'Please enter your password';
     else if (password.length < 6) next.password = 'Password must be at least 6 characters';
     setErrors(next);
-    return !next.name && !next.email && !next.password;
+    return !next.firstName && !next.lastName && !next.email && !next.country && !next.password;
   };
 
-  const onForgotPassword = () => {
-    // Static phase: no-op / placeholder. Real reset comes with Firebase Auth.
-    // Could show a small confirm modal here later.
+  // Send a password-reset email. Needs a valid email in the field first.
+  const onForgotPassword = async () => {
+    const mail = email.trim();
+    if (!mail || !EMAIL_RE.test(mail)) {
+      setErrors((e) => ({ ...e, email: 'Enter your email first to reset your password' }));
+      return;
+    }
+    try {
+      await resetPassword(mail);
+      showToast('success', 'Password reset email sent. Check your inbox.');
+    } catch (err) {
+      showToast('danger', authErrorMessage(err));
+    }
   };
 
   const onSubmit = async () => {
     if (!validate()) return;
 
-    // Static phase: just sign in locally. Real auth (Firebase) comes later.
-    const displayName = mode === 'register' ? name.trim() : email.split('@')[0];
-    await signIn({ name: displayName, email: email.trim() });
+    try {
+      setSubmitting(true);
 
-    // Branch on where the user came from. `replace` so back doesn't return here.
-    if (entry === 'booking' && booking) {
-      navigation.replace(STACK_ROUTES.PaymentReview, booking);
-    } else {
-      navigation.replace(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Home });
+      if (mode === 'register') {
+        // Creates the Auth account + the Firestore profile, and signs the user in.
+        await signUp({
+          firstName,
+          lastName,
+          email,
+          phone: phone.trim() || null,
+          country: country.trim() || 'United Kingdom',
+          password,
+        });
+      } else {
+        await signIn(email, password);
+      }
+
+      // Where to go next. `replace` so Back doesn't return to this screen.
+      if (entry === 'booking' && booking) {
+        navigation.replace(STACK_ROUTES.PaymentReview, booking);
+      } else {
+        navigation.replace(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Home });
+      }
+    } catch (err) {
+      // Bad password, email already used, no network, etc.
+      showToast('danger', authErrorMessage(err));
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -139,13 +176,22 @@ const LoginRegister: React.FC = () => {
           {/* Form */}
           <View style={styles.fields}>
             {isRegister && (
-              <Input
-                label="FULL NAME"
-                value={name}
-                onChangeText={(t) => { setName(t); if (errors.name) clearError('name'); }}
-                placeholder="e.g. Alexander Windsor"
-                error={errors.name}
-              />
+              <>
+                <Input
+                  label="FIRST NAME"
+                  value={firstName}
+                  onChangeText={(t) => { setFirstName(t); if (errors.firstName) clearError('firstName'); }}
+                  placeholder="e.g. Alexander"
+                  error={errors.firstName}
+                />
+                <Input
+                  label="LAST NAME"
+                  value={lastName}
+                  onChangeText={(t) => { setLastName(t); if (errors.lastName) clearError('lastName'); }}
+                  placeholder="e.g. Windsor"
+                  error={errors.lastName}
+                />
+              </>
             )}
 
             <Input
@@ -159,13 +205,22 @@ const LoginRegister: React.FC = () => {
             />
 
             {isRegister && (
-              <Input
-                label="PHONE"
-                value={phone}
-                onChangeText={setPhone}
-                placeholder="e.g. +44 7700 900000"
-                keyboardType="phone-pad"
-              />
+              <>
+                <Input
+                  label="PHONE"
+                  value={phone}
+                  onChangeText={setPhone}
+                  placeholder="e.g. +44 7700 900000"
+                  keyboardType="phone-pad"
+                />
+                <Input
+                  label="COUNTRY"
+                  value={country}
+                  onChangeText={(t) => { setCountry(t); if (errors.country) clearError('country'); }}
+                  placeholder="e.g. United Kingdom"
+                  error={errors.country}
+                />
+              </>
             )}
 
             <Input
@@ -187,16 +242,8 @@ const LoginRegister: React.FC = () => {
               error={errors.password}
             />
 
-            {/* Keep me signed in */}
-            <TouchableOpacity style={styles.checkboxRow} onPress={() => setKeepSignedIn((v) => !v)} activeOpacity={0.7}>
-              <View style={[styles.checkbox, { borderColor: p.borderColor, backgroundColor: keepSignedIn ? p.primary.main : 'transparent' }]}>
-                {keepSignedIn && <Icon name="check" size={12} color={p.primary.contrastText} />}
-              </View>
-              <Text style={[typography.caption, { color: p.text.primary }]}>Keep me signed in on this device</Text>
-            </TouchableOpacity>
-
             <View style={{ marginTop: spacing.xs }}>
-              <Button title="Continue" rightIcon="arrow-right" onPress={onSubmit} />
+              <Button title="Continue" rightIcon="arrow-right" onPress={onSubmit} loading={submitting} />
             </View>
           </View>
 
@@ -228,7 +275,6 @@ const LoginRegister: React.FC = () => {
           </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
-
     </View>
   );
 };

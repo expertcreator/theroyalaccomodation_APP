@@ -43,7 +43,7 @@ export const getAPIData = async (
 
         // prefer the server's message from the response body; fall back to the generic axios one
         const serverMessage = error?.response?.data?.message;
-        showToast(serverMessage || error?.message, 'warning');
+        showToast('warning', serverMessage || error?.message);
         return null;
     }
 };
@@ -95,7 +95,7 @@ export const postDataAPI = async ({ url, data, ContentType = 'application/json',
 
         // prefer the server's message from the response body; fall back to the generic axios one
         const serverMessage = error?.response?.data?.message;
-        showToast(serverMessage || error?.message, 'warning');
+        showToast('warning', serverMessage || error?.message);
         return null;
     }
 }

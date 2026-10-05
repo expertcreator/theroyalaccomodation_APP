@@ -15,7 +15,15 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("com.google.gms:google-services:4.5.0")
     }
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// Top-level: applies to EVERY subproject, incl. :stripe_stripe-react-native
+allprojects {
+    configurations.all {
+        exclude group: 'com.google.android.gms', module: 'play-services-tapandpay'
+    }
+}

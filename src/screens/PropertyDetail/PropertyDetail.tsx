@@ -34,7 +34,16 @@ const PropertyDetail: React.FC = () => {
     const [saved, setSaved] = useState(false);
 
     const goCheck = () => navigation.navigate(STACK_ROUTES.CheckAvailability, { propertyId: property.id });
-    const onShare = () => Share.share({ message: `${property.name} — The Royal Accommodation` }).catch(() => { });
+    const onShare = () => {
+        const content: { message: string; url?: string; title?: string } = {
+            message: property.websiteUrl
+                ? `${property.name} — The Royal Accommodation\n${property.websiteUrl}`
+                : `${property.name} — The Royal Accommodation`,
+            title: property.name,
+        };
+        if (property.websiteUrl) content.url = property.websiteUrl; // iOS treats url separately
+        Share.share(content).catch(() => { });
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: p.background.default }]}>
