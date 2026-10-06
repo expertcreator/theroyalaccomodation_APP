@@ -6,10 +6,12 @@ import {
     signIn as authSignIn,
     signOut as authSignOut,
     resetPassword as authResetPassword,
+    deleteAccount as authDeleteAccount,
     SignUpParams,
 } from '../firebase/auth';
 import { getUserProfile, updateUserProfile } from '../firebase/users';
 import { IUserProfile, EditableProfile } from '../interfaces/user';
+import { AppState } from 'react-native';
 
 // A small, display-friendly view of the user — kept so screens that already
 // read user.name / user.email / user.avatarUri / user.phone keep working.
@@ -34,6 +36,7 @@ interface IAuthContextType {
     refreshProfile: () => Promise<void>;
     reloadEmailVerified: () => Promise<void>;
     resendVerification: () => Promise<void>;
+    deleteAccount: (password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<IAuthContextType>({
@@ -50,6 +53,7 @@ const AuthContext = createContext<IAuthContextType>({
     refreshProfile: async () => { },
     reloadEmailVerified: async () => { },
     resendVerification: async () => { },
+    deleteAccount: async () => { },
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -88,6 +92,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setInitializing(false);
         });
         return unsubscribe; // stop listening when the provider unmounts
+    }, []);
+
+    // Re-check email verification whenever the app returns to the foreground —
+    // the user may have just tapped the verification link in their browser.
+    useEffect(() => {
+        const sub = AppState.addEventListener('change', (state) => {
+            if (state !== 'active') return;
+            const current = auth.currentUser;
+            if (current && !current.emailVerified) {
+                current.reload()
+                    .then(() => setEmailVerified(auth.currentUser?.emailVerified ?? false))
+                    .catch(() => { });
+            }
+        });
+        return () => sub.remove();
     }, []);
 
     // --- actions ---
@@ -133,6 +152,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (current) await sendEmailVerification(current);
     };
 
+    const deleteAccount = async (password: string) => {
+        await authDeleteAccount(password);
+        // onAuthStateChanged fires with null and clears uid/profile.
+    };
+
     // Derived convenience view for existing screens.
     const user: AuthUser = profile
         ? {
@@ -155,6 +179,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 signIn,
                 signOut,
                 resetPassword,
+                deleteAccount,
                 updateProfile,
                 refreshProfile,
                 reloadEmailVerified,

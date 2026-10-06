@@ -28,6 +28,9 @@ export function authErrorMessage(error: unknown): string {
         case 'auth/network-request-failed':
             return 'Network error. Check your connection and try again.';
 
+        case 'auth/requires-recent-login':
+            return 'Please sign in again, then retry deleting your account.';
+
         default:
             return 'Something went wrong. Please try again.';
     }

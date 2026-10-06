@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, BackHandler, Switch } from 'react-native';
+import { View, Image, TouchableOpacity, BackHandler } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -22,12 +22,13 @@ import DiamondDivider from '../../components/Dividers/DiamondDivider';
 import ConfirmModal from '../../components/Modals/ConfirmModal';
 import { styles } from './styles';
 import { showToast } from '../../utils/ToastNotifier';
+import { moderateScale } from 'react-native-size-matters';
 
 type Nav = DrawerNavigationProp<DrawerParamList>;
 
 const MyProfile: React.FC = () => {
     const navigation = useNavigation<Nav>();
-    const { theme, isDarkMode, toggleTheme } = useTheme();
+    const { theme } = useTheme();
     const { profile, updateProfile, isLoggedIn, emailVerified, resendVerification } = useAuth();
     const p = theme.palette;
 
@@ -76,7 +77,7 @@ const MyProfile: React.FC = () => {
         try {
             await resendVerification();
             showToast('success', 'Verification email sent. Check your inbox.');
-        } catch {
+        } catch (error) {
             showToast('danger', 'Could not send the verification email.');
         }
     };
@@ -215,9 +216,15 @@ const MyProfile: React.FC = () => {
                             <Text style={[typography.overline, { color: p.accent.dark }]}>EMAIL VERIFIED</Text>
                         </View>
                     ) : (
-                        <TouchableOpacity onPress={onResendVerification} hitSlop={8} style={{ marginTop: spacing.xs }}>
-                            <Text style={[typography.overline, { color: p.accent.dark }]}>
-                                VERIFY YOUR EMAIL · RESEND
+                        <TouchableOpacity
+                            onPress={onResendVerification}
+                            hitSlop={8}
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: moderateScale(5), marginTop: spacing.xs }}
+                        >
+                            <Icon name="alert" size={12} color={p.warning.main} />
+                            <Text style={[typography.overline, { color: p.warning.main, }]}>
+                                EMAIL NOT VERIFIED ·{' '}
+                                <Text style={[typography.overline, { textDecorationLine: 'underline', color: p.accent.dark }]}>RESEND</Text>
                             </Text>
                         </TouchableOpacity>
                     )}
@@ -251,14 +258,20 @@ const MyProfile: React.FC = () => {
                             error={errors.lastName}
                         />
                         {/* Email is read-only — account identity + bookings match key. */}
-                        <Input
-                            label="EMAIL ADDRESS"
-                            value={email}
-                            onChangeText={() => { }}
-                            editable={false}
-                            selectTextOnFocus={false}
-                            style={{ color: p.text.placeHolder }}
-                        />
+                        <View>
+                            <Input
+                                label="EMAIL ADDRESS"
+                                value={email}
+                                onChangeText={() => { }}
+                                editable={false}
+                                selectTextOnFocus={false}
+                                style={{ color: p.text.placeHolder }}
+                            />
+                            <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xs }]}>
+                                Your email can't be changed — it's linked to your account and bookings.
+                            </Text>
+                        </View>
+
                         <Input
                             label="PHONE"
                             value={phone}
@@ -291,33 +304,6 @@ const MyProfile: React.FC = () => {
 
                 <View style={styles.saveWrap}>
                     <Button title="Save Changes" rightIcon="check" disabled={!isDirty || saving} loading={saving} onPress={onSave} />
-                </View>
-
-                {/* Preferences */}
-                <View style={{ marginTop: spacing.xl }}>
-                    <SectionEyebrow label="Preferences" />
-
-                    <View style={[styles.prefCard, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
-                        <View style={styles.prefRow}>
-                            <View style={styles.prefLeft}>
-                                <Icon name="moon" size={18} color={p.accent.main} />
-                                <View>
-                                    <Text style={[typography.label, { color: p.text.primary }]}>Dark Mode</Text>
-                                    <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
-                                        Switch appearance
-                                    </Text>
-                                </View>
-                            </View>
-                            <Switch
-                                value={isDarkMode}
-                                onValueChange={toggleTheme}
-                                trackColor={{ false: p.borderColor, true: p.primary.main }}
-                                thumbColor={isDarkMode ? p.accent.light : '#FFFFFF'}
-                                ios_backgroundColor={p.borderColor}
-                                style={styles.switchStyles}
-                            />
-                        </View>
-                    </View>
                 </View>
             </KeyboardAwareScrollView>
 

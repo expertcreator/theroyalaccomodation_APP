@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, ScrollView, Share } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -31,7 +31,6 @@ const PropertyDetail: React.FC = () => {
     const p = theme.palette;
 
     const property = getPropertyById(route.params.propertyId);
-    const [saved, setSaved] = useState(false);
 
     const goCheck = () => navigation.navigate(STACK_ROUTES.CheckAvailability, { propertyId: property.id });
     const onShare = () => {
@@ -66,7 +65,6 @@ const PropertyDetail: React.FC = () => {
                 onBack={() => navigation.goBack()}
                 rightActions={[
                     { icon: 'share', onPress: onShare, label: 'Share' },
-                    { icon: 'bookmark', onPress: () => setSaved(!saved), label: 'Save' },
                 ]}
             />
 

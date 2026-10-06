@@ -18,4 +18,5 @@ export const DRAWER_ROUTES = {
     Contact: 'Contact',
     MyBookings: 'MyBookings',
     MyProfile: 'MyProfile',
+    Settings: 'Settings',
 } as const;

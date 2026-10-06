@@ -7,9 +7,12 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   sendEmailVerification,
+  reauthenticateWithCredential,
+  deleteUser,
+  EmailAuthProvider,
 } from '@react-native-firebase/auth';
 import { auth } from './config';
-import { createUserProfile } from './users';
+import { createUserProfile, deleteUserProfile } from './users';
 import { ISignupProfileInput } from '../interfaces/user';
 
 // What the signup form gives us: the profile fields WITHOUT uid
@@ -58,7 +61,7 @@ export async function signUp(params: SignUpParams): Promise<string> {
 
   // 4. Ask them to verify their email — fire-and-forget so a failure here
   //    never fails signup.
-  sendEmailVerification(user).catch(() => {});
+  sendEmailVerification(user).catch(() => { });
 
   return user.uid;
 }
@@ -90,4 +93,35 @@ export async function signOut(): Promise<void> {
  */
 export async function resetPassword(email: string): Promise<void> {
   await sendPasswordResetEmail(auth, email.trim());
+}
+
+/**
+ * Permanently delete the signed-in user's account.
+ *
+ * Firebase requires a RECENT login to delete, so we re-authenticate with the
+ * current password first (this also proves it's really them).
+ *
+ * Order matters: delete the Firestore profile while still authenticated, THEN
+ * delete the Auth user — after that the client is signed out and can no longer
+ * write to Firestore.
+ *
+ * Throws Firebase errors ('auth/invalid-credential' for a wrong password,
+ * 'auth/requires-recent-login', network, etc.) — the screen maps them.
+ */
+export async function deleteAccount(password: string): Promise<void> {
+  const user = auth.currentUser;
+  if (!user || !user.email) {
+    throw { code: 'auth/no-current-user' };
+  }
+
+  // 1. Re-authenticate with the current password.
+  const credential = EmailAuthProvider.credential(user.email, password);
+  await reauthenticateWithCredential(user, credential);
+
+  // 2. Remove the Firestore profile while we still have auth.
+  //    (When profile photos land, also delete the Storage file here.)
+  await deleteUserProfile(user.uid);
+
+  // 3. Delete the Auth user. This signs them out automatically.
+  await deleteUser(user);
 }

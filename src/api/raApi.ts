@@ -1,5 +1,5 @@
 import { headers as OW_HEADERS, raAppBaseUrl } from './apiEndpoints';
-import { getAPIData } from './apiClient';
+import { getAPIData, postDataAPI } from './apiClient';
 
 // Public, read-only endpoint exposed by our companion WordPress plugin (ra-app/v1).
 // Occupied dates are public info (already on the site's own calendar) → no secret needed.
@@ -109,4 +109,46 @@ export async function getReviewsAPI(): Promise<ReviewsMap | null> {
         return res.data as ReviewsMap;
     }
     return null;
+}
+
+////////////////////////////////////////////
+export type EnquiryInput = {
+    name: string;
+    email: string;
+    phone?: string;
+    property?: string;
+    message: string;
+};
+
+/**
+ * Send a contact enquiry to the WP plugin (ra-app/v1/enquiry), which emails
+ * the business + an acknowledgement to the guest.
+ * Returns the { success, message } envelope, or null on a network error
+ * (apiClient already shows a toast for that case).
+ */
+export async function sendEnquiryAPI(
+    input: EnquiryInput,
+): Promise<{ success: boolean; message: string } | null> {
+    // OW_HEADERS carries Content-Type: application/x-www-form-urlencoded (for the
+    // OWcal admin-ajax calls). But /enquiry is a wp-json REST endpoint and we send
+    // a JSON object — if that urlencoded Content-Type wins, WordPress parses the
+    // body as a form and every field arrives empty. So drop Content-Type from the
+    // WAF headers and let postDataAPI default to application/json.
+    const { 'Content-Type': _omit, ...wafHeaders } = OW_HEADERS;
+
+    const res = await postDataAPI({
+        url: `${raAppBaseUrl}/enquiry`,
+        data: {
+            name: input.name,
+            email: input.email,
+            phone: input.phone ?? '',
+            property: input.property ?? '',
+            message: input.message,
+            company: '', // honeypot — always empty from the app
+        },
+        headers: wafHeaders, // browser-like headers for the WAF, minus Content-Type
+        // ContentType defaults to 'application/json'
+    });
+    if (!res) return null;
+    return { success: !!res.success, message: res.message ?? '' };
 }

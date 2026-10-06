@@ -5,7 +5,7 @@ import { typography, radius, spacing, borderWidth } from '../../theme';
 import Text from '../Text/Text';
 import Icon, { IconName } from '../Icon/Icon';
 
-type Variant = 'primary' | 'outline';
+type Variant = 'primary' | 'outline' | 'destructive';
 type Size = 'md' | 'sm';
 
 type Props = {
@@ -30,8 +30,15 @@ const Button: React.FC<Props> = ({
     const isOutline = variant === 'outline';
     const isSmall = size === 'sm';
 
-    const bg = isOutline ? p.transparent : p.primary.main;
-    const textColor = isOutline ? p.text.primary : p.accent.light;
+    const isFilled = variant === 'primary';
+    const isDestructive = variant === 'destructive';
+    const hasBorder = variant === 'outline' || isDestructive;
+
+    // destructive = red outline; outline = neutral; primary = filled green.
+    const bg = isFilled ? p.primary.main : p.transparent;
+    const textColor = isDestructive ? p.error.main : isFilled ? p.accent.light : p.text.primary;
+    const borderColor = isDestructive ? p.error.main : p.text.primary;
+    const iconColor = isDestructive ? p.error.main : p.accent.main;
 
     const isDisabled = disabled || loading;   // can't press while loading
 
@@ -47,8 +54,9 @@ const Button: React.FC<Props> = ({
                 styles.base,
                 isSmall ? styles.sizeSm : styles.sizeMd,
                 {
-                    backgroundColor: bg, borderWidth: isOutline ? borderWidth.thin : 0,
-                    borderColor: isOutline ? p.text.primary : p.primary.main,
+                    backgroundColor: bg,
+                    borderWidth: hasBorder ? borderWidth.thin : 0,
+                    borderColor: borderColor,
                 },
                 fullWidth && { alignSelf: 'stretch' },
                 isDisabled && { opacity: 0.5 },
@@ -65,7 +73,7 @@ const Button: React.FC<Props> = ({
             </Text>
             {!loading && rightIcon && (
                 <View style={{ marginLeft: spacing.sm }}>
-                    <Icon name={rightIcon} size={isSmall ? 14 : 16} color={p.accent.main} />
+                    <Icon name={rightIcon} size={isSmall ? 14 : 16} color={iconColor} />
                 </View>
             )}
         </TouchableOpacity>

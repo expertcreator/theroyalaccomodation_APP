@@ -22,6 +22,7 @@ export type DrawerParamList = {
     [DRAWER_ROUTES.Contact]: undefined;
     [DRAWER_ROUTES.MyBookings]: undefined;
     [DRAWER_ROUTES.MyProfile]: undefined;
+    [DRAWER_ROUTES.Settings]: undefined;
 };
 
 export type RootStackParamList = {

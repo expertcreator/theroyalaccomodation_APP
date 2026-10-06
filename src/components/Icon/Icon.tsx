@@ -7,7 +7,7 @@ export type IconName =
     // Feather (UI icons)
     | 'back' | 'close' | 'menu' | 'share' | 'bookmark'
     | 'guests' | 'bedrooms' | 'bathrooms' | 'arrow-right' | 'chevron-right'
-    | 'plus' | 'minus' | 'search' | 'info' | 'alert'
+    | 'plus' | 'minus' | 'search' | 'info' | 'alert' | 'settings' | 'trash' | 'log-out'
     // MaterialDesignIcons (brand + amenities)
     | 'crown' | 'pool' | 'jacuzzi' | 'wifi' | 'parking'
     | 'fire' | 'dishwasher' | 'laundry' | 'dining' | 'tennis' | 'helipad'
@@ -49,6 +49,9 @@ const FEATHER_MAP: Partial<Record<IconName, FeatherName>> = {
     moon: 'moon',
     camera: 'camera',
     alert: 'alert-triangle',
+    settings: 'settings',
+    trash: 'trash-2',
+    'log-out': 'log-out',
 };
 
 // MaterialDesignIcons — icons Feather doesn't have.

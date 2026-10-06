@@ -4,11 +4,11 @@ import { DRAWER_ROUTES } from './routes';
 import { useTheme } from '../context/ThemeContext';
 import DrawerContent from '../components/Drawer/DrawerContent';
 import Home from '../screens/Home/Home';
-import PlaceholderScreen from '../screens/_Placeholder';
 import ThingsToDo from '../screens/ThingsToDo/ThingsToDo';
 import Contact from '../screens/Contact/Contact';
 import MyProfile from '../screens/MyProfile/MyProfile';
 import MyBookings from '../screens/MyBookings/MyBookings';
+import Settings from '../screens/Settings/Settings';
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
@@ -21,16 +21,18 @@ export default function DrawerNavigator() {
             screenOptions={{
                 headerShown: false,
                 drawerPosition: 'right',
+                swipeEnabled: false,
                 drawerType: 'front',
                 overlayColor: 'rgba(0,0,0,0.55)',           // dims the home screen behind
                 drawerStyle: { width: '84%', backgroundColor: theme.palette.primary.dark },
             }}
         >
-            <Drawer.Screen name={DRAWER_ROUTES.Home} component={Home} />
+            <Drawer.Screen name={DRAWER_ROUTES.Home} component={Home} options={{ swipeEnabled: true }} />
             <Drawer.Screen name={DRAWER_ROUTES.ThingsToDo} component={ThingsToDo} />
             <Drawer.Screen name={DRAWER_ROUTES.Contact} component={Contact} />
             <Drawer.Screen name={DRAWER_ROUTES.MyBookings} component={MyBookings} />
             <Drawer.Screen name={DRAWER_ROUTES.MyProfile} component={MyProfile} />
+            <Drawer.Screen name={DRAWER_ROUTES.Settings} component={Settings} />
         </Drawer.Navigator>
     );
 }

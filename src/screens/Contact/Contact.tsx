@@ -20,10 +20,18 @@ import { styles } from './styles';
 import Input from '../../components/Input/Input';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { showToast } from '../../utils/ToastNotifier';
+import { sendEnquiryAPI } from '../../api/raApi';
 
 type Nav = DrawerNavigationProp<DrawerParamList>;
 
-const PROPERTY_OPTIONS = ['Not specified', 'Luxury Ascot Retreat', 'Royal Windsor Residence'];
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PROPERTY_OPTIONS = ['Not specified', 'Luxury Ascot Mansion', 'Royal Windsor Stately Home'];
+
+interface IFormErrors {
+    name?: string;
+    email?: string;
+    message?: string
+}
 
 const Contact: React.FC = () => {
     const navigation = useNavigation<Nav>();
@@ -36,7 +44,8 @@ const Contact: React.FC = () => {
     const [email, setEmail] = useState('');
     const [property, setProperty] = useState(PROPERTY_OPTIONS[0]);
     const [message, setMessage] = useState('');
-    const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+    const [errors, setErrors] = useState<IFormErrors>({});
+    const [submitting, setSubmitting] = useState(false);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -46,20 +55,37 @@ const Contact: React.FC = () => {
         }, [])
     );
 
-    // Static-data phase: just show a confirmation. Later this calls Firebase / email.
-    const submitEnquiry = () => {
-        // Check required fields; collect messages.
-        const nextErrors: { name?: string; email?: string } = {};
+    const submitEnquiry = async () => {
+        const nextErrors: { name?: string; email?: string; message?: string } = {};
         if (!name.trim()) nextErrors.name = 'Please enter your name';
         if (!email.trim()) nextErrors.email = 'Please enter your email address';
+        else if (!EMAIL_RE.test(email.trim())) nextErrors.email = 'Please enter a valid email';
+        if (!message.trim()) nextErrors.message = 'Please enter a message';
 
         setErrors(nextErrors);
+        if (nextErrors.name || nextErrors.email || nextErrors.message) return;
 
-        // Stop if anything is missing.
-        if (nextErrors.name || nextErrors.email) return;
+        try {
+            setSubmitting(true);
+            const res = await sendEnquiryAPI({
+                name: name.trim(),
+                email: email.trim(),
+                phone: phone.trim(),
+                property,
+                message: message.trim(),
+            });
 
-        showToast('success', 'Enquiry received — we\'ll be in touch');
-        resetForm();  // clear the form after sending
+            if (res?.success) {
+                showToast('success', "Enquiry received — we'll be in touch");
+                resetForm();
+            } else if (res) {
+                // non-2xx: server told us why (e.g. rate limited, bad input)
+                showToast('warning', res.message || 'Could not send your enquiry.');
+            }
+            // res === null → network error, already toasted by apiClient
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const resetForm = () => {
@@ -165,10 +191,17 @@ const Contact: React.FC = () => {
                             error={errors.email}
                         />
                         <Select label="INTERESTED PROPERTY" value={property} options={PROPERTY_OPTIONS} onSelect={setProperty} />
-                        <Input label="MESSAGE / REQUIREMENTS" value={message} onChangeText={setMessage} placeholder="Your dates, questions or any special requests..." multiline />
+                        <Input
+                            label="MESSAGE / REQUIREMENTS"
+                            value={message}
+                            onChangeText={(t) => { setMessage(t); if (errors.message) setErrors((e) => ({ ...e, message: undefined })); }}
+                            placeholder="Your dates, questions or any special requests..."
+                            error={errors.message}
+                            multiline
+                        />
 
                         <View style={{ marginTop: spacing.sm }}>
-                            <Button title="Send Enquiry" rightIcon="arrow-right" onPress={submitEnquiry} />
+                            <Button title="Send Enquiry" rightIcon="arrow-right" onPress={submitEnquiry} loading={submitting} />
                         </View>
                     </View>
 

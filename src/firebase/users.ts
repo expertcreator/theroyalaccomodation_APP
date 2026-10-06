@@ -4,6 +4,7 @@ import {
     doc,
     getDoc,
     setDoc,
+    deleteDoc,
     serverTimestamp,
 } from '@react-native-firebase/firestore';
 import { db } from './config';
@@ -84,4 +85,11 @@ export async function updateUserProfile(
         { ...changes, updatedAt: serverTimestamp() },
         { merge: true },
     );
+}
+
+/**
+ * Permanently delete a user's profile document (used by account deletion).
+ */
+export async function deleteUserProfile(uid: string): Promise<void> {
+    await deleteDoc(userRef(uid));
 }

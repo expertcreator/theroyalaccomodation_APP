@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, ScrollView, Pressable, StyleSheet, Linking } from 'react-native';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import LinearGradient from 'react-native-linear-gradient';
@@ -12,6 +12,7 @@ import { CONTACT, PROPERTIES } from '../../constants/data';
 import { DRAWER_ROUTES, STACK_ROUTES } from '../../navigation/routes';
 import Text from '../Text/Text';
 import Icon from '../Icon/Icon';
+import ConfirmModal from '../Modals/ConfirmModal';
 
 type NavItem = { label: string; onPress: () => void; emphasized?: boolean; chevron?: boolean };
 
@@ -36,6 +37,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             ? [
                 { label: 'My Bookings', onPress: () => go(DRAWER_ROUTES.MyBookings), },
                 { label: 'My Profile', onPress: () => go(DRAWER_ROUTES.MyProfile) },
+                { label: 'Settings', onPress: () => go(DRAWER_ROUTES.Settings) },
                 { label: 'Contact', onPress: () => go(DRAWER_ROUTES.Contact) },
             ]
             : [
@@ -43,6 +45,14 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                 { label: 'Sign In', onPress: () => go(STACK_ROUTES.LoginRegister, { entry: 'drawer' }), chevron: true },
             ]),
     ];
+
+    const [showSignOutConfirm, setShowSignOutConfirm] = useState<boolean>(false);
+
+    const onConfirmSignOut = async () => {
+        setShowSignOutConfirm(false);
+        nav.closeDrawer();   // close the drawer as we leave
+        await signOut();     // AuthContext clears state → drops to guest
+    };
 
     return (
         <View style={[styles.root, { backgroundColor: p.primary.dark }]}>
@@ -110,7 +120,7 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                             <Text style={[typography.overline, { color: p.accent.main, marginBottom: spacing.xxs }]}>Account</Text>
                             <Text style={[typography.label, { color: CREAM }]}>{user?.name}</Text>
                         </View>
-                        <Pressable onPress={() => signOut()}>
+                        <Pressable onPress={() => setShowSignOutConfirm(true)}>
                             <Text style={[typography.caption, { color: white(0.5), textDecorationLine: 'underline' }]}>Sign out</Text>
                         </Pressable>
                     </View>
@@ -133,6 +143,16 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                     </Pressable>
                 </View>
             </View>
+
+            <ConfirmModal
+                visible={showSignOutConfirm}
+                title="Sign Out?"
+                message="You can sign back in anytime to manage your bookings."
+                cancelBtnText="Cancel"
+                confirmBtnText="Sign Out"
+                onCancel={() => setShowSignOutConfirm(false)}
+                onConfirm={onConfirmSignOut}
+            />
         </View>
     );
 };
