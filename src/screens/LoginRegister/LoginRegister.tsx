@@ -22,11 +22,10 @@ import StaySummary from './components/StaySummary';
 import { styles } from './styles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { showToast } from '../../utils/ToastNotifier';
+import { isValidEmail } from '../../utils/validation';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.LoginRegister>;
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type Mode = 'login' | 'register';
 type Errors = { firstName?: string; lastName?: string; email?: string; country?: string; password?: string };
@@ -35,7 +34,7 @@ const LoginRegister: React.FC = () => {
   const navigation = useNavigation<Nav>();
   const route = useRoute<ScreenRoute>();
   const { theme } = useTheme();
-  const { signIn, signUp, resetPassword } = useAuth();
+  const { signIn, signUp } = useAuth();
   const p = theme.palette;
 
   // Entry context — booking shows the "Your Stay" card and returns to Payment.
@@ -64,7 +63,7 @@ const LoginRegister: React.FC = () => {
       if (!country.trim()) next.country = 'Please enter your country';
     }
     if (!email.trim()) next.email = 'Please enter your email';
-    else if (!EMAIL_RE.test(email.trim())) next.email = 'Please enter a valid email';
+    else if (!isValidEmail(email)) next.email = 'Please enter a valid email';
     if (!password) next.password = 'Please enter your password';
     else if (password.length < 6) next.password = 'Password must be at least 6 characters';
     setErrors(next);
@@ -73,17 +72,7 @@ const LoginRegister: React.FC = () => {
 
   // Send a password-reset email. Needs a valid email in the field first.
   const onForgotPassword = async () => {
-    const mail = email.trim();
-    if (!mail || !EMAIL_RE.test(mail)) {
-      setErrors((e) => ({ ...e, email: 'Enter your email first to reset your password' }));
-      return;
-    }
-    try {
-      await resetPassword(mail);
-      showToast('success', 'Password reset email sent. Check your inbox.');
-    } catch (err) {
-      showToast('danger', authErrorMessage(err));
-    }
+    navigation.navigate(STACK_ROUTES.ForgotPassword)
   };
 
   const onSubmit = async () => {

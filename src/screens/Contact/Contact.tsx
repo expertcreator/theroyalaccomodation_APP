@@ -21,10 +21,10 @@ import Input from '../../components/Input/Input';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { showToast } from '../../utils/ToastNotifier';
 import { sendEnquiryAPI } from '../../api/raApi';
+import { isValidEmail } from '../../utils/validation';
 
 type Nav = DrawerNavigationProp<DrawerParamList>;
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PROPERTY_OPTIONS = ['Not specified', 'Luxury Ascot Mansion', 'Royal Windsor Stately Home'];
 
 interface IFormErrors {
@@ -59,7 +59,7 @@ const Contact: React.FC = () => {
         const nextErrors: { name?: string; email?: string; message?: string } = {};
         if (!name.trim()) nextErrors.name = 'Please enter your name';
         if (!email.trim()) nextErrors.email = 'Please enter your email address';
-        else if (!EMAIL_RE.test(email.trim())) nextErrors.email = 'Please enter a valid email';
+        else if (!isValidEmail(email)) nextErrors.email = 'Please enter a valid email';
         if (!message.trim()) nextErrors.message = 'Please enter a message';
 
         setErrors(nextErrors);

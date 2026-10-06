@@ -37,6 +37,7 @@ export type RootStackParamList = {
     [STACK_ROUTES.PaymentReview]: BookingDraft;
     // total = the real amount charged, carried from Payment → BookingConfirmed. ← CHANGED
     [STACK_ROUTES.BookingConfirmed]: BookingDraft & { bookingRef: string; total: number };
+    [STACK_ROUTES.ForgotPassword]: undefined;
 };
 
 // Makes useNavigation()/useRoute() typed everywhere without passing generics

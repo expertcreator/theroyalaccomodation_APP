@@ -10,6 +10,7 @@ export const STACK_ROUTES = {
     LoginRegister: 'LoginRegister',
     PaymentReview: 'PaymentReview',
     BookingConfirmed: 'BookingConfirmed',
+    ForgotPassword: 'ForgotPassword',
 } as const;
 
 export const DRAWER_ROUTES = {
