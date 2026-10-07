@@ -25,8 +25,16 @@ import { showToast } from '../../utils/ToastNotifier';
 import { moderateScale } from 'react-native-size-matters';
 import { COUNTRIES } from '../../constants/countries';
 import Select from '../../components/Dropdown/Select';
+import { formatPhoneDisplay, isValidPhone, toE164 } from '../../utils/phone';
 
 type Nav = DrawerNavigationProp<DrawerParamList>;
+
+interface IFormErros {
+    firstName?: string;
+    lastName?: string;
+    country?: string;
+    phone?: string
+}
 
 const MyProfile: React.FC = () => {
     const navigation = useNavigation<Nav>();
@@ -39,7 +47,7 @@ const MyProfile: React.FC = () => {
     // Editable fields, seeded from the live profile.
     const [firstName, setFirstName] = useState(profile?.firstName ?? '');
     const [lastName, setLastName] = useState(profile?.lastName ?? '');
-    const [phone, setPhone] = useState(profile?.phone ?? '');
+    const [phone, setPhone] = useState(formatPhoneDisplay(profile?.phone ?? '', addr?.country ?? 'United Kingdom'));
     const [line1, setLine1] = useState(addr?.line1 ?? '');
     const [line2, setLine2] = useState(addr?.line2 ?? '');
     const [city, setCity] = useState(addr?.city ?? '');
@@ -47,7 +55,7 @@ const MyProfile: React.FC = () => {
     const [postCode, setPostCode] = useState(addr?.postCode ?? '');
     const [country, setCountry] = useState(addr?.country ?? 'United Kingdom');
 
-    const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; country?: string }>({});
+    const [errors, setErrors] = useState<IFormErros>({});
     const [saving, setSaving] = useState(false);
     const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
@@ -61,7 +69,7 @@ const MyProfile: React.FC = () => {
     const isDirty =
         firstName !== (profile?.firstName ?? '') ||
         lastName !== (profile?.lastName ?? '') ||
-        phone !== (profile?.phone ?? '') ||
+        toE164(phone, country) !== (profile?.phone ?? null) ||
         line1 !== (addr?.line1 ?? '') ||
         line2 !== (addr?.line2 ?? '') ||
         city !== (addr?.city ?? '') ||
@@ -88,13 +96,14 @@ const MyProfile: React.FC = () => {
         if (!firstName.trim()) { setErrors({ firstName: 'Please enter your first name' }); return; }
         if (!lastName.trim()) { setErrors({ lastName: 'Please enter your last name' }); return; }
         if (!country.trim()) { setErrors({ country: 'Please enter your country' }); return; }
+        if (phone.trim() && !isValidPhone(phone, country)) { setErrors({ phone: 'Please enter a valid phone number' }); return; }
 
         try {
             setSaving(true);
             await updateProfile({
                 firstName: firstName.trim(),
                 lastName: lastName.trim(),
-                phone: phone.trim() || null,
+                phone: toE164(phone, country),
                 address: {
                     line1: line1.trim() || null,
                     line2: line2.trim() || null,
@@ -122,7 +131,7 @@ const MyProfile: React.FC = () => {
     const resetToProfile = () => {
         setFirstName(profile?.firstName ?? '');
         setLastName(profile?.lastName ?? '');
-        setPhone(profile?.phone ?? '');
+        setPhone(formatPhoneDisplay(profile?.phone ?? '', addr?.country ?? 'United Kingdom'));
         setLine1(addr?.line1 ?? '');
         setLine2(addr?.line2 ?? '');
         setCity(addr?.city ?? '');
@@ -277,9 +286,11 @@ const MyProfile: React.FC = () => {
                         <Input
                             label="PHONE"
                             value={phone}
-                            onChangeText={setPhone}
+                            onChangeText={(t) => { setPhone(t); if (errors.phone) setErrors((e) => ({ ...e, phone: undefined })); }}
+                            onBlur={() => setPhone((cur) => formatPhoneDisplay(cur, country))}
                             placeholder="e.g. +44 7700 900000"
                             keyboardType="phone-pad"
+                            error={errors.phone}
                         />
                     </View>
                 </View>
@@ -299,7 +310,13 @@ const MyProfile: React.FC = () => {
                             value={country}
                             options={COUNTRIES}
                             searchable
-                            onSelect={(c) => { setCountry(c); if (errors.country) setErrors((e) => ({ ...e, country: undefined })); }}
+                            onSelect={(c) => {
+                                // Lock phone to international (+..) using the OLD country before switching,
+                                // so a half-typed national number isn't re-read under the new country.
+                                setPhone((cur) => formatPhoneDisplay(cur, country));
+                                setCountry(c);
+                                if (errors.country) setErrors((e) => ({ ...e, country: undefined }));
+                            }}
                             error={errors.country}
                         />
                     </View>

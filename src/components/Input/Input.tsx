@@ -17,7 +17,7 @@ type Props = TextInputProps & {
 };
 
 const Input: React.FC<Props> = ({
-    label, labelRight, value, onChangeText, error, rightIcon, onRightIconPress, multiline, style, ...rest
+    label, labelRight, value, onChangeText, error, rightIcon, onRightIconPress, multiline, style, onBlur, ...rest
 }) => {
     const { theme } = useTheme();
     const p = theme.palette;
@@ -50,7 +50,7 @@ const Input: React.FC<Props> = ({
                     onChangeText={onChangeText}
                     multiline={multiline}
                     onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
+                    onBlur={(e) => { setFocused(false); onBlur?.(e); }}
                     placeholderTextColor={p.text.placeHolder}
                     style={[styles.input, typography.bodySmall, { color: p.text.primary }, multiline && styles.multiline, style]}
                     {...rest}

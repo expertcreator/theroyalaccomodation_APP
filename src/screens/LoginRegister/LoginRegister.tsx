@@ -25,12 +25,13 @@ import { showToast } from '../../utils/ToastNotifier';
 import { isValidEmail } from '../../utils/validation';
 import Select from '../../components/Dropdown/Select';
 import { COUNTRIES } from '../../constants/countries';
+import { formatPhoneDisplay, isValidPhone, toE164 } from '../../utils/phone';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.LoginRegister>;
 
 type Mode = 'login' | 'register';
-type Errors = { firstName?: string; lastName?: string; email?: string; country?: string; password?: string };
+type Errors = { firstName?: string; lastName?: string; email?: string; country?: string; phone?: string; password?: string };
 
 const LoginRegister: React.FC = () => {
   const navigation = useNavigation<Nav>();
@@ -63,13 +64,15 @@ const LoginRegister: React.FC = () => {
       if (!firstName.trim()) next.firstName = 'Please enter your first name';
       if (!lastName.trim()) next.lastName = 'Please enter your last name';
       if (!country.trim()) next.country = 'Please enter your country';
+      // Phone is optional — validate only when something was entered.
+      if (phone.trim() && !isValidPhone(phone, country)) next.phone = 'Please enter a valid phone number';
     }
     if (!email.trim()) next.email = 'Please enter your email';
     else if (!isValidEmail(email)) next.email = 'Please enter a valid email';
     if (!password) next.password = 'Please enter your password';
     else if (password.length < 6) next.password = 'Password must be at least 6 characters';
     setErrors(next);
-    return !next.firstName && !next.lastName && !next.email && !next.country && !next.password;
+    return !next.firstName && !next.lastName && !next.email && !next.country && !next.phone && !next.password;
   };
 
   // Send a password-reset email. Needs a valid email in the field first.
@@ -89,7 +92,7 @@ const LoginRegister: React.FC = () => {
           firstName,
           lastName,
           email,
-          phone: phone.trim() || null,
+          phone: toE164(phone, country),
           country: country.trim() || 'United Kingdom',
           password,
         });
@@ -200,16 +203,24 @@ const LoginRegister: React.FC = () => {
                 <Input
                   label="PHONE"
                   value={phone}
-                  onChangeText={setPhone}
+                  onChangeText={(t) => { setPhone(t); if (errors.phone) clearError('phone'); }}
+                  onBlur={() => setPhone((cur) => formatPhoneDisplay(cur, country))}
                   placeholder="e.g. +44 7700 900000"
                   keyboardType="phone-pad"
+                  error={errors.phone}
                 />
                 <Select
                   label="COUNTRY"
                   value={country}
                   options={COUNTRIES}
                   searchable
-                  onSelect={(c) => { setCountry(c); if (errors.country) clearError('country'); }}
+                  onSelect={(c) => {
+                    // Lock phone to international (+..) using the OLD country before switching,
+                    // so a half-typed national number isn't re-read under the new country.
+                    setPhone((cur) => formatPhoneDisplay(cur, country));
+                    setCountry(c);
+                    if (errors.country) clearError('country');
+                  }}
                   error={errors.country}
                 />
               </>

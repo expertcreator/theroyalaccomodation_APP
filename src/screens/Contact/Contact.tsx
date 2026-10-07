@@ -22,6 +22,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { showToast } from '../../utils/ToastNotifier';
 import { sendEnquiryAPI } from '../../api/raApi';
 import { isValidEmail } from '../../utils/validation';
+import { formatPhoneDisplay } from '../../utils/phone';
 
 type Nav = DrawerNavigationProp<DrawerParamList>;
 
@@ -101,7 +102,7 @@ const Contact: React.FC = () => {
         navigation.goBack();
     }
 
-    const openMaps = () => Linking.openURL(CONTACT.mapsUrl).catch(() => { });
+    const openMaps = (url: string) => Linking.openURL(url).catch(() => { });
 
     return (
         <View style={[styles.container, { backgroundColor: p.background.default }]}>
@@ -122,7 +123,7 @@ const Contact: React.FC = () => {
                 </View>
 
                 {/* Map card — tap to open maps */}
-                <TouchableOpacity activeOpacity={0.9} onPress={openMaps} style={[styles.mapCard, { borderColor: p.borderColor }]}>
+                <TouchableOpacity activeOpacity={0.9} onPress={() => openMaps(CONTACT.mapsUrl[0])} style={[styles.mapCard, { borderColor: p.borderColor }]}>
                     <Image source={imagePath.map} style={styles.mapImage} resizeMode="cover" />
                     <View style={[styles.mapTag, { backgroundColor: withAlpha(p.background.card, 0.95), borderColor: p.borderColor }]}>
                         <View style={[styles.mapTagDot, { backgroundColor: p.accent.main }]} />
@@ -150,7 +151,7 @@ const Contact: React.FC = () => {
 
                     <View style={[styles.rowDivider, { backgroundColor: p.divider }]} />
 
-                    <ContactRow icon="map-pin" label="ADDRESS" onPress={openMaps}>
+                    <ContactRow icon="map-pin" label="ADDRESS" onPress={() => openMaps(CONTACT.mapsUrl[1])}>
                         {CONTACT.address.map((line, i) => (
                             <Text key={i} style={[typography.bodySmall, { color: p.text.primary }]}>{line}</Text>
                         ))}
@@ -178,6 +179,7 @@ const Contact: React.FC = () => {
                             label="TELEPHONE NUMBER"
                             value={phone}
                             onChangeText={setPhone}
+                            onBlur={() => setPhone((cur) => formatPhoneDisplay(cur, 'United Kingdom'))}
                             placeholder="+44 7000 000000"
                             keyboardType="phone-pad"
                         />
