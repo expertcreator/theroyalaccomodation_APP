@@ -23,6 +23,8 @@ import ConfirmModal from '../../components/Modals/ConfirmModal';
 import { styles } from './styles';
 import { showToast } from '../../utils/ToastNotifier';
 import { moderateScale } from 'react-native-size-matters';
+import { COUNTRIES } from '../../constants/countries';
+import Select from '../../components/Dropdown/Select';
 
 type Nav = DrawerNavigationProp<DrawerParamList>;
 
@@ -292,11 +294,12 @@ const MyProfile: React.FC = () => {
                         <Input label="CITY" value={city} onChangeText={setCity} placeholder="e.g. London" />
                         <Input label="COUNTY" value={county} onChangeText={setCounty} placeholder="e.g. Greater London" />
                         <Input label="POST CODE" value={postCode} onChangeText={setPostCode} placeholder="e.g. SW1A 1AA" autoCapitalize="characters" />
-                        <Input
+                        <Select
                             label="COUNTRY"
                             value={country}
-                            onChangeText={(t) => { setCountry(t); if (errors.country) setErrors((e) => ({ ...e, country: undefined })); }}
-                            placeholder="e.g. United Kingdom"
+                            options={COUNTRIES}
+                            searchable
+                            onSelect={(c) => { setCountry(c); if (errors.country) setErrors((e) => ({ ...e, country: undefined })); }}
                             error={errors.country}
                         />
                     </View>

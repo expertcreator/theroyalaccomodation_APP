@@ -23,6 +23,8 @@ import { styles } from './styles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { showToast } from '../../utils/ToastNotifier';
 import { isValidEmail } from '../../utils/validation';
+import Select from '../../components/Dropdown/Select';
+import { COUNTRIES } from '../../constants/countries';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.LoginRegister>;
@@ -202,11 +204,12 @@ const LoginRegister: React.FC = () => {
                   placeholder="e.g. +44 7700 900000"
                   keyboardType="phone-pad"
                 />
-                <Input
+                <Select
                   label="COUNTRY"
                   value={country}
-                  onChangeText={(t) => { setCountry(t); if (errors.country) clearError('country'); }}
-                  placeholder="e.g. United Kingdom"
+                  options={COUNTRIES}
+                  searchable
+                  onSelect={(c) => { setCountry(c); if (errors.country) clearError('country'); }}
                   error={errors.country}
                 />
               </>
