@@ -3,7 +3,6 @@ import imagePath from './imagePath';
 import type { Property, Room, Attraction } from '../interfaces/property';
 import { toISO } from '../utils/date';
 import { AreaAttraction } from '../interfaces/attraction';
-import { Booking } from '../interfaces/booking';
 
 export const ASCOT_BASE_RATE = 1450;
 export const WINDSOR_BASE_RATE = 995;
@@ -197,33 +196,5 @@ export const AREA_ATTRACTIONS: AreaAttraction[] = [
         description: 'A popular family theme park with rides and attractions set in Berkshire parkland.',
         image: imagePath.thingsToDo.legoland,
         url: 'https://www.legoland.co.uk',
-    },
-];
-
-// Static demo bookings (placeholder). Real bookings come from Firestore later.
-export const BOOKINGS: Booking[] = [
-    {
-        accomId: 1225,
-        ref: 'RA-84029-WN',
-        propertyId: 'windsor',
-        status: 'upcoming',
-        checkIn: '2025-06-18',
-        checkOut: '2025-06-21',
-        adults: 4,
-        children: 0,
-        pets: 0,
-        totalPaid: 2985,   // Windsor £995 × 3 nights
-    },
-    {
-        accomId: 1680,
-        ref: 'RA-61904-AS',
-        propertyId: 'ascot',
-        status: 'past',
-        checkIn: '2025-05-12',
-        checkOut: '2025-05-15',
-        adults: 2,
-        children: 0,
-        pets: 0,
-        totalPaid: 3750,   // Ascot £1,250 × 3 nights
     },
 ];

@@ -4,7 +4,7 @@ import { useTheme } from '../../../context/ThemeContext';
 import { typography, spacing } from '../../../theme';
 import { withAlpha } from '../../../utils/color';
 import { formatGBP } from '../../../utils/format';
-import { formatDateRange, nightsBetween } from '../../../utils/date';
+import { formatDateRange, fromISO, nightsBetween } from '../../../utils/date';
 import { getPropertyById } from '../../../constants/data';
 import Text from '../../../components/Text/Text';
 import Icon from '../../../components/Icon/Icon';
@@ -18,8 +18,8 @@ const BookingCard: React.FC<Props> = ({ booking, onViewSummary }) => {
     const p = theme.palette;
 
     const property = getPropertyById(booking.propertyId);
-    const checkIn = new Date(booking.checkIn);
-    const checkOut = new Date(booking.checkOut);
+    const checkIn = fromISO(booking.checkIn);
+    const checkOut = fromISO(booking.checkOut);
     const nights = nightsBetween(checkIn, checkOut);
     const guests = booking.adults + booking.children;
     const isUpcoming = booking.status === 'upcoming';
@@ -27,7 +27,9 @@ const BookingCard: React.FC<Props> = ({ booking, onViewSummary }) => {
     // Status-driven badge + footer copy.
     const badgeColor = isUpcoming ? p.success.main : p.text.placeHolder;
     const badgeLabel = isUpcoming ? 'UPCOMING' : 'PAST STAY';
-    const footerText = isUpcoming ? 'Payment settled' : 'Completed stay';
+    // Upcoming stays show whether anything is still owed.
+    const upcomingText = booking.amountToPay > 0 ? `Balance due ${formatGBP(booking.amountToPay)}` : 'Payment settled';
+    const footerText = isUpcoming ? upcomingText : 'Completed stay';
 
     return (
         <View style={[styles.card, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
@@ -56,18 +58,20 @@ const BookingCard: React.FC<Props> = ({ booking, onViewSummary }) => {
                     <View style={[styles.metaDivider, { backgroundColor: p.divider }]} />
 
                     <View style={styles.metaRow}>
-                        <View>
+                        {/* Dates on their own line so long ranges ("16–18 Jun 2027") leave room for the total.
+                            flex: 1 lets this side shrink/wrap; the total never gets pushed off the card. */}
+                        <View style={{ flex: 1, marginRight: spacing.sm }}>
                             <Text style={[typography.caption, { color: p.text.primary }]}>
-                                {formatDateRange(checkIn, checkOut)} · {nights} {nights === 1 ? 'Night' : 'Nights'}
+                                {formatDateRange(checkIn, checkOut)}
                             </Text>
                             <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
-                                {guests} {guests === 1 ? 'guest' : 'guests'}
+                                {nights} {nights === 1 ? 'Night' : 'Nights'} · {guests} {guests === 1 ? 'guest' : 'guests'}
                             </Text>
                         </View>
-                        <View style={{ alignItems: 'flex-end' }}>
+                        <View style={{ alignItems: 'flex-end', flexShrink: 0 }}>
                             <Text style={[typography.overline, { color: p.text.placeHolder }]}>TOTAL PAID</Text>
                             <Text style={[typography.title, { color: p.text.primary, marginTop: spacing.xxs }]}>
-                                {formatGBP(booking.totalPaid)}
+                                {formatGBP(booking.paid)}
                             </Text>
                         </View>
                     </View>

@@ -4,7 +4,7 @@ import { moderateScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
 import { typography, spacing, radius, borderWidth } from '../../theme';
 import { formatGBP } from '../../utils/format';
-import { formatDateRange, nightsBetween } from '../../utils/date';
+import { formatDateRange, fromISO, nightsBetween } from '../../utils/date';
 import { getPropertyById } from '../../constants/data';
 import Text from '../Text/Text';
 import Icon from '../Icon/Icon';
@@ -24,11 +24,26 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
     if (!booking) return null;
 
     const property = getPropertyById(booking.propertyId);
-    const checkIn = new Date(booking.checkIn);
-    const checkOut = new Date(booking.checkOut);
+    const checkIn = fromISO(booking.checkIn);
+    const checkOut = fromISO(booking.checkOut);
     const nights = nightsBetween(checkIn, checkOut);
     const guests = booking.adults + booking.children;
     const isUpcoming = booking.status === 'upcoming';
+    const pets = booking.pets ?? 0; // OWcal doesn't send pets yet
+    // OWcal 'pending' = waiting for the owner to confirm. Every other status the
+    // guest can see ('new', 'confirmed') is a real, booked stay.
+    const awaitingConfirmation = isUpcoming && booking.owStatus === 'pending';
+
+    // Status line under the property name.
+    let statusText = '● Completed';
+    let statusColor = p.text.placeHolder;
+    if (awaitingConfirmation) {
+        statusText = '● Awaiting confirmation';
+        statusColor = p.warning.main;
+    } else if (isUpcoming) {
+        statusText = '● Confirmed';
+        statusColor = p.success.main;
+    }
 
     const Row = ({ label, value }: { label: string; value: string }) => (
         <View style={styles.row}>
@@ -57,7 +72,7 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
                     </View>
 
                     <Text style={[typography.overline, { color: p.accent.dark, textAlign: 'center', marginTop: spacing.md }]}>
-                        {isUpcoming ? 'RESERVATION CONFIRMED' : 'COMPLETED STAY'}
+                        {awaitingConfirmation ? 'RESERVATION RECEIVED' : isUpcoming ? 'RESERVATION CONFIRMED' : 'COMPLETED STAY'}
                     </Text>
                     <Text style={[typography.h2, { color: p.text.primary, textAlign: 'center', marginTop: spacing.xxs }]}>
                         Booking Summary
@@ -74,8 +89,8 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
                             <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
                                 {property.location}, Berkshire
                             </Text>
-                            <Text style={[typography.caption, { color: isUpcoming ? p.success.main : p.text.placeHolder, marginTop: spacing.xxs }]}>
-                                {isUpcoming ? '● Confirmed & Guaranteed' : '● Completed'}
+                            <Text style={[typography.caption, { color: statusColor, marginTop: spacing.xxs }]}>
+                                {statusText}
                             </Text>
                         </View>
                     </View>
@@ -83,12 +98,16 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
                     {/* Rows */}
                     <Row label="Dates of stay" value={`${formatDateRange(checkIn, checkOut)} · ${nights} ${nights === 1 ? 'night' : 'nights'}`} />
                     <Row label="Guests" value={`${guests} ${guests === 1 ? 'guest' : 'guests'}`} />
-                    {booking.pets > 0 && (
-                        <Row label="Pets" value={`${booking.pets} ${booking.pets === 1 ? 'pet' : 'pets'}`} />
+                    {pets > 0 && (
+                        <Row label="Pets" value={`${pets} ${pets === 1 ? 'pet' : 'pets'}`} />
+                    )}
+                    {/* Only shown when part of the stay is still unpaid */}
+                    {booking.amountToPay > 0 && (
+                        <Row label="Balance due" value={formatGBP(booking.amountToPay)} />
                     )}
                     <View style={[styles.totalRow, { borderTopColor: p.divider }]}>
                         <Text style={[typography.label, { color: p.text.primary }]}>Total Paid (VAT incl.)</Text>
-                        <Text style={[typography.h2, { color: p.text.primary }]}>{formatGBP(booking.totalPaid)}</Text>
+                        <Text style={[typography.h2, { color: p.text.primary }]}>{formatGBP(booking.paid)}</Text>
                     </View>
 
                     {/* Actions */}

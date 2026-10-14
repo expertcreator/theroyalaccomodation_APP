@@ -12,6 +12,12 @@ const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'S
 export const toISO = (d: Date): string =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
+// 'YYYY-MM-DD' → local Date. (new Date('YYYY-MM-DD') is read as UTC and can show the previous day.)
+export const fromISO = (iso: string): Date => {
+    const [year, month, day] = iso.split('-').map(Number);
+    return new Date(year, month - 1, day);
+};
+
 // Strip the time part so day comparisons are clean.
 export const startOfDay = (d: Date): Date => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
@@ -50,10 +56,20 @@ export const buildMonthGrid = (year: number, month: number): (Date | null)[] => 
 
 export const formatMonthShort = (d: Date): string => MONTHS_SHORT[d.getMonth()];
 
-// "18–21 Jun" (same month) or "30 Jun – 2 Jul" (spanning months)
+// "18–21 Jun" (same month) or "30 Jun – 2 Jul" (spanning months).
+// Adds the year when the stay isn't this year: "16–18 Jun 2027", "30 Dec 2026 – 2 Jan 2027".
 export const formatDateRange = (a: Date, b: Date): string => {
-    const sameMonth = a.getMonth() === b.getMonth();
+    const sameYear = a.getFullYear() === b.getFullYear();
+    const sameMonth = sameYear && a.getMonth() === b.getMonth();
+
+    // Stay crosses New Year — show both years so it's never ambiguous.
+    if (!sameYear) {
+        return `${a.getDate()} ${formatMonthShort(a)} ${a.getFullYear()} – ${b.getDate()} ${formatMonthShort(b)} ${b.getFullYear()}`;
+    }
+
+    // Only add the year when it isn't the current year.
+    const year = a.getFullYear() !== new Date().getFullYear() ? ` ${a.getFullYear()}` : '';
     return sameMonth
-        ? `${a.getDate()}–${b.getDate()} ${formatMonthShort(a)}`
-        : `${a.getDate()} ${formatMonthShort(a)} – ${b.getDate()} ${formatMonthShort(b)}`;
+        ? `${a.getDate()}–${b.getDate()} ${formatMonthShort(a)}${year}`
+        : `${a.getDate()} ${formatMonthShort(a)} – ${b.getDate()} ${formatMonthShort(b)}${year}`;
 };
