@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint *)",
+      "Bash(npm test *)",
+      "Bash(npx tsc --noEmit *)",
+      "Bash(npx jest *)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(*.env)",
+      "Read(!.env.example)",
+      "Read(*.keystore)",
+      "Read(*.jks)",
+      "Read(key.properties)",
+      "Read(keystore.properties)",
+      "Read(secrets.properties)",
+      "Read(local.properties)",
+      "Read(*.p12)",
+      "Read(*.p8)",
+      "Read(*.mobileprovision)",
+      "Read(*.pem)",
+      "Read(*.key)",
+      "Read(google-services.json)",
+      "Read(GoogleService-Info.plist)",
+      "Read(*service-account*.json)",
+      "Read(*serviceAccount*.json)",
+      "Read(credentials.json)",
+      "Read(sentry.properties)",
+      "Read(.sentryclirc)",
+      "Read(secrets/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.config/gh/**)",
+      "Read(~/.netrc)",
+      "Read(~/.npmrc)",
+      "Read(~/.gradle/gradle.properties)",
+      "Read(~/.android/*.keystore)",
+      "Bash(printenv *)",
+      "Bash(env)"
+    ]
+  }
+}

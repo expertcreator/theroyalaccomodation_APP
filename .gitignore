@@ -91,3 +91,15 @@ vendor/bundle/
 
 structure.txt
 src/constants/stripe.ts
+
+# Firebase CLI logs and deploy cache
+firebase-debug*.log
+.firebase/
+# Firebase emulator logs (firestore-debug.log, ui-debug.log, …)
+*-debug.log
+
+# Claude Code — personal settings (the shared .claude/settings.json is committed)
+.claude/settings.local.json
+
+# VS Code React Native extension cache
+.vscode/.react/

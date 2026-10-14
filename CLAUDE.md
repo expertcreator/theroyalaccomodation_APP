@@ -1,0 +1,143 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+React Native 0.87 app (New Architecture, Hermes, TypeScript) for booking two luxury holiday homes — Ascot and Windsor — run by The Royal Accommodation. There is no app-specific server: the app talks directly to the client's WordPress site (theroyalaccommodation.com) and to Firebase.
+
+Known bugs and deferred fixes are tracked in `KNOWN_ISSUES.md` — check it before touching an affected area, and tick items off when fixed.
+
+## Commands
+
+Package manager is Yarn (`yarn.lock`); Node >= 22.11.
+
+```bash
+yarn start                      # Metro
+yarn android                    # build + run Android
+yarn fast-run                   # Android, active arch only (faster)
+yarn connect-run                # adb reverse 8081, then run Android on a device
+yarn ios                        # build + run iOS
+cd ios && bundle install && bundle exec pod install   # after cloning or changing native deps
+npx tsc --noEmit                # typecheck
+yarn android-build              # release APK
+yarn android-app-bundle         # release AAB
+yarn reset-gradle               # nuke Gradle caches when Android builds get wedged
+yarn make-patch <pkg>           # regenerate a patch-package patch after editing node_modules
+npm --prefix functions run build                                   # compile Cloud Functions (functions/)
+firebase deploy --only functions --project the-royal-accommodation # deploy Cloud Functions
+firebase functions:secrets:set <NAME>                              # store a server secret (the user runs this)
+```
+
+Tooling state:
+- `yarn lint` fails — `@react-native/eslint-config` is installed but there is no ESLint config file in the repo.
+- `yarn test` fails — the only test (`__tests__/App.test.tsx`) renders `<App />` and Jest isn't set up to transform/mock the native modules (gesture-handler, Firebase, Stripe). Single test, once working: `yarn jest __tests__/App.test.tsx -t "renders correctly"`.
+- `tsc` has one known error: no type declarations for `@sominaththore/react-native-custom-status-bar`.
+
+## Local setup gotchas
+
+- `src/constants/stripe.ts` is **gitignored** but imported by `App.tsx`; a fresh clone must create it: `export const STRIPE_PUBLISHABLE_KEY = 'pk_test_...';`. The Stripe secret key must never live in the app (intended to be Cloud-Function-only).
+- Firebase is configured natively (`android/app/google-services.json`, `ios/TheRoyalAccommodation/GoogleService-Info.plist`); `src/firebase/config.ts` just calls `getApp()` — no `initializeApp` in JS.
+- Android release signing reads `storeFile`/`storePassword`/`keyAlias`/`keyPassword` from `android/local.properties`.
+- `patches/` is applied on `postinstall` (patch-package). The custom-status-bar patch rewrites the component to use safe-area insets; don't upgrade those packages without re-checking the patches.
+- `ios/Podfile` uses `use_frameworks! :linkage => :dynamic` (required by RN Firebase) and explicitly links `MobileCoreServices` for `RNImageCropPicker`.
+
+## Architecture
+
+### App shell and splash
+`App.tsx` nests providers: GestureHandler → KeyboardProvider → SafeArea → Theme → Auth → Toast → Stripe → Rates → Reviews → NavigationContainer. The native splash (`react-native-splash-view`) stays up until `RootNavigator` sees both `useRates().ready` and `!useAuth().initializing`, then calls `hideSplash()`. Anything that delays either of those delays app start.
+
+### Navigation
+- `src/navigation/routes.ts` holds route-name constants (`STACK_ROUTES`, `DRAWER_ROUTES`) — use them, never string literals.
+- `types.ts` keys the param lists off those constants and augments `ReactNavigation.RootParamList` globally, so `useNavigation()` is typed everywhere.
+- Root is a native stack; the right-side drawer is nested as the `DrawerRoot` stack screen. Booking-flow screens (PropertyDetail, CheckAvailability, LoginRegister, PaymentReview, BookingConfirmed, ForgotPassword) live on the root stack. Drawer screens reach them via `navigation.getParent()` or by navigate bubbling.
+- `LoginRegister` takes `{ entry: 'drawer' }` or `{ entry: 'booking', booking: BookingDraft }`; booking entry shows the stay summary and continues to Payment.
+- `BookingDraft` (ISO `YYYY-MM-DD` strings + guest counts + `propertyId`) is passed screen-to-screen through route params; there is no booking store.
+
+### Static content vs live data
+- All property content (names, copy, images, amenities, attractions, contact info) is static in `src/constants/data.ts`, keyed by `PropertyId` (`'ascot' | 'windsor'`). Each property's `owAccomId` (Ascot `1680`, Windsor `1225`) bridges to the backend; live maps from the API are keyed by `String(owAccomId)`.
+- `RatesContext` / `ReviewContext` load cache-first from AsyncStorage, then refresh from the network; consumers fall back to static values (e.g. `property.baseRate`) when live data is missing.
+
+### Backend integrations (`src/api/`, `src/firebase/`)
+All HTTP goes through `apiClient.ts` (`getAPIData`, `postDataAPI`):
+- Uses `validateStatus: () => true`, so HTTP error responses come back as normal data. Only transport errors hit `catch`, which shows a toast and returns `null`.
+- Callers check the result shape and fall back; API helpers don't throw.
+
+Three backends:
+1. **RA App WordPress plugin** — `wp-json/ra-app/v1`, in `raApi.ts`. Our own plugin; see the "RA App API plugin" section below.
+2. **OWcal booking plugin** — `wp-admin/admin-ajax.php`, in `owcal.ts`.
+   - Bodies are form-urlencoded, built by hand (`encodeForm`).
+   - The real price comes from `ow_get_summary`, which returns HTML; `total`/`deposit` are read from the `data-charged-total-price-raw` and `data-charged-deposit-raw` attributes via regex.
+   - The pet fee is OWcal option id `1`.
+   - Don't send `admin_*` fields — they trip the site's WAF (403).
+3. **Firebase** — email/password Auth plus one Firestore doc per user at `users/{uid}` (shape in `src/interfaces/user.ts`).
+   - OWcal owns bookings; Firestore holds only the reusable profile.
+   - `email` is stored lowercased (to match OWcal's email-keyed customers).
+   - Phone is stored as E.164.
+   - Address is filled in later, not at signup.
+   - `AuthContext` wraps all auth actions and maps the profile to a convenience `user` view; show errors with `authErrorMessage()`.
+
+Requests to the WordPress site send browser-like headers (`OW_HEADERS` in `apiEndpoints.ts`) to get past its WAF. For JSON POSTs to `wp-json`, strip `OW_HEADERS`' urlencoded `Content-Type` first (see `sendEnquiryAPI`), otherwise WordPress parses the body as a form and the fields arrive empty.
+
+### RA App API plugin (`wordpress/ra-app-api/ra-app-api.php`)
+`wp-json/ra-app/v1` is served by our own WordPress plugin, "RA App API" (v1.3.0). Its source lives in this repo, but **the live copy is whatever is on the site**: the user updates it by pasting the file into WP admin → Plugins → Plugin File Editor. After any change, give the user the full file to paste and keep this copy in sync.
+
+It reads OWcal's DB tables and ACF data directly. Every route returns `{ success, message, data }`, and errors come back with a non-2xx status plus the same envelope. Without a local PHP install, syntax-check edits with the `php-parser` npm package.
+
+| Route | Access | Contract |
+|---|---|---|
+| `GET /availability?accomId&from&to` | public | `data.occupied`: booked nights in `[from, to)`. The check-out day stays free, which is the same convention as `hasOccupiedInRange`. Includes admin/iCal blocks and respects `accom_quantity`. Window capped at 400 nights. |
+| `GET /rates` | public | `{ [accomId]: { accomId, property, from, to, currency } }`: min/max of OWcal `type='accom'` nightly rate rows. |
+| `GET /reviews` | public | `{ [accomId]: { accomId, property, average, count, reviews[] } }` from the ACF `reviews` post type. Every known property is present, even with 0 reviews. |
+| `POST /enquiry` | public | JSON body: `name`, `email`, `message`, optional `phone` and `property`, and `company` (a honeypot; always send `''`). Rate-limited to 5 per IP per 10 min (429). Emails the business and sends the guest an acknowledgement. |
+| `POST /me/bookings` | `X-Firebase-Token` header | **Used by My Bookings** (`src/firebase/bookings.ts`). The plugin verifies the Firebase ID token itself: RS256 signature against Google's published certs (cached in a transient), `aud`/`iss` = project `the-royal-accommodation`, expiry, and `email_verified`. It returns the bookings for the **token's** email. Errors carry `data.code`: `invalid-token` (401), `email-not-verified` (403), `unavailable` (503). Sent with `Cache-Control: no-store`. |
+| `POST /my-bookings` | `x-ra-secret` header | Server-to-server only. Body `{ email }` → that OWcal customer's reservations: `ref, accomId, property, checkIn, checkOut, adults, children, status, paymentStatus, total, paid, amountToPay, currency, bookedOn` (no pets). Hides `waiting_payment`/`cancelled`/`multi_resa_pending`. |
+
+- The accom-ID → slug map (`1680 → ascot`, `1225 → windsor`) exists in both the plugin (`ra_app_accom_map()`) and `constants/data.ts`. Adding a property means updating both.
+- **OWcal data facts** (from its source, `database-actions/database-actions.php`; class `OwDataBaseActions`, tables prefixed `wp_ow_`):
+  - **Payments** live in the reservation row's `payments_logs` JSON: entries with `amount`, `refunded_amount`, `payment_method` and an optional `delayed`. This is the "Edit payments" list in OWcal admin. The plugin computes `paid` = Σ(amount − refunded), skipping delayed entries, and `amountToPay` = price − paid.
+  - OWcal's own `paid` / `amount_to_pay` columns are **not** reliable; don't use them.
+  - Multi-property bookings keep payments on a parent row (`parents_resa`, linked by `parent_id`).
+  - **Statuses:** `new` and `confirmed` are normal booked stays. This site doesn't require owner confirmation, so paid bookings are `new`. `pending` means awaiting the owner's confirmation. `waiting_payment`, `cancelled` and `multi_resa_pending` are hidden from the app.
+  - **Payment statuses:** `paid`, `not_fully_paid`, `bond_not_paid`, `unpaid`, `payment_delayed`.
+  - **Extras** (e.g. the "Pet Fee" option) are stored in the reservation's `options` column. They aren't returned to the app yet.
+- **Never call `/my-bookings` from the app.** The secret proves who is calling, not which user is asking: whoever holds it can read any email's bookings, and anything in the app bundle can be extracted. The app uses `/me/bookings` with its Firebase token instead. `RA_APP_SECRET` (in `wp-config.php` and Google Secret Manager) must never go into the JS bundle.
+- **The site's firewall blocks requests from Google Cloud IPs** (403 before WordPress runs), while requests from phones pass. That's why My Bookings verifies the token in the plugin rather than in a Cloud Function. Any future Cloud Function → WordPress call (e.g. Stripe webhook → create reservation) needs the host to allowlist that route or a fixed outgoing IP first. See `KNOWN_ISSUES.md`.
+
+### Firebase Cloud Functions (`functions/`)
+TypeScript, 2nd gen, region `europe-west2` (London, same as Firestore). Project `the-royal-accommodation`, configured in `.firebaserc` and `firebase.json`; the app's `getFunctions` uses the same region. **No functions are deployed yet**; this folder is the home for the Stripe work. Things learned while deploying:
+- The project sits under the Workspace organisation, which enforces "Domain restricted sharing". That blocks the `allUsers` invoker binding `firebase deploy` tries to add for callable functions. Workaround: in Cloud Run → service → Security, choose **"Allow public access"**. Callable functions still check Firebase auth themselves.
+- The build runs as `637799926068-compute@developer.gserviceaccount.com`, which needed **Cloud Build Service Account** granted manually. It's also the runtime identity; see GCF-1 in `KNOWN_ISSUES.md`.
+- Secrets live in Secret Manager (`defineSecret`). `RA_APP_SECRET` is already stored there.
+
+### Booking flow and what is still stubbed
+`CheckAvailability`:
+- `useOccupiedDates` fetches booked nights in 3-month chunks as the calendar pages, accumulating results.
+- The calendar enforces `pricing.minNights` and blocks ranges that span a booked night.
+- `useOwcalSummary` fetches the live price, debounced 400 ms and race-safe.
+- "Proceed" re-checks availability for the exact range, then routes to `LoginRegister` (signed out) or `Payment`.
+
+`Payment` fetches the price again and collects the card with Stripe `CardForm`, then goes to `BookingConfirmed`.
+
+Still stubbed:
+- **No real payment or reservation.** `Payment.onBookNow` makes up an `RA-…` reference. `ow_create_resa` and `ow_verify_coupon` are defined in `apiEndpoints.ts` but unused.
+- **Profile photos** are disabled ("coming soon"); `utils/photo.ts` and the Firebase `storage`/`functions` exports are unused.
+
+**My Bookings is live:** `MyBookings.tsx` → `loadMyBookings()` (`src/firebase/bookings.ts`) → plugin `/me/bookings`. Upcoming/past is worked out from `checkOut`. Unverified accounts see a "Verify your email" state; after verifying, the loader reloads the user and retries once with a fresh token.
+- `utils/pricing.ts` (`calculateStayPrice`) and `Property.occupiedDates` are legacy from before live OWcal pricing and availability.
+
+### Theming and UI conventions
+- `useTheme()` → `const p = theme.palette`. Every color comes from the palette; both light and dark palettes are defined in `src/theme/theme.ts` against `ITheme`. Use `withAlpha(hex, a)` for translucency instead of new hex values.
+  - Exception: the drawer (`DrawerContent`) intentionally hard-codes cream/green so it looks the same in both modes.
+- `typography.*` presets carry size/weight/tracking/case but **no color**; combine them in a style array with a palette color.
+- `spacing.*` is already scaled with `moderateScale` — don't wrap it again. `radius` and `borderWidth` are deliberately unscaled.
+- Use `components/Text/Text` rather than RN `Text`: it applies a `bodySmall` base and caps font scaling at 1.2.
+- Use `components/Icon/Icon` with semantic names. Add a new icon by extending the `IconName` union and mapping it in `FEATHER_MAP` or `MDI_MAP`.
+- Screen layout: `src/screens/<Name>/<Name>.tsx` + `styles.ts` (plain `StyleSheet` or `createStyles(theme)`) + a `components/` folder for screen-only pieces. Shared UI goes in `src/components/`.
+- Dark mode is saved in two places: AsyncStorage `darkMode`, and the native `ThemePreference` module (iOS `UserDefaults` via `ios/ThemePreference.swift` + `.m` bridge; Android `SharedPreferences` via `ThemePreferenceModule.kt`). The iOS `AppDelegate` reads it to set the window background before JS loads, so there's no white flash.
+- Feedback: `showToast(type, message)` from `utils/ToastNotifier`; confirmations use `ConfirmModal` / `PasswordPromptModal`.
+
+### Dates, phone, money
+- `src/utils/date.ts` works in local Y/M/D and builds `YYYY-MM-DD` by hand. Avoid `new Date('YYYY-MM-DD')`: it parses as UTC and shows the previous day for users west of UTC. Several existing screens still do this.
+- Phone is optional. Validate and normalize with `utils/phone.ts` (libphonenumber-js), using the region from the selected country name (`isoForCountry` in `constants/countries.ts`).
+- Format money with `formatGBP` (manual thousands grouping, since Hermes `Intl` support isn't relied on).
