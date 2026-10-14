@@ -12,5 +12,6 @@ const app = getApp();
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const functions = getFunctions(app);
+// Our Cloud Functions run in London — this must match the region in functions/src/.
+export const functions = getFunctions(app, 'europe-west2');
 export const storage = getStorage(app);

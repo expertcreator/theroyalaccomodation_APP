@@ -1,0 +1,11 @@
+# Compiled output
+lib/
+
+# Dependencies
+node_modules/
+
+# Local secrets for the emulator — never commit
+*.local
+
+# Old-style local Firebase config — can contain secrets
+.runtimeconfig.json
