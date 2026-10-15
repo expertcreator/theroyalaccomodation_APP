@@ -915,7 +915,7 @@ function ra_app_enquiry( WP_REST_Request $req ) {
  *  Routes:
  *    GET  /checkout-config        public — is booking on, and which Stripe key to use
  *    POST /me/checkout            start a booking: price it, create the payment, hold the dates
- *    POST /me/checkout/confirm    (next steps)
+ *    POST /me/checkout/confirm    after the card payment: check with Stripe, complete the booking
  *    POST /me/checkout/cancel     (next steps)
  * ------------------------------------------------------------------
  */
@@ -1522,4 +1522,151 @@ function ra_app_payment_intent_status( $stripe, $payment_intent_id ) {
  */
 function ra_app_cancel_payment_intent( $stripe, $payment_intent_id ) {
 	$stripe->remote_post_to_stripe( 'https://api.stripe.com/v1/payment_intents/' . rawurlencode( $payment_intent_id ) . '/cancel', array() );
+}
+
+/**
+ * POST /wp-json/ra-app/v1/me/checkout/confirm
+ * ------------------------------------------------------------------
+ * Called by the app after Stripe says the card payment went through.
+ * We never trust the app on that: we ask Stripe ourselves, then complete
+ * the booking with OWcal's own code (status, payment record, calendar block).
+ *
+ *   live mode → OWcal's check_uncompleted_resa(): exactly what OWcal does
+ *               for website bookings, including its "new reservation" emails.
+ *   test mode → the same Stripe check and completion, but NO emails, and the
+ *               guest's saved (live) Stripe customer is left untouched.
+ *
+ * Header: X-Firebase-Token.   JSON body: { paymentIntentId }
+ * Success data: { status: 'confirmed' | 'processing', ref, total, paid, currency }
+ *   'processing' = the bank hasn't finished yet; OWcal completes it on its own.
+ * Error data.code: not-paid (402), not-found (404), unavailable (503), plus the start errors.
+ * Safe to call more than once.
+ * ------------------------------------------------------------------
+ */
+add_action( 'rest_api_init', function () {
+	register_rest_route(
+		'ra-app/v1',
+		'/me/checkout/confirm',
+		array(
+			'methods'             => 'POST',
+			'callback'            => 'ra_app_me_checkout_confirm',
+			'permission_callback' => '__return_true', // real auth is the Firebase token, checked in the callback
+		)
+	);
+} );
+
+function ra_app_me_checkout_confirm( WP_REST_Request $req ) {
+
+	// 1. Switch on, OWcal ready, guest signed in.
+	$start = ra_app_checkout_start( $req );
+	if ( $start instanceof WP_REST_Response ) {
+		return $start;
+	}
+	$owdb   = $start['owcal']['owdb'];
+	$stripe = $start['owcal']['stripe'];
+
+	// 2. Find this guest's booking for the payment.
+	$resa = ra_app_checkout_find_own_resa( $owdb, $req, $start['email'] );
+	if ( ! $resa ) {
+		return ra_app_private_response( false, 'We couldn\'t find this booking. It may have expired — please start again.', array( 'code' => 'not-found' ), 404 );
+	}
+
+	// 3. Already completed (a second call, or OWcal got there first)? Just report it.
+	if ( in_array( $resa['status'], array( 'new', 'confirmed', 'pending' ), true ) ) {
+		return ra_app_checkout_confirmed_response( $resa );
+	}
+	if ( 'waiting_payment' !== $resa['status'] ) {
+		return ra_app_private_response( false, 'This booking is no longer active. Please start again.', array( 'code' => 'not-found' ), 404 );
+	}
+
+	// 4. Ask Stripe and complete the booking.
+	$token = $resa['payment_token'];
+	if ( 'live' === ra_app_checkout_mode() ) {
+		// OWcal's own completion: checks Stripe, records the payment, blocks
+		// the calendar and sends its "new reservation" emails.
+		$result = $stripe->check_uncompleted_resa( $resa );
+		$resa   = $owdb->get_resa_by_payment_token( $token );
+		if ( $resa && in_array( $resa['status'], array( 'new', 'confirmed', 'pending' ), true ) ) {
+			return ra_app_checkout_confirmed_response( $resa );
+		}
+		if ( 'delete' === $result ) {
+			return ra_app_private_response( false, 'Your payment hasn\'t gone through. Please check your card details and try again.', array( 'code' => 'not-paid' ), 402 );
+		}
+		return ra_app_private_response( true, 'We\'re confirming your payment.', array( 'status' => 'processing', 'ref' => $resa ? $resa['alphanum_id'] : '' ) );
+	}
+
+	// Test mode: the same steps as check_uncompleted_resa(), minus the emails
+	// and the saved-card update (a test card must never replace a guest's live one).
+	$intent_status = ra_app_payment_intent_status( $stripe, $token );
+	if ( null === $intent_status ) {
+		return ra_app_private_response( false, 'Could not check your payment right now. Please try again.', array( 'code' => 'unavailable' ), 503 );
+	}
+	if ( 'succeeded' === $intent_status || 'processing' === $intent_status ) {
+		$processing = ( 'processing' === $intent_status );
+		$charge     = $processing ? $token : ra_app_payment_intent_charge( $stripe, $token );
+
+		// OWcal moves its invoice counter on when a booking is paid. Put it back
+		// afterwards, so deleted test bookings don't leave gaps in invoice numbers.
+		$invoice_counter = get_option( 'ow_invoice_counter_next_value' );
+		$owdb->update_resa_after_payment( $token, 'paid', '', $resa['amount_to_pay'], $charge, $processing );
+		update_option( 'ow_invoice_counter_next_value', $invoice_counter );
+
+		$resa = $owdb->get_resa_by_payment_token( $token );
+		if ( $resa && in_array( $resa['status'], array( 'new', 'confirmed', 'pending' ), true ) ) {
+			return ra_app_checkout_confirmed_response( $resa );
+		}
+		return ra_app_private_response( false, 'Could not complete your booking. Please contact us.', array( 'code' => 'unavailable' ), 503 );
+	}
+	return ra_app_private_response( false, 'Your payment hasn\'t gone through. Please check your card details and try again.', array( 'code' => 'not-paid' ), 402 );
+}
+
+/**
+ * The reservation for the paymentIntentId in the request body — but only if it
+ * belongs to the signed-in guest (the email inside their token). Otherwise null.
+ */
+function ra_app_checkout_find_own_resa( $owdb, WP_REST_Request $req, $email ) {
+	$body  = (array) $req->get_json_params();
+	$token = isset( $body['paymentIntentId'] ) ? (string) $body['paymentIntentId'] : '';
+	if ( ! preg_match( '/^pi_[A-Za-z0-9_]+$/', $token ) ) {
+		return null;
+	}
+
+	$resa = $owdb->get_resa_by_payment_token( $token );
+	if ( ! $resa || ! isset( $resa['parent_id'] ) ) {
+		return null; // not found, or a multi-property booking (never made by the app)
+	}
+
+	$customer = $owdb->get_single( 'customers', $resa['customer_id'] );
+	if ( ! $customer || strtolower( (string) $customer['email'] ) !== $email ) {
+		return null; // someone else's booking — say "not found", reveal nothing
+	}
+	return $resa;
+}
+
+/**
+ * The success reply for a completed booking.
+ * 'processing' when the bank is still finishing the payment (OWcal marks it delayed).
+ */
+function ra_app_checkout_confirmed_response( array $resa ) {
+	return ra_app_private_response( true, 'Your booking is confirmed.', array(
+		'status'        => ! empty( $resa['payment_delayed'] ) ? 'processing' : 'confirmed',
+		'bookingStatus' => $resa['status'], // OWcal's: 'new' (normal here), 'confirmed', or 'pending' = awaiting the owner
+		'ref'           => $resa['alphanum_id'],
+		'total'         => (float) $resa['price'],
+		'paid'          => (float) $resa['amount_to_pay'],
+		'currency'      => $resa['currency'],
+	) );
+}
+
+/**
+ * The Stripe charge id of a succeeded PaymentIntent (OWcal stores it as the
+ * payment's "gateway info"), or false if it can't be read.
+ */
+function ra_app_payment_intent_charge( $stripe, $payment_intent_id ) {
+	$response = $stripe->remote_get_to_stripe( 'https://api.stripe.com/v1/payment_intents/' . rawurlencode( $payment_intent_id ) );
+	if ( empty( $response['success'] ) ) {
+		return false;
+	}
+	$intent = json_decode( $response['info'], true );
+	return ! empty( $intent['latest_charge'] ) ? (string) $intent['latest_charge'] : false;
 }
