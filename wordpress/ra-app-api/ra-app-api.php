@@ -896,3 +896,630 @@ function ra_app_enquiry( WP_REST_Request $req ) {
 	// 7. Done — the app shows "Enquiry received".
 	return ra_app_response( true, 'Thank you for your enquiry.', null );
 }
+
+/**
+ * ==================================================================
+ *  CHECKOUT — book and pay in the app (Stripe, through OWcal)
+ * ==================================================================
+ *  App bookings are made exactly like website bookings, using OWcal's
+ *  own code: same price, same customer record, same Stripe account,
+ *  same "new reservation" emails. Only the origin says "Mobile app".
+ *
+ *  SAFETY SWITCH — set ONE of these in wp-config.php:
+ *
+ *      define( 'RA_APP_CHECKOUT', 'off' );   // default: the app can't book
+ *      define( 'RA_APP_CHECKOUT', 'test' );  // the app uses OWcal's Stripe TEST keys
+ *                                            // (the website is not affected)
+ *      define( 'RA_APP_CHECKOUT', 'live' );  // real payments, same Stripe mode as the website
+ *
+ *  Routes:
+ *    GET  /checkout-config        public — is booking on, and which Stripe key to use
+ *    POST /me/checkout            start a booking: price it, create the payment, hold the dates
+ *    POST /me/checkout/confirm    (next steps)
+ *    POST /me/checkout/cancel     (next steps)
+ * ------------------------------------------------------------------
+ */
+if ( ! defined( 'RA_APP_CHECKOUT' ) ) {
+	define( 'RA_APP_CHECKOUT', 'off' );
+}
+
+/**
+ * The checkout mode: 'off', 'test' or 'live'. Anything unexpected counts as 'off'.
+ */
+function ra_app_checkout_mode() {
+	$mode = strtolower( trim( (string) RA_APP_CHECKOUT ) );
+	return in_array( $mode, array( 'test', 'live' ), true ) ? $mode : 'off';
+}
+
+/**
+ * In test mode, make OWcal's Stripe code use its TEST keys — for this
+ * request only. The website keeps using OWcal's own setting (live).
+ * Call this at the start of every checkout route.
+ */
+function ra_app_use_checkout_stripe_mode() {
+	if ( 'test' === ra_app_checkout_mode() ) {
+		add_filter( 'pre_option_ow_stripe_mode', function () {
+			return 'test';
+		} );
+	}
+}
+
+/**
+ * OWcal's own objects, so the app books with exactly the same code as the website.
+ * Returns null if OWcal (or its Stripe gateway) isn't available.
+ */
+function ra_app_owcal() {
+	global $owcal; // OWcal creates this when it loads (owcal.php: $owcal = new OWcal();)
+
+	if ( ! class_exists( 'OwDataBaseActions' ) || ! is_object( $owcal ) || empty( $owcal->utils ) ) {
+		return null;
+	}
+	$stripe = $owcal->utils->get_payment_gateway( 'stripe' );
+	if ( ! $stripe || 'yes' !== get_option( 'ow_stripe_active' ) ) {
+		return null;
+	}
+	return array(
+		'owdb'   => new OwDataBaseActions(),
+		'utils'  => $owcal->utils,
+		'stripe' => $stripe,
+	);
+}
+
+/**
+ * The Stripe publishable key the app must use — always the same account and
+ * mode as the payment (call after ra_app_use_checkout_stripe_mode()).
+ */
+function ra_app_stripe_publishable_key() {
+	if ( 'test' === get_option( 'ow_stripe_mode' ) ) {
+		$key = get_option( 'ow_stripe_test_publishable_key' );
+	} else {
+		$key = get_option( 'ow_stripe_live_publishable_key' );
+	}
+	return trim( (string) $key );
+}
+
+/**
+ * Shared start of every /me/checkout* route:
+ *   1. the switch is on,  2. OWcal is ready,  3. the guest's Firebase token is valid.
+ * Booking does NOT require a verified email (only My Bookings does).
+ *
+ * Returns array( 'owcal' => ..., 'email' => ... ) — or a ready error response.
+ */
+function ra_app_checkout_start( WP_REST_Request $req ) {
+	if ( 'off' === ra_app_checkout_mode() ) {
+		return ra_app_private_response( false, 'Online booking is not available in the app yet.', array( 'code' => 'checkout-off' ), 503 );
+	}
+	ra_app_use_checkout_stripe_mode();
+
+	$owcal = ra_app_owcal();
+	if ( ! $owcal ) {
+		return ra_app_private_response( false, 'Booking system unavailable.', array( 'code' => 'unavailable' ), 503 );
+	}
+
+	$claims = ra_app_verify_firebase_token( (string) $req->get_header( 'x-firebase-token' ) );
+	if ( is_wp_error( $claims ) ) {
+		if ( 'keys-unavailable' === $claims->get_error_code() ) {
+			return ra_app_private_response( false, 'Could not check your sign-in right now. Please try again.', array( 'code' => 'unavailable' ), 503 );
+		}
+		return ra_app_private_response( false, 'Please sign in again.', array( 'code' => 'invalid-token' ), 401 );
+	}
+	if ( empty( $claims['email'] ) ) {
+		return ra_app_private_response( false, 'Please sign in again.', array( 'code' => 'invalid-token' ), 401 );
+	}
+
+	return array(
+		'owcal' => $owcal,
+		'email' => sanitize_email( strtolower( (string) $claims['email'] ) ), // the booking email is ALWAYS the token's
+	);
+}
+
+/**
+ * GET /wp-json/ra-app/v1/checkout-config
+ * Tells the app whether it can take bookings, and which Stripe key to load.
+ * Public: Stripe publishable keys are designed to be public.
+ *   data: { enabled: bool, mode: 'off'|'test'|'live', publishableKey: string|null }
+ * Never cached, so flipping the switch takes effect immediately.
+ */
+add_action( 'rest_api_init', function () {
+	register_rest_route(
+		'ra-app/v1',
+		'/checkout-config',
+		array(
+			'methods'             => 'GET',
+			'callback'            => 'ra_app_checkout_config',
+			'permission_callback' => '__return_true',
+		)
+	);
+} );
+
+function ra_app_checkout_config( WP_REST_Request $req ) {
+	$mode = ra_app_checkout_mode();
+	$off  = array( 'enabled' => false, 'mode' => $mode, 'publishableKey' => null );
+
+	if ( 'off' === $mode ) {
+		return ra_app_private_response( true, 'Online booking is not available in the app yet.', $off );
+	}
+
+	ra_app_use_checkout_stripe_mode();
+	$key = ra_app_stripe_publishable_key();
+	if ( ! ra_app_owcal() || '' === $key ) {
+		return ra_app_private_response( true, 'Online booking is temporarily unavailable.', $off );
+	}
+
+	return ra_app_private_response( true, 'OK', array( 'enabled' => true, 'mode' => $mode, 'publishableKey' => $key ) );
+}
+
+/**
+ * Checkout settings for the app's residences.
+ *  - pet_option: OWcal's "Pet Fee" extra (a quantity option), max_pets: its limit.
+ *  - min_nights: same minimum stay the app's calendar enforces.
+ */
+function ra_app_checkout_rules() {
+	return array(
+		'pet_option' => 1,
+		'max_pets'   => 2,
+		'min_nights' => 2,
+		'max_nights' => 90, // sanity limit
+	);
+}
+
+/**
+ * POST /wp-json/ra-app/v1/me/checkout
+ * ------------------------------------------------------------------
+ * Starts a booking: checks the stay, prices it with OWcal, creates the
+ * Stripe payment with OWcal's own Stripe code, and holds the dates as a
+ * `waiting_payment` reservation — exactly what the website does when a
+ * guest clicks "Book now". The app then confirms the card payment with
+ * Stripe and calls /me/checkout/confirm.
+ *
+ * Header: X-Firebase-Token.   JSON body:
+ *   accomId, checkIn, checkOut (YYYY-MM-DD), adults, children, pets,
+ *   firstName, lastName, countryIso (e.g. "GB"),
+ *   phone, address1, address2, city, county, postCode  (optional),
+ *   couponCode (optional — re-checked here; the app's check is only a preview)
+ *
+ * Success data: { ref, paymentIntentId, clientSecret, publishableKey, amount, currency }
+ *            or { alreadyPaid: true, paymentIntentId } — an earlier payment for this
+ *               stay already went through; the app should just call /confirm.
+ * Error data.code: checkout-off, unavailable, invalid-token, invalid-request,
+ *   dates-unavailable, coupon-invalid, price-error, payment-error.
+ * ------------------------------------------------------------------
+ */
+add_action( 'rest_api_init', function () {
+	register_rest_route(
+		'ra-app/v1',
+		'/me/checkout',
+		array(
+			'methods'             => 'POST',
+			'callback'            => 'ra_app_me_checkout',
+			'permission_callback' => '__return_true', // real auth is the Firebase token, checked in the callback
+		)
+	);
+} );
+
+function ra_app_me_checkout( WP_REST_Request $req ) {
+
+	// 1. Switch on, OWcal ready, guest signed in. The email always comes from the token.
+	$start = ra_app_checkout_start( $req );
+	if ( $start instanceof WP_REST_Response ) {
+		return $start;
+	}
+	$owdb   = $start['owcal']['owdb'];
+	$utils  = $start['owcal']['utils'];
+	$stripe = $start['owcal']['stripe'];
+	$email  = $start['email'];
+
+	// 2. Read and check what the app sent.
+	$stay = ra_app_checkout_read_stay( (array) $req->get_json_params() );
+	if ( is_string( $stay ) ) {
+		return ra_app_private_response( false, $stay, array( 'code' => 'invalid-request' ), 400 );
+	}
+	$accom_id  = $stay['accom_id'];
+	$check_in  = $stay['check_in'];
+	$check_out = $stay['check_out'];
+
+	// 3. Same guest, same stay, earlier unpaid hold (double tap, declined card…)?
+	//    If it was actually paid, tell the app to confirm it; otherwise release it
+	//    so it doesn't block the dates for this new attempt.
+	$customer_id = (int) $owdb->get_customer_id( $email );
+	if ( $customer_id ) {
+		$earlier = ra_app_checkout_clear_earlier_hold( $owdb, $stripe, $customer_id, $accom_id, $check_in, $check_out );
+		if ( $earlier ) {
+			return ra_app_private_response( true, 'This stay is already paid.', array( 'alreadyPaid' => true, 'paymentIntentId' => $earlier ) );
+		}
+	}
+
+	// 4. The dates must still be free (OWcal's own availability check).
+	$accom_num = (int) $owdb->get_first_available_accom_num( $accom_id, $check_in, $check_out );
+	if ( ! $accom_num ) {
+		return ra_app_private_response( false, 'Sorry, these dates have just been booked. Please choose other dates.', array( 'code' => 'dates-unavailable' ), 409 );
+	}
+	if ( 'yes' === get_option( 'ow_resa_paid_has_confirmation' ) ) {
+		$accom_num = 0; // same as the website: the owner assigns it when confirming
+	}
+
+	// 5. The price — OWcal's own calculation, with the coupon (if any) re-checked here.
+	$price = ra_app_checkout_price( $owdb, $utils, $stay );
+	if ( is_string( $price ) ) {
+		$code = ( 0 === strpos( $price, 'coupon:' ) ) ? 'coupon-invalid' : 'price-error';
+		$msg  = ( 'coupon-invalid' === $code ) ? substr( $price, 7 ) : $price;
+		return ra_app_private_response( false, $msg, array( 'code' => $code ), 409 );
+	}
+	if ( $price['amount_to_pay'] <= 0 ) {
+		// A free stay would need a different Stripe flow — very unlikely (the cleaning fee is always charged).
+		return ra_app_private_response( false, 'Please contact us to complete this booking.', array( 'code' => 'price-error' ), 409 );
+	}
+
+	// 6. The OWcal customer — created or updated, exactly like the website form does.
+	$customer_info = ra_app_checkout_customer_info( $stay, $email );
+	if ( $customer_id ) {
+		$customer_id = (int) $owdb->update_customer_on_resa_creation( $customer_id, $email, $customer_info );
+	} else {
+		$customer_id = (int) $owdb->create_customer( $email, $customer_info );
+	}
+	if ( ! $customer_id ) {
+		return ra_app_private_response( false, 'Could not save your details. Please try again.', array( 'code' => 'unavailable' ), 503 );
+	}
+	$customer_info['id'] = $customer_id;
+
+	// 7. The reservation details — the same fields ow_create_resa fills in.
+	$resa_info = array(
+		'check_in'         => $check_in,
+		'check_out'        => $check_out,
+		'lang'             => get_locale(),
+		'currency'         => get_option( 'ow_currency' ),
+		'origin'           => ( 'test' === ra_app_checkout_mode() ) ? 'Mobile app (TEST)' : 'Mobile app',
+		'adults'           => $stay['adults'],
+		'children'         => $stay['children'],
+		'accom_id'         => $accom_id,
+		'accom_num'        => $accom_num,
+		'accom_price'      => $price['accom_price'],
+		'discount'         => $price['discount_json'],
+		'price'            => $price['price'],
+		'customer_id'      => $customer_id,
+		'additional_info'  => array(),
+		'options'          => $price['options_json'],
+		'fees'             => $price['fees_json'],
+		'coupon'           => $price['coupon_code'],
+		'coupon_value'     => $price['coupon_value'],
+		'booking_form_num' => 0,
+		'deposit'          => $price['deposit'],
+		'payment_type'     => $price['payment_type'],
+		'paid'             => 0,
+		'payment_token'    => '',
+		'payment_gateway'  => $stripe->name, // "Stripe"
+		'amount_to_pay'    => 0,
+		'payment_info'     => '',
+		'alphanum_id'      => $utils->get_alphanum(),
+		'invoice_counter'  => get_option( 'ow_invoice_counter_next_value', 1 ),
+	);
+
+	// 8. The Stripe payment — OWcal's own code (same account, same saved-card setting).
+	$payment = $stripe->process_payment( $resa_info, $customer_info, $price['amount_to_pay'] );
+	if ( empty( $payment['success'] ) || empty( $payment['payment_token'] ) || empty( $payment['client_secret'] ) ) {
+		$msg = ! empty( $payment['error_msg'] ) ? wp_strip_all_tags( $payment['error_msg'] ) : 'Could not start the payment. Please try again.';
+		return ra_app_private_response( false, $msg, array( 'code' => 'payment-error' ), 502 );
+	}
+
+	// 9. Hold the dates: a `waiting_payment` reservation linked to the payment.
+	//    (OWcal deletes it after an hour if it's never paid.)
+	$resa_info['status']        = 'waiting_payment';
+	$resa_info['payment_token'] = $payment['payment_token'];
+	$resa_info['amount_to_pay'] = $price['amount_to_pay'];
+
+	$resa_id = $owdb->create_resa( $resa_info );
+	if ( ! $resa_id ) {
+		ra_app_cancel_payment_intent( $stripe, $payment['payment_token'] ); // never leave a payable intent with no booking
+		return ra_app_private_response( false, 'Could not create your booking. Please try again.', array( 'code' => 'unavailable' ), 503 );
+	}
+	$owdb->increment_customer_nb_resa( $customer_id );
+	if ( $price['coupon_id'] ) {
+		$owdb->increment_coupon_use( $price['coupon_id'] ); // the website counts the use at this point too
+	}
+
+	return ra_app_private_response( true, 'OK', array(
+		'ref'             => $resa_info['alphanum_id'],
+		'paymentIntentId' => $payment['payment_token'],
+		'clientSecret'    => $payment['client_secret'],
+		'publishableKey'  => ra_app_stripe_publishable_key(),
+		'amount'          => (float) $price['amount_to_pay'],
+		'currency'        => $resa_info['currency'],
+	) );
+}
+
+/**
+ * Read and check the stay the app sent. Returns the clean values, or an error
+ * message (string) to show the guest.
+ */
+function ra_app_checkout_read_stay( array $body ) {
+	$rules = ra_app_checkout_rules();
+	$text  = function ( $key, $max = 100 ) use ( $body ) {
+		return isset( $body[ $key ] ) ? mb_substr( sanitize_text_field( (string) $body[ $key ] ), 0, $max ) : '';
+	};
+
+	$stay = array(
+		'accom_id'    => isset( $body['accomId'] ) ? (int) $body['accomId'] : 0,
+		'check_in'    => $text( 'checkIn', 10 ),
+		'check_out'   => $text( 'checkOut', 10 ),
+		'adults'      => isset( $body['adults'] ) ? (int) $body['adults'] : 0,
+		'children'    => isset( $body['children'] ) ? (int) $body['children'] : 0,
+		'pets'        => isset( $body['pets'] ) ? (int) $body['pets'] : 0,
+		'first_name'  => $text( 'firstName' ),
+		'last_name'   => $text( 'lastName' ),
+		'phone'       => $text( 'phone', 30 ),
+		'address_1'   => $text( 'address1' ),
+		'address_2'   => $text( 'address2' ),
+		'city'        => $text( 'city' ),
+		'county'      => $text( 'county' ),
+		'post_code'   => $text( 'postCode', 20 ),
+		'country_iso' => strtoupper( $text( 'countryIso', 2 ) ),
+		'coupon_code' => $text( 'couponCode', 50 ),
+	);
+
+	// Property, dates and guests.
+	if ( ! ra_app_property_slug( $stay['accom_id'] ) ) {
+		return 'Unknown residence.';
+	}
+	if ( ! ra_app_is_ymd( $stay['check_in'] ) || ! ra_app_is_ymd( $stay['check_out'] ) ) {
+		return 'Please choose your dates again.';
+	}
+	if ( $stay['check_in'] < current_time( 'Y-m-d' ) ) {
+		return 'Your check-in date has passed. Please choose new dates.';
+	}
+	$nights = (int) round( ( strtotime( $stay['check_out'] ) - strtotime( $stay['check_in'] ) ) / DAY_IN_SECONDS );
+	if ( $nights < $rules['min_nights'] ) {
+		return sprintf( 'The minimum stay is %d nights.', $rules['min_nights'] );
+	}
+	if ( $nights > $rules['max_nights'] ) {
+		return sprintf( 'Stays can be up to %d nights. Please contact us for longer stays.', $rules['max_nights'] );
+	}
+	$max_guests = (int) get_post_meta( $stay['accom_id'], 'accom_max_occupancy', true );
+	if ( $stay['adults'] < 1 || $stay['children'] < 0 || ( $max_guests && $stay['adults'] + $stay['children'] > $max_guests ) ) {
+		return 'Please check the number of guests.';
+	}
+	if ( $stay['pets'] < 0 || $stay['pets'] > $rules['max_pets'] ) {
+		return sprintf( 'You can bring up to %d pets.', $rules['max_pets'] );
+	}
+
+	// The website's required fields (email comes from the token).
+	if ( '' === $stay['first_name'] || '' === $stay['last_name'] ) {
+		return 'Please add your first and last name in My Profile.';
+	}
+	if ( ! preg_match( '/^[A-Z]{2}$/', $stay['country_iso'] ) ) {
+		return 'Please add your country in My Profile.';
+	}
+
+	return $stay;
+}
+
+/**
+ * The OWcal customer record, with the same field ids as the website's
+ * "Enter your details" form. Empty fields are left out, as the website does.
+ */
+function ra_app_checkout_customer_info( array $stay, $email ) {
+	$info = array(
+		'first_name'     => $stay['first_name'],
+		'last_name'      => $stay['last_name'],
+		'email'          => $email,
+		'phone'          => $stay['phone'],
+		'address_1'      => $stay['address_1'],
+		'address_2'      => $stay['address_2'],
+		'city'           => $stay['city'],
+		'state_province' => $stay['county'], // shown as "County" on the website
+		'post_code'      => $stay['post_code'],
+		'country_iso'    => $stay['country_iso'],
+	);
+	return array_filter( $info, function ( $value ) {
+		return '' !== $value;
+	} );
+}
+
+/**
+ * Price the stay exactly as OWcal's ow_create_resa does (one residence):
+ *   OWcal rates → + extras (pet fee) → − coupon → − OWcal discounts → + fees
+ * then works out how much to charge now (full price or deposit, per the
+ * website's payment setting).
+ *
+ * Returns an array of values for the reservation, or an error message (string).
+ * Coupon errors start with "coupon:".
+ */
+function ra_app_checkout_price( $owdb, $utils, array $stay ) {
+	$rules     = ra_app_checkout_rules();
+	$accom_id  = $stay['accom_id'];
+	$check_in  = $stay['check_in'];
+	$check_out = $stay['check_out'];
+	$adults    = $stay['adults'];
+	$children  = $stay['children'];
+
+	// Rates for the nights (seasons, per-guest rates, OWcal's own accommodation discounts).
+	require_once $utils->plugin_directory . '/utils/price-calc.php';
+	$price_calc = new OwPriceCalc( $owdb, $utils, $utils->get_strings() );
+	$calc       = $price_calc->get_price( $accom_id, $check_in, $check_out, $adults, $children );
+	if ( empty( $calc['success'] ) ) {
+		return 'Could not work out the price for these dates. Please contact us.';
+	}
+	$prices = $calc['prices'];
+
+	// Extras — the app only offers the pet fee (a quantity option).
+	$nb_nights = $utils->get_number_of_nights( $check_in, $check_out );
+	if ( 'yes' === get_option( 'ow_charge_per_day' ) ) {
+		$nb_nights++;
+	}
+	$options       = $owdb->get_options_with_choices( $accom_id );
+	$option_prices = $utils->calculate_options_price( $adults, $children, $nb_nights, 1, $options, false );
+	$extras_rate   = 1;
+	foreach ( $owdb->get_extras_fees_percentages() as $percentage ) {
+		$extras_rate += $percentage / 100;
+	}
+	$extras_total   = 0;
+	$chosen_options = array();
+	foreach ( $options as $option ) {
+		$is_quantity = in_array( $option['apply_to_type'], array( 'quantity', 'quantity-per-day' ), true );
+		if ( (int) $option['id'] !== $rules['pet_option'] || ! $is_quantity || $stay['pets'] < 1 ) {
+			continue;
+		}
+		$extras_total += $utils->round_price( $stay['pets'] * $option_prices[ 'option_' . $option['id'] ] * $extras_rate );
+		$chosen_options[ $option['id'] ] = array(
+			'name'            => $option['name'],
+			'amount'          => $option['amount'],
+			'amount_children' => $option['amount_children'],
+			'apply_to_type'   => $option['apply_to_type'],
+			'quantity'        => $stay['pets'],
+		);
+	}
+	if ( $stay['pets'] > 0 && ! $chosen_options ) {
+		return 'Could not add the pet fee. Please contact us.';
+	}
+	$price = $extras_total + $prices['accom_total'];
+
+	// Coupon — checked again here (the app's earlier check was only a preview).
+	$coupon_id    = 0;
+	$coupon_code  = '';
+	$coupon_value = 0;
+	if ( '' !== $stay['coupon_code'] ) {
+		require_once $utils->plugin_directory . '/utils/resa-coupon.php';
+		foreach ( (array) $owdb->get_coupon_ids_by_code( $stay['coupon_code'] ) as $id ) {
+			$info   = $owdb->get_coupon_info( $id );
+			$coupon = new OwResaCoupon( $owdb, $utils, $info );
+			if ( $coupon->is_valid( array( $accom_id ), $check_in, $check_out ) && $coupon->is_still_valid() ) {
+				if ( 'percent' === $info['amount_type'] ) {
+					$coupon_value = $utils->round_price( $price * $info['amount'] / 100 );
+				} else {
+					$coupon_value = min( (float) $info['amount'], $price ); // a fixed coupon can't go below zero
+				}
+				$coupon_id   = (int) $id;
+				$coupon_code = $info['code'];
+				break;
+			}
+		}
+		if ( ! $coupon_id ) {
+			return 'coupon:This coupon code is no longer valid. Please remove it and try again.';
+		}
+	}
+
+	// OWcal's own discount rules (if the owner has any).
+	$global       = $utils->get_global_discount( $accom_id, $check_in, $check_out, $price );
+	$discount_json = wp_json_encode( array(
+		'accom'  => $prices['discount'],
+		'global' => $global['discount_breakdown'],
+	) );
+	$price -= $coupon_value;
+	$price -= $global['discount_amount'];
+
+	// Fees (e.g. the cleaning fee). Fees "added at the end" go on top of the price.
+	$fee_base           = $prices;
+	$fee_base['extras'] = $extras_total;
+	$fee_base['total']  = max( 0, $price );
+	$fee_resa           = array( 'check_in' => $check_in, 'check_out' => $check_out, 'adults' => $adults, 'children' => $children );
+	$resa_fees          = array();
+	foreach ( $owdb->get_fees( $accom_id ) as $fee ) {
+		if ( 0 === (int) $fee['include_in_price'] ) {
+			$fee_values = $utils->calculate_fees_extras_values( $fee_resa, $fee_base, $fee );
+			$price     += $fee_values['price'];
+		}
+		unset( $fee['all_accom'], $fee['global'], $fee['fee_id'], $fee['accom_id'] );
+		$resa_fees[] = $fee;
+	}
+	$price = max( 0, $price );
+
+	// How much to charge now — the same rules as the website when guests can't choose.
+	$deposit      = $utils->deposit( $check_in, $check_out, $price );
+	$bond         = 0;
+	$bond_deposit = 0;
+	if ( 'yes' === get_option( 'ow_security_bond_online_payment' ) ) {
+		$bond = (float) get_option( 'ow_security_bond_amount' );
+		if ( 'yes' === get_option( 'ow_deposit_bond' ) ) {
+			$bond_deposit = $bond;
+		}
+	}
+	$decimals = ( in_array( get_option( 'ow_currency' ), array( 'HUF', 'JPY', 'TWD' ), true ) || 'no_decimals' === get_option( 'ow_price_precision' ) ) ? 0 : 2;
+	$price    = round( $price, $decimals );
+	$deposit  = round( $deposit, $decimals );
+
+	$setting = get_option( 'ow_resa_payment' );
+	if ( 'deposit' === $setting ) {
+		$payment_type  = 'deposit';
+		$amount_to_pay = $deposit + $bond_deposit;
+	} elseif ( 'full' === $setting || 'yes' === get_option( 'ow_resa_payment_full' ) ) {
+		$payment_type  = 'full';
+		$amount_to_pay = $price + $bond;
+	} else {
+		// e.g. "no online payment" or "leave card details only" — not something the app can do.
+		return 'Online booking is not available in the app right now. Please contact us.';
+	}
+
+	return array(
+		'accom_price'   => $prices['accom'],
+		'price'         => $price,
+		'deposit'       => $deposit,
+		'payment_type'  => $payment_type,
+		'amount_to_pay' => round( $amount_to_pay, $decimals ),
+		'discount_json' => $discount_json,
+		'options_json'  => wp_json_encode( $chosen_options ),
+		'fees_json'     => wp_json_encode( $resa_fees ),
+		'coupon_id'     => $coupon_id,
+		'coupon_code'   => $coupon_code,
+		'coupon_value'  => $coupon_value,
+	);
+}
+
+/**
+ * The guest already has an unpaid app hold for this exact stay (they tapped
+ * Book Now twice, or a card was declined). If Stripe says it was actually
+ * paid (or is still processing), return its payment id so the app can
+ * confirm it. Otherwise cancel its payment and delete the hold, so the new
+ * attempt starts clean and the dates aren't blocked by the old one.
+ */
+function ra_app_checkout_clear_earlier_hold( $owdb, $stripe, $customer_id, $accom_id, $check_in, $check_out ) {
+	global $wpdb;
+	$hold = $wpdb->get_row(
+		$wpdb->prepare(
+			"SELECT * FROM {$owdb->resa_table}
+			 WHERE customer_id = %d AND accom_id = %d AND check_in = %s AND check_out = %s
+			   AND status = 'waiting_payment' AND origin LIKE %s AND payment_token != ''
+			 ORDER BY id DESC LIMIT 1",
+			$customer_id,
+			$accom_id,
+			$check_in,
+			$check_out,
+			'Mobile app%'
+		),
+		ARRAY_A
+	);
+	if ( ! $hold ) {
+		return null;
+	}
+
+	$status = ra_app_payment_intent_status( $stripe, $hold['payment_token'] );
+	if ( in_array( $status, array( 'succeeded', 'processing' ), true ) ) {
+		return $hold['payment_token']; // paid — the app should confirm, not pay again
+	}
+	if ( null === $status ) {
+		return null; // couldn't reach Stripe — leave it; OWcal tidies it up within the hour
+	}
+
+	ra_app_cancel_payment_intent( $stripe, $hold['payment_token'] );
+	$owdb->delete_resa( $hold['id'] );
+	return null;
+}
+
+/**
+ * A Stripe PaymentIntent's status ('succeeded', 'requires_payment_method', …),
+ * or null if Stripe couldn't be reached. Uses OWcal's own Stripe connection.
+ */
+function ra_app_payment_intent_status( $stripe, $payment_intent_id ) {
+	$response = $stripe->remote_get_to_stripe( 'https://api.stripe.com/v1/payment_intents/' . rawurlencode( $payment_intent_id ) );
+	if ( empty( $response['success'] ) ) {
+		return null;
+	}
+	$intent = json_decode( $response['info'], true );
+	return isset( $intent['status'] ) ? (string) $intent['status'] : null;
+}
+
+/**
+ * Cancel a Stripe PaymentIntent so it can never be paid later
+ * (used when its hold is removed). Errors are ignored — it may already be cancelled.
+ */
+function ra_app_cancel_payment_intent( $stripe, $payment_intent_id ) {
+	$stripe->remote_post_to_stripe( 'https://api.stripe.com/v1/payment_intents/' . rawurlencode( $payment_intent_id ) . '/cancel', array() );
+}
