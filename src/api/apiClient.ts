@@ -8,6 +8,7 @@ export const getAPIData = async (
     skipAuth?: boolean,
     signal?: AbortSignal,
     extraHeaders?: Record<string, string>,   // ← NEW: per-call headers (e.g. WAF recipe)
+    timeout?: number,                        // ms — give up after this long (default: no limit)
 ) => {
 
     // Build headers — caller's extras win over the defaults.
@@ -28,6 +29,9 @@ export const getAPIData = async (
             withCredentials: skipAuth,
             signal: signal,
             validateStatus: () => true,
+            timeout: timeout,   // undefined = no limit (same as before)
+            // Shown by the toast in `catch` if the time limit is hit.
+            timeoutErrorMessage: 'The connection is slow. Please try again.',
         });
 
         console.log(`Response of ${url} = `, JSON.stringify(response.data));

@@ -55,6 +55,10 @@ export type RatesMap = Record<string, ResidenceRate>;
  * getAPIData never throws — it returns null on network error — so callers just
  * check for null and fall back to cache / static constants.
  */
+// The splash screen waits for this request, so it must never hang forever
+// (on Android, React Native has no network time limit of its own).
+const RATES_TIMEOUT_MS = 30000;
+
 export async function getRatesAPI(): Promise<RatesMap | null> {
     const res = await getAPIData(
         `${RA_APP_BASE}/rates`,
@@ -62,6 +66,7 @@ export async function getRatesAPI(): Promise<RatesMap | null> {
         undefined,   // skipAuth
         undefined,   // signal
         OW_HEADERS,  // WAF-friendly headers (same recipe as /availability)
+        RATES_TIMEOUT_MS,
     );
     if (res?.success === true && res.data && typeof res.data === 'object') {
         return res.data as RatesMap;
