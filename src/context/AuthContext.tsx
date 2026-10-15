@@ -80,16 +80,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
             console.log("[AuthContext] fbUser: ", fbUser)
-            if (fbUser) {
-                setUid(fbUser.uid);
-                setEmailVerified(fbUser.emailVerified);
-                await loadProfile(fbUser.uid);
-            } else {
-                setUid(null);
-                setEmailVerified(false);
-                setProfile(null);
+            try {
+                if (fbUser) {
+                    setUid(fbUser.uid);
+                    setEmailVerified(fbUser.emailVerified);
+                    await loadProfile(fbUser.uid);
+                } else {
+                    setUid(null);
+                    setEmailVerified(false);
+                    setProfile(null);
+                }
+            } catch (error) {
+                // Couldn't load the profile (e.g. offline with nothing cached, or
+                // Firestore refused). Stay signed in without a profile for now —
+                // screens cope with that, and we retry when the app is reopened.
+                console.warn('[AuthContext] Could not load the profile:', error);
+            } finally {
+                // Always finish start-up, so the splash screen can never get stuck.
+                setInitializing(false);
             }
-            setInitializing(false);
         });
         return unsubscribe; // stop listening when the provider unmounts
     }, []);
@@ -108,6 +117,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
         return () => sub.remove();
     }, []);
+
+    // Signed in but the profile didn't load (e.g. we were offline at start-up)?
+    // Try again each time the app comes back to the foreground, until it works.
+    useEffect(() => {
+        if (!uid || profile) return; // signed out, or already loaded — nothing to do
+        const sub = AppState.addEventListener('change', (state) => {
+            if (state !== 'active') return;
+            getUserProfile(uid)
+                .then((p) => {
+                    // Only use it if the same person is still signed in.
+                    if (auth.currentUser?.uid === uid) setProfile(p);
+                })
+                .catch(() => { }); // still failing — we'll try again next time
+        });
+        return () => sub.remove();
+    }, [uid, profile]);
 
     // --- actions ---
 
