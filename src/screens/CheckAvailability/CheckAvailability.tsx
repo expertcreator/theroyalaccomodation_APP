@@ -98,6 +98,13 @@ const CheckAvailability: React.FC = () => {
   const handleSelectDay = (date: Date) => {
     const day = startOfDay(date);
 
+    // Safety net: a booked day can only be a CHECK-OUT (right after a check-in,
+    // with every night in between free — the next guest arrives that afternoon).
+    // Never start a stay on it. The calendar only lets it be tapped in that case anyway.
+    const canCheckOutOnBookedDay =
+      !!checkIn && !checkOut && day > checkIn && !hasOccupiedInRange(checkIn, day);
+    if (occupiedSet.has(toISO(day)) && !canCheckOutOnBookedDay) return;
+
     // Start a new range if none started, or if a full range already exists.
     if (!checkIn || (checkIn && checkOut)) {
       setCheckIn(day);

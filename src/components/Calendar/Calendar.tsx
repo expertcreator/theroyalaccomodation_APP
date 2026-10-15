@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { View, TouchableOpacity, StyleSheet, type LayoutChangeEvent, type ViewStyle } from 'react-native';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
 import { typography, spacing, radius, borderWidth, IThemePalette } from '../../theme';
@@ -10,6 +10,31 @@ import Icon from '../Icon/Icon';
 
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 const COL = `${100 / 7}%`; // 7 equal columns
+const CELL_HEIGHT = verticalScale(44);
+const SWATCH = moderateScale(12); // legend swatch size
+
+// Soft pink for booked days (the site's calendar uses the same idea).
+const bookedColor = (p: IThemePalette) => withAlpha(p.error.main, 0.22);
+
+/* ------------------------------------------------------------
+   Half-day triangles, drawn like the website's calendar.
+   Each day is split corner-to-corner:
+     top-left half     = the morning   → booked if a guest LEAVES that day
+     bottom-right half = the afternoon → booked if a guest ARRIVES that day
+   Drawn with the classic "border triangle" trick: a 0×0 box whose two
+   borders meet on the diagonal; one border is coloured, the other clear.
+   ------------------------------------------------------------ */
+const morningTriangle = (width: number, height: number, color: string): ViewStyle => ({
+    position: 'absolute', top: 0, left: 0, width: 0, height: 0,
+    borderTopWidth: height, borderTopColor: color,
+    borderRightWidth: width, borderRightColor: 'transparent',
+});
+
+const afternoonTriangle = (width: number, height: number, color: string): ViewStyle => ({
+    position: 'absolute', bottom: 0, right: 0, width: 0, height: 0,
+    borderBottomWidth: height, borderBottomColor: color,
+    borderLeftWidth: width, borderLeftColor: 'transparent',
+});
 
 type Props = {
     month: Date;                 // first day of the visible month
@@ -30,48 +55,77 @@ type DayProps = {
     isCheckIn: boolean;
     isCheckOut: boolean;
     isInRange: boolean;
-    isOccupied: boolean;
+    bookedNight: boolean;        // tonight is booked (a guest arrives or is staying)
+    bookedMorning: boolean;      // last night was booked (a guest leaves this morning)
+    canCheckOutHere: boolean;    // booked tonight, but a valid check-out for the chosen check-in
     isPast: boolean;
     rangeComplete: boolean;      // both check-in AND check-out chosen
+    cellWidth: number;           // measured, so the triangles fit the cell exactly
     palette: IThemePalette;      // stable ref, so memo stays effective
     onPress: (date: Date) => void;
 };
 
 const Day = React.memo(function Day({
-    date, isCheckIn, isCheckOut, isInRange, isOccupied, isPast, rangeComplete, palette: p, onPress,
+    date, isCheckIn, isCheckOut, isInRange, bookedNight, bookedMorning, canCheckOutHere,
+    isPast, rangeComplete, cellWidth, palette: p, onPress,
 }: DayProps) {
-    const isEnd = isCheckIn || isCheckOut;         // the green pill days
-    const disabled = isOccupied || isPast;
+    const isEnd = isCheckIn || isCheckOut;         // the selected check-in / check-out days
+    const fullyBooked = bookedNight && bookedMorning;
+
+    // Selected on a half-day → fill its FREE half with green instead of a circle.
+    const checkInHalf = isCheckIn && bookedMorning;  // a guest leaves that morning, we arrive later
+    const checkOutHalf = isCheckOut && bookedNight;  // we leave that morning, the next guest arrives later
+    const halfDayEnd = checkInHalf || checkOutHalf;
+    const isPill = isEnd && !halfDayEnd;             // every other selected day keeps the green circle
+    // A booked night can't be tapped — unless it's the check-out day for the
+    // chosen check-in (the guest leaves in the morning, the next one arrives later).
+    const disabled = isPast || (bookedNight && !canCheckOutHere);
     const gold = withAlpha(p.accent.main, 0.22);   // soft gold range fill
+    const pink = bookedColor(p);
 
     // Text colour depends on the day's state.
     let textColor = p.text.primary;
-    if (isEnd) textColor = p.primary.contrastText;
-    else if (isOccupied) textColor = p.text.placeHolder;
+    if (isPill) textColor = p.primary.contrastText;
+    else if (halfDayEnd) textColor = p.accent.main;   // gold reads on both the green and pink halves
     else if (isPast) textColor = withAlpha(p.text.placeHolder, 0.5);
-    else if (isInRange) textColor = p.text.primary;
+    else if (disabled) textColor = p.text.placeHolder;
 
     return (
         <View style={styles.cell}>
+            {/* Booked shading: the whole day, or just the morning / afternoon half. */}
+            {fullyBooked && <View style={[StyleSheet.absoluteFill, { backgroundColor: pink }]} />}
+            {!fullyBooked && bookedMorning && <View style={morningTriangle(cellWidth, CELL_HEIGHT, pink)} />}
+            {!fullyBooked && bookedNight && <View style={afternoonTriangle(cellWidth, CELL_HEIGHT, pink)} />}
+
             {/* Gold band behind the range. In-range = full width; the two
-                ends show a half-band pointing toward the range so it connects. */}
+                ends show a half-band pointing toward the range so it connects.
+                (Half-day ends skip it — their green triangle already reaches that edge.) */}
             {isInRange && <View style={[StyleSheet.absoluteFill, { backgroundColor: gold }]} />}
-            {isCheckIn && rangeComplete && <View style={[styles.halfRight, { backgroundColor: gold }]} />}
-            {isCheckOut && <View style={[styles.halfLeft, { backgroundColor: gold }]} />}
+            {isCheckIn && rangeComplete && !checkInHalf && <View style={[styles.halfRight, { backgroundColor: gold }]} />}
+            {isCheckOut && !checkOutHalf && <View style={[styles.halfLeft, { backgroundColor: gold }]} />}
+
+            {/* Selected half-day: green fills the half that's free for this guest. */}
+            {checkInHalf && <View style={afternoonTriangle(cellWidth, CELL_HEIGHT, p.primary.main)} />}
+            {checkOutHalf && <View style={morningTriangle(cellWidth, CELL_HEIGHT, p.primary.main)} />}
 
             <TouchableOpacity
                 disabled={disabled}
                 activeOpacity={0.7}
                 onPress={() => onPress(date)}
-                style={[styles.dayTouch, isEnd && { backgroundColor: p.primary.main, borderRadius: radius.pill, borderWidth: borderWidth.thin, borderColor: p.accent.main }]}
+                style={[
+                    styles.dayTouch,
+                    isPill && { backgroundColor: p.primary.main, borderRadius: radius.pill, borderWidth: borderWidth.thin, borderColor: p.accent.main },
+                    // Dashed gold ring: "you can check out here" (next guest arrives this day).
+                    !isEnd && canCheckOutHere && [styles.checkOutRing, { borderColor: p.accent.main }],
+                ]}
             >
                 <Text
                     style={[
                         typography.bodySmall,
                         {
                             color: textColor,
-                            fontWeight: isEnd || isInRange ? '600' : '400',
-                            textDecorationLine: isOccupied ? 'line-through' : 'none',
+                            fontWeight: isEnd || isInRange || canCheckOutHere ? '600' : '400',
+                            textDecorationLine: fullyBooked ? 'line-through' : 'none',
                         },
                     ]}
                 >
@@ -90,6 +144,22 @@ const LegendItem = ({ color, label, border, p }: { color: string; label: string;
     </View>
 );
 
+/* Legend item for booked days: a small square, fully or half shaded. */
+const LegendBooked = ({ shade, label, p }: { shade: 'full' | 'morning' | 'afternoon'; label: string; p: IThemePalette }) => {
+    const pink = bookedColor(p);
+    const inner = SWATCH - 2 * borderWidth.thin; // space inside the swatch's border
+    return (
+        <View style={styles.legendItem}>
+            <View style={[styles.swatch, { borderColor: p.borderColor }]}>
+                {shade === 'full' && <View style={[StyleSheet.absoluteFill, { backgroundColor: pink }]} />}
+                {shade === 'morning' && <View style={morningTriangle(inner, inner, pink)} />}
+                {shade === 'afternoon' && <View style={afternoonTriangle(inner, inner, pink)} />}
+            </View>
+            <Text style={[typography.caption, { color: p.text.primary }]}>{label}</Text>
+        </View>
+    );
+};
+
 /* ============================================================ */
 const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, onSelectDay, onChangeMonth }) => {
     const { theme } = useTheme();
@@ -105,6 +175,24 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, on
     const occupiedSet = useMemo(() => new Set(occupiedDates), [occupiedDates]);
 
     const rangeComplete = !!(checkIn && checkOut);
+
+    // Width of one day cell, measured from the grid, so the half-day triangles fit exactly.
+    const [cellWidth, setCellWidth] = useState(0);
+    const onGridLayout = (e: LayoutChangeEvent) => setCellWidth(e.nativeEvent.layout.width / 7);
+
+    // While choosing a check-out: the first booked night after the check-in.
+    // A guest arrives that day, but it's still a valid check-out day for this
+    // stay (one leaves in the morning, the next arrives in the afternoon).
+    const nextBookedNight = useMemo(() => {
+        if (!checkIn || checkOut) return null;
+        const start = toISO(checkIn);
+        let first: string | null = null;
+        for (const iso of occupiedDates) {
+            // 'YYYY-MM-DD' strings compare correctly as plain text.
+            if (iso > start && (first === null || iso < first)) first = iso;
+        }
+        return first;
+    }, [checkIn, checkOut, occupiedDates]);
 
     // Can't browse to months before the current one.
     const canGoPrev =
@@ -134,11 +222,14 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, on
             </View>
 
             {/* Day grid */}
-            <View style={styles.grid}>
+            <View style={styles.grid} onLayout={onGridLayout}>
                 {grid.map((date, i) => {
                     if (!date) return <View key={`blank-${i}`} style={styles.cell} />; // padding
 
                     const iso = toISO(date);
+                    const isPast = date < today;
+                    // The day before — if that night was booked, a guest leaves this morning.
+                    const prevISO = toISO(new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1));
                     return (
                         <Day
                             key={iso}
@@ -146,9 +237,12 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, on
                             isCheckIn={!!checkIn && isSameDay(date, checkIn)}
                             isCheckOut={!!checkOut && isSameDay(date, checkOut)}
                             isInRange={rangeComplete && date > checkIn! && date < checkOut!}
-                            isOccupied={occupiedSet.has(iso)}
-                            isPast={date < today}
+                            bookedNight={!isPast && occupiedSet.has(iso)}
+                            bookedMorning={!isPast && occupiedSet.has(prevISO)}
+                            canCheckOutHere={iso === nextBookedNight}
+                            isPast={isPast}
                             rangeComplete={rangeComplete}
+                            cellWidth={cellWidth}
                             palette={p}
                             onPress={handlePress}
                         />
@@ -160,10 +254,9 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, on
             <View style={[styles.legend, { borderTopColor: p.divider }]}>
                 <LegendItem color={p.primary.main} border={p.accent.main} label="Selected" p={p} />
                 <LegendItem color={withAlpha(p.accent.main, 0.3)} border={p.accent.main} label="In Range" p={p} />
-                <View style={[styles.occupiedTag, { backgroundColor: p.background.default, borderColor: p.borderColor }]}>
-                    <View style={[styles.legendDot, { backgroundColor: p.text.placeHolder }]} />
-                    <Text style={[typography.overline, { color: p.text.placeHolder }]}>Occupied</Text>
-                </View>
+                <LegendBooked shade="full" label="Booked" p={p} />
+                <LegendBooked shade="afternoon" label="Guest arrives" p={p} />
+                <LegendBooked shade="morning" label="Guest leaves" p={p} />
             </View>
         </View>
     );
@@ -179,17 +272,19 @@ const styles = StyleSheet.create({
     weekday: { width: COL, textAlign: 'center' },
 
     grid: { flexDirection: 'row', flexWrap: 'wrap' },
-    cell: { width: COL, height: verticalScale(44), alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xs },
+    cell: { width: COL, height: CELL_HEIGHT, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xs },
     dayTouch: { width: moderateScale(36), height: moderateScale(36), alignItems: 'center', justifyContent: 'center' },
+    checkOutRing: { borderRadius: radius.pill, borderWidth: borderWidth.thin, borderStyle: 'dashed' },
 
     // Half gold bands for the two range ends.
     halfRight: { position: 'absolute', top: 0, bottom: 0, right: 0, left: '50%' },
     halfLeft: { position: 'absolute', top: 0, bottom: 0, left: 0, right: '50%' },
 
-    legend: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', columnGap: spacing.lg, marginTop: spacing.lg, paddingTop: spacing.md, borderTopWidth: borderWidth.thin },
+    // Wraps onto two rows on narrow phones.
+    legend: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', columnGap: spacing.lg, rowGap: spacing.sm, marginTop: spacing.lg, paddingTop: spacing.md, borderTopWidth: borderWidth.thin },
     legendItem: { flexDirection: 'row', alignItems: 'center', columnGap: spacing.xs },
-    legendDot: { width: moderateScale(12), height: moderateScale(12), borderRadius: radius.pill },
-    occupiedTag: { flexDirection: 'row', alignItems: 'center', columnGap: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, borderRadius: radius.pill, borderWidth: borderWidth.thin },
+    legendDot: { width: SWATCH, height: SWATCH, borderRadius: radius.pill },
+    swatch: { width: SWATCH, height: SWATCH, borderWidth: borderWidth.thin, overflow: 'hidden' },
 });
 
 export default Calendar;
