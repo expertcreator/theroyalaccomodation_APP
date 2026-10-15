@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { onAuthStateChanged, sendEmailVerification } from '@react-native-firebase/auth';
+import { useNetInfo } from '@react-native-community/netinfo';
 import { auth } from '../firebase/config';
 import {
     signUp as authSignUp,
@@ -118,21 +119,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return () => sub.remove();
     }, []);
 
+    // Load the profile again after an earlier failure. Only use the result if
+    // the same person is still signed in (they may have signed out meanwhile).
+    const retryProfile = (userId: string) => {
+        getUserProfile(userId)
+            .then((p) => {
+                if (auth.currentUser?.uid === userId) setProfile(p);
+            })
+            .catch(() => { }); // still failing — the next trigger will try again
+    };
+
     // Signed in but the profile didn't load (e.g. we were offline at start-up)?
     // Try again each time the app comes back to the foreground, until it works.
     useEffect(() => {
         if (!uid || profile) return; // signed out, or already loaded — nothing to do
         const sub = AppState.addEventListener('change', (state) => {
-            if (state !== 'active') return;
-            getUserProfile(uid)
-                .then((p) => {
-                    // Only use it if the same person is still signed in.
-                    if (auth.currentUser?.uid === uid) setProfile(p);
-                })
-                .catch(() => { }); // still failing — we'll try again next time
+            if (state === 'active') retryProfile(uid);
         });
         return () => sub.remove();
     }, [uid, profile]);
+
+    // Also try again the moment the internet comes back.
+    // "Offline" = no network, or a network that can't reach the internet.
+    // NetInfo starts as "unknown" (null) — that doesn't count as offline, so
+    // app start-up is never mistaken for "just came back online".
+    const net = useNetInfo();
+    const isOffline = net.isConnected === false || net.isInternetReachable === false;
+    const wasOffline = useRef(isOffline);
+    useEffect(() => {
+        const cameBackOnline = wasOffline.current && !isOffline;
+        wasOffline.current = isOffline;
+        if (cameBackOnline && uid && !profile) retryProfile(uid);
+    }, [isOffline, uid, profile]);
 
     // --- actions ---
 
