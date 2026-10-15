@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, ScrollView } from 'react-native';
-import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import { useRoute, useNavigation, useFocusEffect, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -58,9 +58,23 @@ const CheckAvailability: React.FC = () => {
   // Real occupied dates — loaded for the viewed month and extended as the user
   // pages the calendar, so far-future bookings (2027, 2028…) show correctly
   // without loading years of data up front.
-  const { occupied: occupiedDates } = useOccupiedDates(
+  const { occupied: occupiedDates, refresh: refreshOccupied } = useOccupiedDates(
     property.owAccomId,
     month
+  );
+
+  // Coming back to this screen (e.g. from Payment after "these dates have just
+  // been booked")? Re-check the calendar, so dates taken meanwhile show as booked.
+  // The effect below then clears a selection that now covers a booked night.
+  const firstFocus = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (firstFocus.current) {
+        firstFocus.current = false; // the first load already happens on open
+        return;
+      }
+      refreshOccupied();
+    }, [refreshOccupied])
   );
 
   // O(1) occupied lookups for the rule checks.
@@ -213,6 +227,7 @@ const CheckAvailability: React.FC = () => {
           checkIn={checkIn}
           checkOut={checkOut}
           occupiedDates={occupiedDates}
+          minNights={minNights}
           onSelectDay={handleSelectDay}
           onChangeMonth={(dir) => setMonth(addMonths(month, dir))}
         />

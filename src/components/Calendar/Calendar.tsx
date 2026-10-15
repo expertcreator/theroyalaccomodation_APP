@@ -41,6 +41,7 @@ type Props = {
     checkIn: Date | null;
     checkOut: Date | null;
     occupiedDates: string[];     // ISO 'YYYY-MM-DD'
+    minNights?: number;          // shortest allowed stay (default 1)
     onSelectDay: (date: Date) => void;
     onChangeMonth: (direction: -1 | 1) => void;
 };
@@ -161,7 +162,7 @@ const LegendBooked = ({ shade, label, p }: { shade: 'full' | 'morning' | 'aftern
 };
 
 /* ============================================================ */
-const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, onSelectDay, onChangeMonth }) => {
+const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, minNights = 1, onSelectDay, onChangeMonth }) => {
     const { theme } = useTheme();
     const p = theme.palette;
 
@@ -182,7 +183,8 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, on
 
     // While choosing a check-out: the first booked night after the check-in.
     // A guest arrives that day, but it's still a valid check-out day for this
-    // stay (one leaves in the morning, the next arrives in the afternoon).
+    // stay (one leaves in the morning, the next arrives in the afternoon) —
+    // as long as the stay would be at least the minimum number of nights.
     const nextBookedNight = useMemo(() => {
         if (!checkIn || checkOut) return null;
         const start = toISO(checkIn);
@@ -191,8 +193,12 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, on
             // 'YYYY-MM-DD' strings compare correctly as plain text.
             if (iso > start && (first === null || iso < first)) first = iso;
         }
-        return first;
-    }, [checkIn, checkOut, occupiedDates]);
+        if (!first) return null;
+
+        // Too short a stay (e.g. 1 night when the minimum is 2)? Then it can't be the check-out.
+        const earliestCheckOut = new Date(checkIn.getFullYear(), checkIn.getMonth(), checkIn.getDate() + minNights);
+        return first >= toISO(earliestCheckOut) ? first : null;
+    }, [checkIn, checkOut, occupiedDates, minNights]);
 
     // Can't browse to months before the current one.
     const canGoPrev =

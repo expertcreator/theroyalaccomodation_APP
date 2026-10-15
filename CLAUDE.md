@@ -125,7 +125,7 @@ TypeScript, 2nd gen, region `europe-west2` (London, same as Firestore). Project 
 
 ### Booking flow and what is still stubbed
 `CheckAvailability`:
-- `useOccupiedDates` fetches booked nights in 3-month chunks as the calendar pages, accumulating results.
+- `useOccupiedDates` fetches booked nights in 3-month chunks as the calendar pages, accumulating results; a fresh answer replaces what was held for its date range. Its `refresh()` runs whenever Check Availability comes back into view (e.g. from Payment), so dates taken meanwhile appear, and the reconcile effect clears a selection that now covers a booked night.
 - The calendar enforces `pricing.minNights` and blocks ranges that span a booked night.
 - `useOwcalSummary` fetches the live price, debounced 400 ms and race-safe.
 - "Proceed" re-checks availability for the exact range, then routes to `LoginRegister` (signed out) or `Payment`.
