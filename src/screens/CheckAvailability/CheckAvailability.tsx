@@ -18,6 +18,7 @@ import Calendar from '../../components/Calendar/Calendar';
 import DateSummary from './components/DateSummary';
 import GuestStepper from './components/GuestStepper';
 import BottomBar from './components/BottomBar';
+import PriceBreakdown from './components/PriceBreakdown';
 import { styles } from './styles';
 import { useAuth } from '../../context/AuthContext';
 import { useOwcalSummary } from '../../hooks/useOwcalSummary';
@@ -269,6 +270,12 @@ const CheckAvailability: React.FC = () => {
             canIncrement={pets < 2}
           />
         </View>
+
+        {/* Price breakdown — once a live price has loaded. While a new price loads it stays
+            in place (faded) instead of disappearing, so the screen doesn't jump. */}
+        {rangeComplete && priceState.summary?.ok && (
+          <PriceBreakdown summary={priceState.summary} nights={nights} pets={pets} updating={priceState.loading} />
+        )}
 
       </ScrollView>
 

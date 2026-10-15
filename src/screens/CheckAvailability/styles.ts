@@ -32,6 +32,10 @@ export const styles = StyleSheet.create({
     // Stepper row
     stepperRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.sm },
     stepperControls: { flexDirection: 'row', alignItems: 'center', columnGap: spacing.md },
+
+    // Price breakdown card (reuses guestsCard / guestsHeader)
+    breakdownRow: { flexDirection: 'row', alignItems: 'center', columnGap: spacing.md, paddingVertical: spacing.xs },
+    breakdownTotal: { marginTop: spacing.xs, paddingTop: spacing.sm, borderTopWidth: borderWidth.thin },
     stepperBtn: { width: 32, height: 32, borderRadius: radius.pill, borderWidth: borderWidth.thin, alignItems: 'center', justifyContent: 'center' },
     stepperValue: { minWidth: 24, textAlign: 'center' },
 

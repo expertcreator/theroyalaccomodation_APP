@@ -17,8 +17,37 @@ const num = (html: string, re: RegExp): number | null => {
 // Field name pattern: ow-option-<id>-multi-accom-1
 const OW_PET_OPTION_ID = 1;
 
+// HTML snippet → plain text, e.g. "Cleaning Fee: &pound;295.00" → "Cleaning Fee: £295.00".
+const plainText = (s: string): string =>
+    s.replace(/<[^>]*>/g, '')
+        .replace(/&pound;/g, '£')
+        .replace(/&#0?38;|&amp;/g, '&')
+        .replace(/&nbsp;/g, ' ')
+        .trim();
+
+// The amount at the end of a summary line, e.g. "Cleaning Fee: £295.00" → 295.
+const amountAtEnd = (text: string): number | null => {
+    const m = text.match(/([\d,]+(?:\.\d+)?)\s*$/);
+    return m ? parseFloat(m[1].replace(/,/g, '')) : null;
+};
+
+// Text of every <div class="…cls…">…</div> in the summary.
+const divTexts = (html: string, cls: string): string[] => {
+    const re = new RegExp(`<div class="[^"]*\\b${cls}\\b[^"]*">([\\s\\S]*?)</div>`, 'g');
+    return Array.from(html.matchAll(re), (m) => plainText(m[1]));
+};
+
 /* ---------- ow_get_summary → the REAL price (fees, seasonal rates and all) ---------- */
-export type OwSummary = { ok: boolean; total: number; deposit: number; html: string };
+// One fee line from OWcal's summary, e.g. { label: 'Cleaning Fee', amount: 295 }.
+export type OwFee = { label: string; amount: number };
+
+export type OwSummary = {
+    ok: boolean; total: number; deposit: number; html: string;
+    // Price breakdown, read from the same summary (null / empty if OWcal didn't show it):
+    accomPrice: number | null;   // "Accommodation price" (all nights)
+    extrasPrice: number | null;  // "Options / Pets" (e.g. the pet fee)
+    fees: OwFee[];               // e.g. the cleaning fee — one entry per fee
+};
 
 export async function owGetSummary(input: {
     accomId: number; checkIn: string; checkOut: string;
@@ -49,7 +78,23 @@ export async function owGetSummary(input: {
     const html = typeof res === 'string' ? res : '';
     const total = num(html, /data-charged-total-price-raw="([\d.]+)"/);
     const deposit = num(html, /data-charged-deposit-raw="([\d.]+)"/);
-    return { ok: total != null, total: total ?? 0, deposit: deposit ?? total ?? 0, html };
+
+    // Breakdown lines, e.g. "Accommodation price: £4,350.00", "Cleaning Fee: £295.00".
+    const accomLine = divTexts(html, 'ow-summary-accom-price')[0];
+    const extrasLine = divTexts(html, 'ow-summary-options-price')[0];
+    const fees: OwFee[] = [];
+    for (const line of divTexts(html, 'ow-summary-fee')) {
+        const amount = amountAtEnd(line);
+        const label = line.slice(0, line.lastIndexOf(':')).trim(); // text before the last ':'
+        if (amount != null && label) fees.push({ label, amount });
+    }
+
+    return {
+        ok: total != null, total: total ?? 0, deposit: deposit ?? total ?? 0, html,
+        accomPrice: accomLine ? amountAtEnd(accomLine) : null,
+        extrasPrice: extrasLine ? amountAtEnd(extrasLine) : null,
+        fees,
+    };
 }
 
 /* ---------- ow_get_available_accom → is this property bookable for these dates? ---------- */

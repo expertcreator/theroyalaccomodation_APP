@@ -67,7 +67,7 @@ Three backends:
 1. **RA App WordPress plugin** — `wp-json/ra-app/v1`, in `raApi.ts`. Our own plugin; see the "RA App API plugin" section below.
 2. **OWcal booking plugin** — `wp-admin/admin-ajax.php`, in `owcal.ts`.
    - Bodies are form-urlencoded, built by hand (`encodeForm`).
-   - The real price comes from `ow_get_summary`, which returns HTML; `total`/`deposit` are read from the `data-charged-total-price-raw` and `data-charged-deposit-raw` attributes via regex.
+   - The real price comes from `ow_get_summary`, which returns HTML; `total`/`deposit` are read from the `data-charged-total-price-raw` and `data-charged-deposit-raw` attributes via regex. The price breakdown shown on Check Availability (accommodation, extras, each fee) is read from the `ow-summary-accom-price`, `ow-summary-options-price` and `ow-summary-fee` divs.
    - The pet fee is OWcal option id `1`.
    - Don't send `admin_*` fields — they trip the site's WAF (403).
 3. **Firebase** — email/password Auth plus one Firestore doc per user at `users/{uid}` (shape in `src/interfaces/user.ts`).
