@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: RA App API
- * Description: Bridge between The Royal Accommodation mobile app and the website. Public, read-only routes for occupied dates, nightly rates and reviews; a contact-enquiry route that sends email; and "My Bookings" — for the signed-in app user (Firebase sign-in token) or server-to-server (shared secret). Reads OWcal data; never writes to it.
- * Version:     1.3.0
+ * Description: Bridge between The Royal Accommodation mobile app and the website. Public, read-only routes for occupied dates, nightly rates and reviews; a contact-enquiry route that sends email; "My Bookings" — for the signed-in app user (Firebase sign-in token) or server-to-server (shared secret); and in-app booking with Stripe, which creates reservations through OWcal's own code exactly like the website (off unless RA_APP_CHECKOUT is set in wp-config.php).
+ * Version:     1.4.0
  * Author:      RTD / ITOasis
  * Requires PHP: 7.4
  */
@@ -32,6 +32,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  *  Statuses that are NOT real, live bookings are hidden from the app.
  *  Override in wp-config.php if the client's OWcal is configured
  *  differently, e.g. define( 'RA_APP_HIDDEN_STATUSES', 'waiting_payment,cancelled' );
+ *
+ *  In-app booking (Stripe) is OFF until switched on in wp-config.php:
+ *
+ *      define( 'RA_APP_CHECKOUT', 'test' );  // or 'live' — see the CHECKOUT section
  * ------------------------------------------------------------------
  */
 if ( ! defined( 'RA_APP_HIDDEN_STATUSES' ) ) {

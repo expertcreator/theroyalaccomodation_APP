@@ -80,9 +80,9 @@ Three backends:
 Requests to the WordPress site send browser-like headers (`OW_HEADERS` in `apiEndpoints.ts`) to get past its WAF. For JSON POSTs to `wp-json`, strip `OW_HEADERS`' urlencoded `Content-Type` first (see `sendEnquiryAPI`), otherwise WordPress parses the body as a form and the fields arrive empty.
 
 ### RA App API plugin (`wordpress/ra-app-api/ra-app-api.php`)
-`wp-json/ra-app/v1` is served by our own WordPress plugin, "RA App API" (v1.3.0). Its source lives in this repo, but **the live copy is whatever is on the site**: the user updates it by pasting the file into WP admin → Plugins → Plugin File Editor. After any change, give the user the full file to paste and keep this copy in sync.
+`wp-json/ra-app/v1` is served by our own WordPress plugin, "RA App API" (v1.4.0). Its source lives in this repo, but **the live copy is whatever is on the site**: the user updates it by pasting the file into WP admin → Plugins → Plugin File Editor. After any change, give the user the full file to paste and keep this copy in sync.
 
-It reads OWcal's DB tables and ACF data directly. Every route returns `{ success, message, data }`, and errors come back with a non-2xx status plus the same envelope. Without a local PHP install, syntax-check edits with the `php-parser` npm package.
+It reads OWcal's DB tables and ACF data directly. The checkout routes also **write** reservations, but only through OWcal's own classes (`global $owcal` → `$owcal->utils`, its `OwStripe` gateway, `OwPriceCalc`, `OwDataBaseActions`), never with raw inserts. Every route returns `{ success, message, data }`, and errors come back with a non-2xx status plus the same envelope. Without a local PHP install, syntax-check edits with the `php-parser` npm package.
 
 | Route | Access | Contract |
 |---|---|---|
@@ -92,7 +92,20 @@ It reads OWcal's DB tables and ACF data directly. Every route returns `{ success
 | `POST /enquiry` | public | JSON body: `name`, `email`, `message`, optional `phone` and `property`, and `company` (a honeypot; always send `''`). Rate-limited to 5 per IP per 10 min (429). Emails the business and sends the guest an acknowledgement. |
 | `POST /me/bookings` | `X-Firebase-Token` header | **Used by My Bookings** (`src/firebase/bookings.ts`). The plugin verifies the Firebase ID token itself: RS256 signature against Google's published certs (cached in a transient), `aud`/`iss` = project `the-royal-accommodation`, expiry, and `email_verified`. It returns the bookings for the **token's** email. Errors carry `data.code`: `invalid-token` (401), `email-not-verified` (403), `unavailable` (503). Sent with `Cache-Control: no-store`. |
 | `POST /my-bookings` | `x-ra-secret` header | Server-to-server only. Body `{ email }` → that OWcal customer's reservations: `ref, accomId, property, checkIn, checkOut, adults, children, status, paymentStatus, total, paid, amountToPay, currency, bookedOn` (no pets). Hides `waiting_payment`/`cancelled`/`multi_resa_pending`. |
+| `GET /checkout-config` | public | `{ enabled, mode: 'off'\|'test'\|'live', publishableKey }`. The Stripe publishable key matches the current mode. Never cached. |
+| `POST /me/checkout` | `X-Firebase-Token` | Body: `accomId, checkIn, checkOut, adults, children, pets, firstName, lastName, countryIso`, plus optional `phone, address1, address2, city, county, postCode, couponCode`. It prices the stay like OWcal's `ow_create_resa` (coupon re-checked server-side), creates or updates the OWcal customer, creates the PaymentIntent with OWcal's `process_payment()`, and holds the dates as a `waiting_payment` reservation with origin "Mobile app". Returns `{ ref, paymentIntentId, clientSecret, publishableKey, amount, currency }`, or `{ alreadyPaid, paymentIntentId }`. Codes: `checkout-off`, `invalid-request`, `dates-unavailable`, `coupon-invalid`, `price-error`, `payment-error`, `unavailable`, `invalid-token`. |
+| `POST /me/checkout/confirm` | `X-Firebase-Token` | Body `{ paymentIntentId }`. Only the guest's own booking. The plugin asks Stripe itself, then completes the booking with OWcal's code. Returns `{ status: 'confirmed'\|'processing', bookingStatus, ref, total, paid, currency }`, or `not-paid` (402) / `not-found` (404). Safe to repeat. |
+| `POST /me/checkout/cancel` | `X-Firebase-Token` | Body `{ paymentIntentId }`. Releases the guest's own unpaid hold: cancels the PaymentIntent, then deletes the hold. If Stripe says it was paid, it confirms instead. Returns `{ status: 'cancelled' }`. Safe to repeat. |
 
+- **Checkout (Stripe) runs entirely in the plugin.** The path is phone → WordPress → Stripe, so the Google Cloud firewall block doesn't apply.
+  - **The switch is `RA_APP_CHECKOUT` in `wp-config.php`:**
+    - `off` (the default): the routes refuse, and `/checkout-config` says disabled.
+    - `test`: only app requests use OWcal's stored Stripe **test** keys, via a `pre_option_ow_stripe_mode` filter. The website stays live. Confirm skips OWcal's emails, doesn't overwrite the guest's saved live Stripe customer, and restores the invoice counter.
+    - `live`: OWcal's `check_uncompleted_resa()`, including its emails.
+  - **Testing happens on the live site in `test` mode.** Use December 2027 dates, and delete each "Mobile app (TEST)" booking from OWcal afterwards, because they block the calendar and iCal.
+  - **OWcal's own safety net:** on every page load it checks `waiting_payment` holds older than 15 min with Stripe. Paid ones are completed and emailed; unpaid ones are deleted after 1 h. So a payment still completes if the app dies after paying.
+  - **On a declined card**, the app should re-confirm the **same** `clientSecret`, not call `/me/checkout` again. Calling it again replaces the hold and counts the coupon use again.
+  - Site settings this relies on: full payment (no deposit or bond), GBP, Stripe live, "store payment method" on (cards are saved, so the app must show the "charge your card for future payments" notice), and the pet fee as OWcal option id 1. These are in `ra_app_checkout_rules()`.
 - The accom-ID → slug map (`1680 → ascot`, `1225 → windsor`) exists in both the plugin (`ra_app_accom_map()`) and `constants/data.ts`. Adding a property means updating both.
 - **OWcal data facts** (from its source, `database-actions/database-actions.php`; class `OwDataBaseActions`, tables prefixed `wp_ow_`):
   - **Payments** live in the reservation row's `payments_logs` JSON: entries with `amount`, `refunded_amount`, `payment_method` and an optional `delayed`. This is the "Edit payments" list in OWcal admin. The plugin computes `paid` = Σ(amount − refunded), skipping delayed entries, and `amountToPay` = price − paid.
@@ -102,10 +115,10 @@ It reads OWcal's DB tables and ACF data directly. Every route returns `{ success
   - **Payment statuses:** `paid`, `not_fully_paid`, `bond_not_paid`, `unpaid`, `payment_delayed`.
   - **Extras** (e.g. the "Pet Fee" option) are stored in the reservation's `options` column. They aren't returned to the app yet.
 - **Never call `/my-bookings` from the app.** The secret proves who is calling, not which user is asking: whoever holds it can read any email's bookings, and anything in the app bundle can be extracted. The app uses `/me/bookings` with its Firebase token instead. `RA_APP_SECRET` (in `wp-config.php` and Google Secret Manager) must never go into the JS bundle.
-- **The site's firewall blocks requests from Google Cloud IPs** (403 before WordPress runs), while requests from phones pass. That's why My Bookings verifies the token in the plugin rather than in a Cloud Function. Any future Cloud Function → WordPress call (e.g. Stripe webhook → create reservation) needs the host to allowlist that route or a fixed outgoing IP first. See `KNOWN_ISSUES.md`.
+- **The site's firewall blocks requests from Google Cloud IPs** (403 before WordPress runs), while requests from phones pass. That's why My Bookings and checkout verify the token in the plugin rather than in a Cloud Function. Any future Cloud Function → WordPress call would need the host (20i / StackCP) to allowlist that route or a fixed outgoing IP first. See `KNOWN_ISSUES.md`.
 
 ### Firebase Cloud Functions (`functions/`)
-TypeScript, 2nd gen, region `europe-west2` (London, same as Firestore). Project `the-royal-accommodation`, configured in `.firebaserc` and `firebase.json`; the app's `getFunctions` uses the same region. **No functions are deployed yet**; this folder is the home for the Stripe work. Things learned while deploying:
+TypeScript, 2nd gen, region `europe-west2` (London, same as Firestore). Project `the-royal-accommodation`, configured in `.firebaserc` and `firebase.json`; the app's `getFunctions` uses the same region. **No functions are deployed.** Stripe ended up in the WordPress plugin instead, because of the firewall, so this folder is currently unused. Things learned while deploying:
 - The project sits under the Workspace organisation, which enforces "Domain restricted sharing". That blocks the `allUsers` invoker binding `firebase deploy` tries to add for callable functions. Workaround: in Cloud Run → service → Security, choose **"Allow public access"**. Callable functions still check Firebase auth themselves.
 - The build runs as `637799926068-compute@developer.gserviceaccount.com`, which needed **Cloud Build Service Account** granted manually. It's also the runtime identity; see GCF-1 in `KNOWN_ISSUES.md`.
 - Secrets live in Secret Manager (`defineSecret`). `RA_APP_SECRET` is already stored there.
@@ -120,7 +133,7 @@ TypeScript, 2nd gen, region `europe-west2` (London, same as Firestore). Project 
 `Payment` fetches the price again and collects the card with Stripe `CardForm`, then goes to `BookingConfirmed`.
 
 Still stubbed:
-- **No real payment or reservation.** `Payment.onBookNow` makes up an `RA-…` reference. `ow_create_resa` is defined in `apiEndpoints.ts` but unused.
+- **No real payment or reservation yet in the app.** `Payment.onBookNow` makes up an `RA-…` reference. The plugin's checkout routes (v1.4.0) are ready on the site but switched off, and the app isn't wired to them yet. `ow_create_resa` in `apiEndpoints.ts` is unused; the plugin creates reservations instead.
 - **Coupons:** the Payment screen's coupon card checks a code with `ow_verify_coupon` (`owVerifyCoupon`). It then re-fetches `ow_get_summary` with `ow-pre-validated-coupon-id`, so OWcal itself returns the discounted total and an `ow-summary-coupon-amount` line. Checking a code doesn't count a use; OWcal counts it only when a reservation is created.
 - **Profile photos** are disabled ("coming soon"); `utils/photo.ts` and the Firebase `storage`/`functions` exports are unused.
 

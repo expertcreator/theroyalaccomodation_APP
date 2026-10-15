@@ -79,7 +79,13 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
 
 ## Not built yet (feature work, not bugs)
 
-- Real payment: `Payment.onBookNow` makes up an `RA-…` reference. There's no Stripe PaymentIntent and no `ow_create_resa`. The Payment coupon card checks codes with `ow_verify_coupon` and shows OWcal's discounted price, but the coupon only reaches a real booking once checkout is built: the plugin must re-check and apply it server-side and count the use.
+- Real payment in the app: `Payment.onBookNow` still makes up an `RA-…` reference.
+  - The **plugin side is done** (v1.4.0: `/checkout-config`, `/me/checkout`, `/confirm`, `/cancel`, live but switched off; see CLAUDE.md). It already re-checks and applies coupons server-side.
+  - **Still to do:**
+    - wire the Payment screen to those routes;
+    - fetch the Stripe key from `/checkout-config`, so `src/constants/stripe.ts` and APP-6 go away;
+    - add the saved-card notice;
+    - test in `RA_APP_CHECKOUT='test'` with December 2027 dates, then delete the test bookings and the `APPTEST10` coupon.
 - Profile photos (Firebase Storage) are shown as "coming soon".
 - The `SearchResults` route is a placeholder screen.
 - The `BookingConfirmed` copy promises a confirmation email and a concierge call that nothing triggers yet.
@@ -89,7 +95,7 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
 - [x] **PLG-1 · `/my-bookings` trusts any email it's sent.** Resolved for the app in v1.2.0 (2026-10-14). The app now uses `/me/bookings`, where the plugin verifies the guest's Firebase token and uses the token's email. `/my-bookings` remains for server-to-server use only, so `RA_APP_SECRET` must never go into the app bundle.
 
 - [ ] **PLG-8 · The site's firewall blocks requests from Google Cloud.** Calls from Cloud Functions to `wp-json/ra-app/v1/*` get a 403 before WordPress runs (blocked by IP). Phones and normal visitors pass, even without browser-like headers. It's an Apache server with no CDN, so the block comes from the host's firewall or a security plugin. This is why My Bookings verifies the token in the plugin instead of a Cloud Function.
-  *Needed before Stripe (backend plan A3/A4):* the webhook must create the OWcal reservation from Google Cloud. Ask the host or site admin to allowlist the specific plugin route(s), or give Cloud Functions a fixed outgoing IP (Cloud NAT, which has a monthly cost) and allowlist that. Alternatively, keep payment logic inside the plugin.
+  *No longer blocks Stripe (2026-10-15):* payment logic was moved inside the plugin (v1.4.0 checkout routes), so the path is phone → WordPress → Stripe and no Cloud Function is involved. The host is 20i (StackCP). This only matters again if a future feature needs Cloud Functions → WordPress: then ask the host to allowlist that route, or use a fixed outgoing IP (Cloud NAT, which has a monthly cost).
 
 - [ ] **PLG-2 · The enquiry rate limit may be shared by all users.** `ra_app_client_ip()` uses `REMOTE_ADDR`. If the site sits behind Cloudflare, Sucuri or a load balancer, that's the proxy's IP, so the whole app shares one limit of 5 per 10 min.
   *Fix:* check the hosting setup. If there's a trusted proxy, read its client-IP header (e.g. `CF-Connecting-IP`).
@@ -123,7 +129,7 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
 
 ## Cloud Functions / Google Cloud
 
-- [ ] **GCF-1 · Functions run as the shared Compute Engine default service account.** (No functions are deployed right now; this applies to the next ones.) To make deploys build, `637799926068-compute@developer.gserviceaccount.com` was granted **Cloud Build Service Account** (`roles/cloudbuild.builds.builder`) on 2026-10-14. That same account is also the functions' runtime identity, so running functions inherit build-level access, including read/write to Cloud Storage objects.
+- [ ] **GCF-1 · Functions run as the shared Compute Engine default service account.** (No functions are deployed, and Stripe no longer needs any. This applies only if functions are added later.) To make deploys build, `637799926068-compute@developer.gserviceaccount.com` was granted **Cloud Build Service Account** (`roles/cloudbuild.builds.builder`) on 2026-10-14. That same account is also the functions' runtime identity, so running functions inherit build-level access, including read/write to Cloud Storage objects.
   *Fix (with security hardening, backend plan D):* create a dedicated runtime service account that can only read the needed secrets. Set it via the `serviceAccount` option in each function's `onCall({...})`.
 
 ## Tooling
