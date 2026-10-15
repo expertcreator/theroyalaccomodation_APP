@@ -62,6 +62,12 @@ const PaymentCard: React.FC<Props> = ({ cardholderName, onCardholderNameChange, 
                     }}
                     style={styles.cardForm}
                 />
+
+                {/* Same notice as the website: OWcal saves the card in Stripe
+                    ("Store payment method" is on), so the guest must be told. */}
+                <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.sm }]}>
+                    By providing your card information, you allow The Royal Accommodation to charge your card for future payments in accordance with their terms.
+                </Text>
             </View>
 
             {/* Security line */}

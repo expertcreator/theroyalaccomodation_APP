@@ -62,6 +62,12 @@ export const styles = StyleSheet.create({
     paymentLoading: { alignItems: 'center', paddingVertical: spacing.xl, marginBottom: spacing.lg },
     testModeNote: { marginBottom: spacing.md, paddingHorizontal: spacing.sm },
 
+    // Your details card
+    detailsRow: { flexDirection: 'row', alignItems: 'flex-start', columnGap: spacing.md, paddingVertical: spacing.xxs },
+    detailsLabel: { width: '26%', paddingTop: 2 },
+    detailsFields: { rowGap: spacing.md },
+    detailsButtons: { flexDirection: 'row', columnGap: spacing.md, marginTop: spacing.xs },
+
     // Coupon card
     couponHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
     couponRow: { flexDirection: 'row', alignItems: 'center', columnGap: spacing.md, paddingVertical: spacing.xxs },

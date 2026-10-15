@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, ScrollView, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -25,6 +26,8 @@ import { useOwcalSummary } from '../../hooks/useOwcalSummary';
 import { owVerifyCoupon } from '../../api/owcal';
 import CouponCard from './components/CouponCard';
 import { useCheckoutConfig } from '../../hooks/useCheckoutConfig';
+import { useAuth } from '../../context/AuthContext';
+import DetailsCard, { detailsComplete } from './components/DetailsCard';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.PaymentReview>;
@@ -95,8 +98,13 @@ const Payment: React.FC = () => {
     // Is in-app booking on, and is Stripe ready (with the site's own key)?
     const { state: payment, retry: retryPayment } = useCheckoutConfig();
 
+    // The guest's details (from My Profile, editable on this screen).
+    const { profile } = useAuth();
+    const [editingDetails, setEditingDetails] = useState<boolean>(false);
+    const detailsReady = detailsComplete(profile) && !editingDetails; // loaded, complete and saved
+
     const canBook = acceptTerms && acceptPrivacy && cardComplete && cardholderName.trim().length > 0 && priceReady // ← + priceReady
-        && payment.status === 'ready';
+        && payment.status === 'ready' && detailsReady;
 
     const goContact = () => navigation.navigate(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Contact });
 
@@ -112,7 +120,13 @@ const Payment: React.FC = () => {
         <View style={[styles.container, { backgroundColor: p.background.default }]}>
             <Header title="Payment & Review" onBack={() => navigation.goBack()} />
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+            {/* Keyboard-aware, so the details and card fields are never hidden behind the keyboard */}
+            <KeyboardAwareScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+                bottomOffset={spacing.xl}
+            >
                 <ReservationSummary
                     property={property}
                     checkIn={checkIn}
@@ -180,6 +194,8 @@ const Payment: React.FC = () => {
                             </View>
                         )}
 
+                        <DetailsCard onEditingChange={setEditingDetails} />
+
                         <PaymentCard
                             cardholderName={cardholderName}
                             onCardholderNameChange={setCardholderName}
@@ -198,7 +214,7 @@ const Payment: React.FC = () => {
                         <Button title="Book Now" rightIcon="arrow-right" disabled={!canBook} onPress={onBookNow} />
                     </>
                 )}
-            </ScrollView>
+            </KeyboardAwareScrollView>
 
             <WebViewModal
                 visible={!!policy}
