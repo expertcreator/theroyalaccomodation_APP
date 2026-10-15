@@ -6,8 +6,6 @@ import { ThemeProvider } from './src/context/ThemeContext';
 import { AuthProvider } from './src/context/AuthContext';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { ToastProvider } from 'react-native-toast-notifications';
-import { STRIPE_PUBLISHABLE_KEY } from './src/constants/stripe';
-import { StripeProvider } from '@stripe/stripe-react-native';
 import { RatesProvider } from './src/context/RatesContext';
 import { ReviewsProvider } from './src/context/ReviewContext';
 
@@ -19,15 +17,15 @@ export default function App() {
           <ThemeProvider>
             <AuthProvider>
               <ToastProvider>
-                <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
-                  <RatesProvider>
-                    <ReviewsProvider>
-                      <NavigationContainer>
-                        <RootNavigator />
-                      </NavigationContainer>
-                    </ReviewsProvider>
-                  </RatesProvider>
-                </StripeProvider>
+                {/* Stripe is started on the Payment screen, with the key our plugin
+                    gives it (useCheckoutConfig) — no Stripe key lives in the app. */}
+                <RatesProvider>
+                  <ReviewsProvider>
+                    <NavigationContainer>
+                      <RootNavigator />
+                    </NavigationContainer>
+                  </ReviewsProvider>
+                </RatesProvider>
               </ToastProvider>
             </AuthProvider>
           </ThemeProvider>

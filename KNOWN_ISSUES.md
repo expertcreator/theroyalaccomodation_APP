@@ -26,8 +26,8 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
 - [ ] **APP-5 · Dates show one day early for users west of UTC.** `new Date('YYYY-MM-DD')` parses as UTC midnight, so guests in the Americas see the previous day. Affected: `Payment.tsx`, `StaySummary.tsx`, `BookingConfirmed.tsx`, `BookingCard.tsx`, `BookingSummaryModal.tsx`.
   *Fix:* add a local `fromISO(s)` (split into Y/M/D → `new Date(y, m - 1, d)`) to `src/utils/date.ts` and use it everywhere.
 
-- [ ] **APP-6 · A fresh clone doesn't build.** `src/constants/stripe.ts` is gitignored, but `App.tsx` imports it.
-  *Fix:* commit it. A Stripe publishable key is public by design. Alternatively, commit a `stripe.example.ts` and document the step.
+- [x] **APP-6 · A fresh clone doesn't build.** `src/constants/stripe.ts` is gitignored, but `App.tsx` imports it.
+  *Fixed 2026-10-15:* the global `StripeProvider` is gone. The Payment screen gets the publishable key from the plugin's `/checkout-config` and calls `initStripe` (`useCheckoutConfig`), so nothing imports `stripe.ts` any more. The leftover local file is harmless and can be deleted.
 
 ## App — medium
 

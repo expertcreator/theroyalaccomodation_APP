@@ -36,7 +36,7 @@ Tooling state:
 
 ## Local setup gotchas
 
-- `src/constants/stripe.ts` is **gitignored** but imported by `App.tsx`; a fresh clone must create it: `export const STRIPE_PUBLISHABLE_KEY = 'pk_test_...';`. The Stripe secret key must never live in the app (intended to be Cloud-Function-only).
+- **No Stripe key lives in the app.** The Payment screen gets the publishable key from the plugin's `/checkout-config` and calls `initStripe` (`src/hooks/useCheckoutConfig.ts`), so app and website always use the same Stripe account and mode. The gitignored `src/constants/stripe.ts` is no longer imported. The Stripe secret keys stay in OWcal's settings on the site.
 - Firebase is configured natively (`android/app/google-services.json`, `ios/TheRoyalAccommodation/GoogleService-Info.plist`); `src/firebase/config.ts` just calls `getApp()` — no `initializeApp` in JS.
 - Android release signing reads `storeFile`/`storePassword`/`keyAlias`/`keyPassword` from `android/local.properties`.
 - `patches/` is applied on `postinstall` (patch-package). The custom-status-bar patch rewrites the component to use safe-area insets; don't upgrade those packages without re-checking the patches.
@@ -45,7 +45,7 @@ Tooling state:
 ## Architecture
 
 ### App shell and splash
-`App.tsx` nests providers: GestureHandler → KeyboardProvider → SafeArea → Theme → Auth → Toast → Stripe → Rates → Reviews → NavigationContainer. The native splash (`react-native-splash-view`) stays up until `RootNavigator` sees both `useRates().ready` and `!useAuth().initializing`, then calls `hideSplash()`. Anything that delays either of those delays app start.
+`App.tsx` nests providers: GestureHandler → KeyboardProvider → SafeArea → Theme → Auth → Toast → Rates → Reviews → NavigationContainer. (Stripe isn't a provider; Payment starts it with `initStripe`.) The native splash (`react-native-splash-view`) stays up until `RootNavigator` sees both `useRates().ready` and `!useAuth().initializing`, then calls `hideSplash()`. Anything that delays either of those delays app start.
 
 ### Navigation
 - `src/navigation/routes.ts` holds route-name constants (`STACK_ROUTES`, `DRAWER_ROUTES`) — use them, never string literals.

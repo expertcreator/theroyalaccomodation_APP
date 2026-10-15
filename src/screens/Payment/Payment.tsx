@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -8,8 +8,12 @@ import { nightsBetween } from '../../utils/date';
 import { getPropertyById, POLICY_URLS } from '../../constants/data';
 import { calculateStayPrice } from '../../utils/pricing';
 import type { RootStackParamList } from '../../navigation/types';
-import { STACK_ROUTES } from '../../navigation/routes';
+import { DRAWER_ROUTES, STACK_ROUTES } from '../../navigation/routes';
+import { typography, spacing } from '../../theme';
 
+import Text from '../../components/Text/Text';
+import Icon from '../../components/Icon/Icon';
+import EmptyState from '../../components/EmptyState/EmptyState';
 import Header from '../../components/Headers/Header';
 import Button from '../../components/Buttons/Button';
 import ReservationSummary from './components/ReservationSummary';
@@ -20,6 +24,7 @@ import WebViewModal from '../../components/Modals/WebViewModal';
 import { useOwcalSummary } from '../../hooks/useOwcalSummary';
 import { owVerifyCoupon } from '../../api/owcal';
 import CouponCard from './components/CouponCard';
+import { useCheckoutConfig } from '../../hooks/useCheckoutConfig';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.PaymentReview>;
@@ -86,7 +91,14 @@ const Payment: React.FC = () => {
 
     const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
     const [acceptPrivacy, setAcceptPrivacy] = useState<boolean>(false);
-    const canBook = acceptTerms && acceptPrivacy && cardComplete && cardholderName.trim().length > 0 && priceReady; // ← + priceReady
+
+    // Is in-app booking on, and is Stripe ready (with the site's own key)?
+    const { state: payment, retry: retryPayment } = useCheckoutConfig();
+
+    const canBook = acceptTerms && acceptPrivacy && cardComplete && cardholderName.trim().length > 0 && priceReady // ← + priceReady
+        && payment.status === 'ready';
+
+    const goContact = () => navigation.navigate(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Contact });
 
     const onBookNow = () => {
         if (!canBook) return;
@@ -123,22 +135,69 @@ const Payment: React.FC = () => {
                     onCodeChange={() => setCouponError(null)}
                 />
 
-                <PaymentCard
-                    cardholderName={cardholderName}
-                    onCardholderNameChange={setCardholderName}
-                    onCardChange={setCardComplete}
-                />
+                {/* Payment — shown only once the site says booking is on and Stripe is ready */}
+                {payment.status === 'loading' && (
+                    <View style={styles.paymentLoading}>
+                        <ActivityIndicator color={p.primary.main} />
+                        <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.sm }]}>
+                            Preparing secure payment…
+                        </Text>
+                    </View>
+                )}
 
-                <TermsCheckboxes
-                    acceptTerms={acceptTerms}
-                    acceptPrivacy={acceptPrivacy}
-                    onToggleTerms={() => setAcceptTerms((v) => !v)}
-                    onTogglePrivacy={() => setAcceptPrivacy((v) => !v)}
-                    onOpenTerms={() => setPolicy({ title: 'Terms & Conditions', url: POLICY_URLS.terms })}
-                    onOpenPrivacy={() => setPolicy({ title: 'Privacy Policy', url: POLICY_URLS.privacy })}
-                />
+                {payment.status === 'off' && (
+                    <EmptyState
+                        icon="calendar"
+                        title="Coming Soon to the App"
+                        message="Booking and paying in the app isn't available just yet. Our concierge will be happy to book these dates for you."
+                        actionLabel="Contact Concierge"
+                        onAction={goContact}
+                    />
+                )}
 
-                <Button title="Book Now" rightIcon="arrow-right" disabled={!canBook} onPress={onBookNow} />
+                {payment.status === 'error' && (
+                    <EmptyState
+                        icon="alert"
+                        title="Couldn't Load Payment"
+                        message="Please check your connection and try again."
+                        actionLabel="Try Again"
+                        onAction={retryPayment}
+                        helpText="Need assistance?"
+                        helpActionLabel="Contact Concierge"
+                        onHelp={goContact}
+                    />
+                )}
+
+                {payment.status === 'ready' && (
+                    <>
+                        {/* Test mode (site switch = 'test'): only Stripe test cards work */}
+                        {payment.mode === 'test' && (
+                            <View style={[styles.stripeNote, styles.testModeNote]}>
+                                <Icon name="info" size={14} color={p.warning.main} />
+                                <Text style={[typography.caption, { color: p.warning.main, flexShrink: 1 }]}>
+                                    Test mode — use a Stripe test card (e.g. 4242 4242 4242 4242). No real money is taken.
+                                </Text>
+                            </View>
+                        )}
+
+                        <PaymentCard
+                            cardholderName={cardholderName}
+                            onCardholderNameChange={setCardholderName}
+                            onCardChange={setCardComplete}
+                        />
+
+                        <TermsCheckboxes
+                            acceptTerms={acceptTerms}
+                            acceptPrivacy={acceptPrivacy}
+                            onToggleTerms={() => setAcceptTerms((v) => !v)}
+                            onTogglePrivacy={() => setAcceptPrivacy((v) => !v)}
+                            onOpenTerms={() => setPolicy({ title: 'Terms & Conditions', url: POLICY_URLS.terms })}
+                            onOpenPrivacy={() => setPolicy({ title: 'Privacy Policy', url: POLICY_URLS.privacy })}
+                        />
+
+                        <Button title="Book Now" rightIcon="arrow-right" disabled={!canBook} onPress={onBookNow} />
+                    </>
+                )}
             </ScrollView>
 
             <WebViewModal

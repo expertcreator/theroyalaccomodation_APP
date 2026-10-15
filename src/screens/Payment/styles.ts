@@ -58,6 +58,10 @@ export const styles = StyleSheet.create({
 
     assurance: { textAlign: 'center', marginTop: spacing.sm },
 
+    // Payment states (loading / test-mode note)
+    paymentLoading: { alignItems: 'center', paddingVertical: spacing.xl, marginBottom: spacing.lg },
+    testModeNote: { marginBottom: spacing.md, paddingHorizontal: spacing.sm },
+
     // Coupon card
     couponHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
     couponRow: { flexDirection: 'row', alignItems: 'center', columnGap: spacing.md, paddingVertical: spacing.xxs },
