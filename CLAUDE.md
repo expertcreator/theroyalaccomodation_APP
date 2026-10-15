@@ -120,7 +120,8 @@ TypeScript, 2nd gen, region `europe-west2` (London, same as Firestore). Project 
 `Payment` fetches the price again and collects the card with Stripe `CardForm`, then goes to `BookingConfirmed`.
 
 Still stubbed:
-- **No real payment or reservation.** `Payment.onBookNow` makes up an `RA-…` reference. `ow_create_resa` and `ow_verify_coupon` are defined in `apiEndpoints.ts` but unused.
+- **No real payment or reservation.** `Payment.onBookNow` makes up an `RA-…` reference. `ow_create_resa` is defined in `apiEndpoints.ts` but unused.
+- **Coupons:** the Payment screen's coupon card checks a code with `ow_verify_coupon` (`owVerifyCoupon`). It then re-fetches `ow_get_summary` with `ow-pre-validated-coupon-id`, so OWcal itself returns the discounted total and an `ow-summary-coupon-amount` line. Checking a code doesn't count a use; OWcal counts it only when a reservation is created.
 - **Profile photos** are disabled ("coming soon"); `utils/photo.ts` and the Firebase `storage`/`functions` exports are unused.
 
 **My Bookings is live:** `MyBookings.tsx` → `loadMyBookings()` (`src/firebase/bookings.ts`) → plugin `/me/bookings`. Upcoming/past is worked out from `checkOut`. Unverified accounts see a "Verify your email" state; after verifying, the loader reloads the user and retries once with a fresh token.

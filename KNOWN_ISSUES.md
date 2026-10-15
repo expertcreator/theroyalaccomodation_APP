@@ -79,7 +79,7 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
 
 ## Not built yet (feature work, not bugs)
 
-- Real payment: `Payment.onBookNow` makes up an `RA-…` reference. There's no Stripe PaymentIntent and no `ow_create_resa`. `ow_verify_coupon` is defined but unused.
+- Real payment: `Payment.onBookNow` makes up an `RA-…` reference. There's no Stripe PaymentIntent and no `ow_create_resa`. The Payment coupon card checks codes with `ow_verify_coupon` and shows OWcal's discounted price, but the coupon only reaches a real booking once checkout is built: the plugin must re-check and apply it server-side and count the use.
 - Profile photos (Firebase Storage) are shown as "coming soon".
 - The `SearchResults` route is a placeholder screen.
 - The `BookingConfirmed` copy promises a confirmation email and a concierge call that nothing triggers yet.

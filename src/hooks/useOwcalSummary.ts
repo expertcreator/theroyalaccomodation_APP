@@ -26,11 +26,12 @@ export function useOwcalSummary(input: {
     adults: number;
     children: number;
     pets?: number;
+    couponId?: string | null; // a checked coupon → OWcal returns the discounted price
     enabled?: boolean;    // set false to pause fetching (e.g. before the range is chosen)
     debounceMs?: number;  // wait after the last change before hitting the API (default 400ms)
 }): State {
     // Defaults: no pets, enabled, 400ms debounce.
-    const { accomId, checkIn, checkOut, adults, children, pets = 0, enabled = true, debounceMs = 400 } = input;
+    const { accomId, checkIn, checkOut, adults, children, pets = 0, couponId = null, enabled = true, debounceMs = 400 } = input;
 
     const [state, setState] = useState<State>({ loading: false, summary: null, error: false });
 
@@ -53,7 +54,7 @@ export function useOwcalSummary(input: {
         // Debounce: only actually call OWcal once the user has stopped changing
         // inputs for `debounceMs`. Each change resets this timer via cleanup.
         const timer = setTimeout(() => {
-            owGetSummary({ accomId, checkIn, checkOut, adults, children, pets })
+            owGetSummary({ accomId, checkIn, checkOut, adults, children, pets, couponId })
                 // res.ok is false when OWcal returned HTML we couldn't price →
                 // surface that as an error rather than a bogus £0 total.
                 .then(res => { if (!cancelled) setState({ loading: false, summary: res, error: !res.ok }); })
@@ -64,7 +65,7 @@ export function useOwcalSummary(input: {
         //  - cancelled = true → a request already in flight won't touch state
         //  - clearTimeout    → a debounce that hasn't fired yet is dropped
         return () => { cancelled = true; clearTimeout(timer); };
-    }, [accomId, checkIn, checkOut, adults, children, pets, enabled, debounceMs]);
+    }, [accomId, checkIn, checkOut, adults, children, pets, couponId, enabled, debounceMs]);
 
     return state;
 }

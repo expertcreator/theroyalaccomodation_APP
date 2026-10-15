@@ -47,11 +47,13 @@ export type OwSummary = {
     accomPrice: number | null;   // "Accommodation price" (all nights)
     extrasPrice: number | null;  // "Options / Pets" (e.g. the pet fee)
     fees: OwFee[];               // e.g. the cleaning fee — one entry per fee
+    couponAmount: number | null; // "Coupon amount" — only when a coupon is applied
 };
 
 export async function owGetSummary(input: {
     accomId: number; checkIn: string; checkOut: string;
     adults: number; children: number; pets?: number;
+    couponId?: string | null;    // from owVerifyCoupon — OWcal then takes the discount off the total
 }): Promise<OwSummary> {
     const fields: Record<string, string | number> = {
         action: apiEndpoints.getSummary,
@@ -68,6 +70,11 @@ export async function owGetSummary(input: {
         fields[`ow-option-${OW_PET_OPTION_ID}-multi-accom-1`] = input.pets;
     }
 
+    // A checked coupon — same field the website sends, so OWcal applies the discount itself.
+    if (input.couponId) {
+        fields['ow-pre-validated-coupon-id'] = input.couponId;
+    }
+
     const res = await postDataAPI({
         url: baseUrl,
         data: encodeForm(fields),
@@ -82,6 +89,7 @@ export async function owGetSummary(input: {
     // Breakdown lines, e.g. "Accommodation price: £4,350.00", "Cleaning Fee: £295.00".
     const accomLine = divTexts(html, 'ow-summary-accom-price')[0];
     const extrasLine = divTexts(html, 'ow-summary-options-price')[0];
+    const couponLine = divTexts(html, 'ow-summary-coupon-amount')[0];   // "Coupon amount: £464.50"
     const fees: OwFee[] = [];
     for (const line of divTexts(html, 'ow-summary-fee')) {
         const amount = amountAtEnd(line);
@@ -94,7 +102,49 @@ export async function owGetSummary(input: {
         accomPrice: accomLine ? amountAtEnd(accomLine) : null,
         extrasPrice: extrasLine ? amountAtEnd(extrasLine) : null,
         fees,
+        couponAmount: couponLine ? amountAtEnd(couponLine) : null,
     };
+}
+
+/* ---------- ow_verify_coupon → is this coupon code valid for this stay? ---------- */
+// valid → couponId (send it to owGetSummary) and label ("10%" / "£50.00").
+// message → OWcal's own text (editable by the owner), e.g. "This coupon code is not valid."
+export type OwCouponCheck = { valid: boolean; couponId?: string; label?: string; message: string };
+
+export async function owVerifyCoupon(input: {
+    code: string; accomId: number; checkIn: string; checkOut: string;
+}): Promise<OwCouponCheck> {
+    const res = await postDataAPI({
+        url: baseUrl,
+        data: encodeForm({
+            action: apiEndpoints.verifyCoupon,
+            coupon_code: input.code,
+            accom_ids: input.accomId,
+            check_in: input.checkIn,
+            check_out: input.checkOut,
+        }),
+        ContentType: 'application/x-www-form-urlencoded',
+        headers: OW_HEADERS,
+    });
+
+    // OWcal replies with JSON, which can arrive as a string or already parsed.
+    let reply: any = res;
+    if (typeof res === 'string') {
+        try { reply = JSON.parse(res); } catch { reply = null; }
+    }
+    if (!reply || typeof reply !== 'object') {
+        return { valid: false, message: "Couldn't check the code. Please try again." };
+    }
+
+    // OWcal escapes its text (e.g. "&amp;pound;50.00") — turn it back into plain text.
+    const clean = (s: unknown) => plainText(String(s ?? '').replace(/&amp;/g, '&'));
+    const message = clean(reply.msg) || 'This coupon code is not valid.';
+
+    // OWcal sends success as "1" (valid) or "" (not valid).
+    if (reply.success && reply.coupon_id) {
+        return { valid: true, couponId: String(reply.coupon_id), label: clean(reply.coupon_amount_text), message };
+    }
+    return { valid: false, message };
 }
 
 /* ---------- ow_get_available_accom → is this property bookable for these dates? ---------- */

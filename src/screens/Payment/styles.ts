@@ -58,6 +58,10 @@ export const styles = StyleSheet.create({
 
     assurance: { textAlign: 'center', marginTop: spacing.sm },
 
+    // Coupon card
+    couponHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
+    couponRow: { flexDirection: 'row', alignItems: 'center', columnGap: spacing.md, paddingVertical: spacing.xxs },
+
     payHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
 
     cardForm: { width: '100%', height: moderateScale(Platform.OS === "ios" ? 180 : 250) },  // trim from 200; tune to fit

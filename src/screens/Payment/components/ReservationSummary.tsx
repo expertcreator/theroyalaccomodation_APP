@@ -19,10 +19,11 @@ type Props = {
     guests: number;
     pets: number;
     total: number;
+    originalTotal?: number;   // the price before a coupon — shown struck through above `total`
     loading?: boolean;
 };
 
-const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nights, guests, pets, total, loading }) => {
+const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nights, guests, pets, total, originalTotal, loading }) => {
     const { theme } = useTheme();
     const p = theme.palette;
 
@@ -100,7 +101,18 @@ const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nigh
                 </View>
                 {loading
                     ? <ActivityIndicator size="small" color={p.primary.main} style={{ alignSelf: "center" }} />
-                    : <Text style={[typography.h1, { color: p.primary.main }]}>{formatGBP(total)}</Text>}
+                    : (
+                        <View style={{ alignItems: 'flex-end' }}>
+                            {/* With a coupon: the old price, crossed out */}
+                            {originalTotal != null && (
+                                <Text style={[typography.caption, { color: p.text.placeHolder, textDecorationLine: 'line-through' }]}>
+                                    {formatGBP(originalTotal, true)}
+                                </Text>
+                            )}
+                            {/* Pence shown when there are any (e.g. £4,475.50 after a coupon) */}
+                            <Text style={[typography.h1, { color: p.primary.main }]}>{formatGBP(total, true)}</Text>
+                        </View>
+                    )}
             </View>
         </View>
     );

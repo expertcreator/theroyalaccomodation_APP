@@ -18,6 +18,8 @@ import { styles } from './styles';
 import PaymentCard from './components/PaymentCard';
 import WebViewModal from '../../components/Modals/WebViewModal';
 import { useOwcalSummary } from '../../hooks/useOwcalSummary';
+import { owVerifyCoupon } from '../../api/owcal';
+import CouponCard from './components/CouponCard';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.PaymentReview>;
@@ -35,6 +37,12 @@ const Payment: React.FC = () => {
     const checkOut = new Date(booking.checkOut);
     const nights = nightsBetween(checkIn, checkOut);
     const guests = booking.adults + booking.children;
+
+    // Coupon — checked with OWcal; once applied, its id goes into the price request below.
+    const [coupon, setCoupon] = useState<{ code: string; id: string; label?: string } | null>(null);
+    const [couponChecking, setCouponChecking] = useState<boolean>(false);
+    const [couponError, setCouponError] = useState<string | null>(null);
+
     const priceState = useOwcalSummary({
         accomId: property.owAccomId,
         checkIn: booking.checkIn,     // already ISO strings from the nav params
@@ -42,9 +50,35 @@ const Payment: React.FC = () => {
         adults: booking.adults,
         children: booking.children,
         pets: booking.pets,
+        couponId: coupon?.id ?? null, // OWcal takes the coupon off the total itself
     });
     const total = priceState.summary?.total ?? 0;
     const priceReady = !priceState.loading && !!priceState.summary?.ok;
+
+    // OWcal's coupon discount, and the price before it (shown crossed out).
+    const couponAmount = coupon ? priceState.summary?.couponAmount ?? null : null;
+    const originalTotal = couponAmount ? total + couponAmount : undefined;
+
+    // "Apply": ask OWcal if the code is valid for this property and these dates.
+    const onApplyCoupon = async (code: string) => {
+        setCouponChecking(true);
+        setCouponError(null);
+        try {
+            const result = await owVerifyCoupon({
+                code,
+                accomId: property.owAccomId,
+                checkIn: booking.checkIn,
+                checkOut: booking.checkOut,
+            });
+            if (result.valid && result.couponId) {
+                setCoupon({ code: code.toUpperCase(), id: result.couponId, label: result.label });
+            } else {
+                setCouponError(result.message);
+            }
+        } finally {
+            setCouponChecking(false);
+        }
+    };
 
     const [cardComplete, setCardComplete] = useState<boolean>(false);
     const [cardholderName, setCardholderName] = useState<string>('');
@@ -75,7 +109,18 @@ const Payment: React.FC = () => {
                     guests={guests}
                     pets={booking.pets}
                     total={total}
+                    originalTotal={originalTotal}
                     loading={priceState.loading}   // ← new
+                />
+
+                <CouponCard
+                    applied={coupon}
+                    discount={couponAmount}
+                    checking={couponChecking}
+                    error={couponError}
+                    onApply={onApplyCoupon}
+                    onRemove={() => setCoupon(null)}
+                    onCodeChange={() => setCouponError(null)}
                 />
 
                 <PaymentCard
