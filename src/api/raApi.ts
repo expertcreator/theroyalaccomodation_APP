@@ -157,3 +157,33 @@ export async function sendEnquiryAPI(
     if (!res) return null;
     return { success: !!res.success, message: res.message ?? '' };
 }
+/* ---------- Checkout config — is in-app booking on, and which Stripe key ---------- */
+// GET /checkout-config (public). The plugin decides this with its RA_APP_CHECKOUT
+// switch: 'off' → the app shows "coming soon"; 'test' → Stripe test key; 'live' → real key.
+export type CheckoutConfig = {
+    enabled: boolean;
+    mode: 'off' | 'test' | 'live';
+    publishableKey: string | null;   // Stripe's public key — safe to have in the app
+};
+
+// The Payment screen waits for this, so never let it hang (see RATES_TIMEOUT_MS).
+const CHECKOUT_CONFIG_TIMEOUT_MS = 30000;
+
+/** Returns the config, or null if the site couldn't be reached. */
+export async function getCheckoutConfigAPI(): Promise<CheckoutConfig | null> {
+    const res = await getAPIData(
+        `${RA_APP_BASE}/checkout-config`,
+        undefined,   // no query params
+        undefined,   // skipAuth
+        undefined,   // signal
+        OW_HEADERS,  // WAF-friendly headers
+        CHECKOUT_CONFIG_TIMEOUT_MS,
+    );
+    const data = res?.success === true ? res.data : null;
+    if (!data || typeof data.enabled !== 'boolean') return null;
+    return {
+        enabled: data.enabled && !!data.publishableKey,
+        mode: data.mode === 'test' || data.mode === 'live' ? data.mode : 'off',
+        publishableKey: data.publishableKey || null,
+    };
+}
