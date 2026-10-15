@@ -36,7 +36,8 @@ export type RootStackParamList = {
     | { entry: 'booking'; booking: BookingDraft };
     [STACK_ROUTES.PaymentReview]: BookingDraft;
     // total = the real amount charged, carried from Payment → BookingConfirmed. ← CHANGED
-    [STACK_ROUTES.BookingConfirmed]: BookingDraft & { bookingRef: string; total: number };
+    // paymentPending = the bank is still finishing the payment (OWcal completes it shortly).
+    [STACK_ROUTES.BookingConfirmed]: BookingDraft & { bookingRef: string; total: number; paymentPending?: boolean };
     [STACK_ROUTES.ForgotPassword]: undefined;
 };
 

@@ -40,7 +40,8 @@ const BookingConfirmed: React.FC = () => {
     const p = theme.palette;
 
     // total is the REAL amount charged, carried over from the Payment screen. ← CHANGED
-    const { bookingRef, propertyId, checkIn, checkOut, adults, children, pets, total } = route.params;
+    // bookingRef is OWcal's real reference; paymentPending = the bank is still finishing the payment.
+    const { bookingRef, propertyId, checkIn, checkOut, adults, children, pets, total, paymentPending } = route.params;
     const property = getPropertyById(propertyId);
     const nights = nightsBetween(new Date(checkIn), new Date(checkOut));
     const guests = adults + children;
@@ -71,6 +72,11 @@ const BookingConfirmed: React.FC = () => {
                     <Text style={[typography.caption, styles.ref, { color: p.text.placeHolder }]}>
                         REFERENCE: <Text style={{ color: p.text.primary, fontWeight: '600' }}>{bookingRef}</Text>
                     </Text>
+                    {paymentPending && (
+                        <Text style={[typography.caption, { color: p.accent.dark, textAlign: 'center', marginTop: spacing.sm }]}>
+                            Your bank is still finishing the payment. Your dates are held, and we'll email you as soon as it's complete.
+                        </Text>
+                    )}
                 </View>
 
                 {/* Recap card */}
@@ -90,7 +96,7 @@ const BookingConfirmed: React.FC = () => {
                         </Text>
                         <View style={[styles.totalRow, { borderTopColor: p.divider }]}>
                             <Text style={[typography.overline, { color: p.text.placeHolder }]}>TOTAL PAID</Text>
-                            <Text style={[typography.title, { color: p.text.primary }]}>{formatGBP(total)}</Text>
+                            <Text style={[typography.title, { color: p.text.primary }]}>{formatGBP(total, true)}</Text>
                         </View>
                     </View>
                 </View>

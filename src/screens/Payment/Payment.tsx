@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { confirmPayment, PaymentIntent } from '@stripe/stripe-react-native';
 
 import { useTheme } from '../../context/ThemeContext';
 import { nightsBetween } from '../../utils/date';
@@ -28,6 +29,10 @@ import CouponCard from './components/CouponCard';
 import { useCheckoutConfig } from '../../hooks/useCheckoutConfig';
 import { useAuth } from '../../context/AuthContext';
 import DetailsCard, { detailsComplete } from './components/DetailsCard';
+import BookingNotice, { Notice } from './components/BookingNotice';
+import { startCheckout, confirmCheckout, cancelCheckout, StartedCheckout, ConfirmResult } from '../../firebase/checkout';
+import { isoForCountry } from '../../constants/countries';
+import { formatGBP } from '../../utils/format';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.PaymentReview>;
@@ -107,13 +112,186 @@ const Payment: React.FC = () => {
         && payment.status === 'ready' && detailsReady;
 
     const goContact = () => navigation.navigate(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Contact });
+    const goMyBookings = () => navigation.reset({
+        index: 0,
+        routes: [{ name: STACK_ROUTES.DrawerRoot, params: { screen: DRAWER_ROUTES.MyBookings } }],
+    });
 
-    const onBookNow = () => {
-        if (!canBook) return;
-        // Static phase: mock a booking reference. Later: Cloud Function → Stripe → confirm.
-        const bookingRef = `RA-${Date.now().toString().slice(-8)}`;
-        // Carry the REAL OWcal total through so BookingConfirmed shows the charged amount. ← CHANGED
-        navigation.replace(STACK_ROUTES.BookingConfirmed, { ...booking, bookingRef, total });
+    /* ---------------- Book Now: hold the dates → take the card → confirm ---------------- */
+
+    // The booking started on our plugin (dates held, Stripe payment created). Kept
+    // between taps, so a declined card is retried on the SAME payment — no second
+    // hold, no second coupon use. `couponCode` is what it was started with.
+    type Active = StartedCheckout & { couponCode: string | null };
+    const [active, setActive] = useState<Active | null>(null);
+    const activeRef = useRef<Active | null>(null);   // for the leave-screen cleanup
+    const paidRef = useRef<boolean>(false);          // once paid, never release the hold
+
+    const [stage, setStage] = useState<string | null>(null);   // "Processing payment…" etc. (null = idle)
+    const [notice, setNotice] = useState<Notice | null>(null);
+
+    const rememberActive = (next: Active | null) => {
+        activeRef.current = next;
+        setActive(next);
+    };
+
+    // Leaving the screen without paying → free the held dates straight away.
+    // (Safe even if it was paid: the plugin checks with Stripe first.)
+    useEffect(() => () => {
+        if (activeRef.current && !paidRef.current) cancelCheckout(activeRef.current.paymentIntentId);
+    }, []);
+
+    // The amount the guest will pay. Once a booking has started, it's the plugin's
+    // exact figure — what's shown is always what's charged.
+    const couponCode = coupon?.code ?? null;
+    const startedHere = !!active && active.couponCode === couponCode;
+    const amountDue = startedHere ? active!.amount : total;
+
+    // Paid and confirmed (or the bank is still finishing) → Booking Confirmed.
+    const goConfirmed = (result: Exclude<ConfirmResult, { kind: 'error' }>, fallbackAmount: number) => {
+        paidRef.current = true;
+        rememberActive(null);
+        navigation.replace(STACK_ROUTES.BookingConfirmed, {
+            ...booking,
+            bookingRef: result.ref,
+            total: result.paid || fallbackAmount,
+            paymentPending: result.kind === 'processing',
+        });
+    };
+
+    // After Stripe took the card: ask the plugin to complete the booking.
+    // A dropped connection is retried a few times before we give up.
+    const finishBooking = async (paymentIntentId: string, amount: number) => {
+        paidRef.current = true;   // the card was charged — never release this hold
+        setStage('Confirming your booking…');
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            const result = await confirmCheckout(paymentIntentId);
+            if (result.kind !== 'error') {
+                goConfirmed(result, amount);
+                return;
+            }
+            if (result.code === 'not-paid') {
+                // Stripe says the money didn't go through after all.
+                paidRef.current = false;
+                setStage(null);
+                setNotice({ kind: 'error', text: result.message });
+                return;
+            }
+            if (result.code !== 'network' && result.code !== 'unavailable') break;
+            await new Promise<void>((resolve) => setTimeout(() => resolve(), 2000)); // wait 2 s, then try again
+        }
+        // Paid, but we couldn't confirm it from here. OWcal completes it on its own.
+        setStage(null);
+        setNotice({
+            kind: 'info',
+            text: "Your payment went through — we're finalising your booking. It will appear in My Bookings shortly, and we'll email your confirmation.",
+            action: { label: 'Go to My Bookings', onPress: goMyBookings },
+        });
+    };
+
+    const onBookNow = async () => {
+        if (!canBook || stage || !profile) return;
+        setNotice(null);
+
+        // 1. Hold the dates and create the payment (or reuse the one started earlier).
+        let checkout = startedHere ? active! : null;
+        if (!checkout) {
+            setStage('Holding your dates…');
+            const result = await startCheckout({
+                accomId: property.owAccomId,
+                checkIn: booking.checkIn,
+                checkOut: booking.checkOut,
+                adults: booking.adults,
+                children: booking.children,
+                pets: booking.pets,
+                couponCode,
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                countryIso: isoForCountry(profile.address?.country) ?? '',
+                phone: profile.phone,
+                address1: profile.address?.line1,
+                address2: profile.address?.line2,
+                city: profile.address?.city,
+                county: profile.address?.county,
+                postCode: profile.address?.postCode,
+            });
+
+            if (result.kind === 'already-paid') {
+                // An earlier attempt for this stay was paid — just complete it.
+                await finishBooking(result.paymentIntentId, total);
+                return;
+            }
+            if (result.kind === 'error') {
+                setStage(null);
+                if (result.code === 'dates-unavailable') {
+                    setNotice({ kind: 'error', text: result.message, action: { label: 'Choose Other Dates', onPress: () => navigation.goBack() } });
+                } else if (result.code === 'coupon-invalid') {
+                    setCoupon(null);                // take it off — the price goes back to normal
+                    setCouponError(result.message);
+                    setNotice({ kind: 'error', text: `${result.message} Please check the new total and try again.` });
+                } else if (result.code === 'checkout-off') {
+                    retryPayment();                 // the screen switches to "Coming soon"
+                } else {
+                    setNotice({ kind: 'error', text: result.message });
+                }
+                return;
+            }
+
+            checkout = { ...result.checkout, couponCode };
+            rememberActive(checkout);
+
+            // 2. The price changed since this screen loaded → show the new amount and
+            //    let the guest decide. Their next tap pays it (same hold, no new one).
+            if (Math.abs(checkout.amount - total) >= 0.01) {
+                setStage(null);
+                setNotice({
+                    kind: 'info',
+                    text: `The price changed while you were here — it's now ${formatGBP(checkout.amount, true)}. Please check and tap Pay to continue.`,
+                });
+                return;
+            }
+        }
+
+        // 3. Take the card with Stripe (it shows 3-D Secure itself if the bank asks).
+        setStage('Processing payment…');
+        const address = profile.address;
+        const { paymentIntent, error } = await confirmPayment(checkout.clientSecret, {
+            paymentMethodType: 'Card',
+            paymentMethodData: {
+                billingDetails: {
+                    name: cardholderName.trim(),
+                    email: profile.email,
+                    phone: profile.phone ?? undefined,
+                    address: {
+                        line1: address?.line1 ?? undefined,
+                        line2: address?.line2 ?? undefined,
+                        city: address?.city ?? undefined,
+                        postalCode: address?.postCode ?? undefined,
+                        country: isoForCountry(address?.country),
+                    },
+                },
+            },
+        });
+
+        if (error) {
+            // Declined, cancelled 3-D Secure, etc. The hold stays — fix the card and tap again.
+            setStage(null);
+            setNotice({
+                kind: 'error',
+                text: error.code === 'Canceled'
+                    ? "Payment cancelled — you haven't been charged."
+                    : error.localizedMessage || error.message || 'Your payment could not be processed. Please try another card.',
+            });
+            return;
+        }
+        if (paymentIntent?.status !== PaymentIntent.Status.Succeeded && paymentIntent?.status !== PaymentIntent.Status.Processing) {
+            setStage(null);
+            setNotice({ kind: 'error', text: 'Your payment could not be completed. Please try again.' });
+            return;
+        }
+
+        // 4. Paid — complete the booking.
+        await finishBooking(checkout.paymentIntentId, checkout.amount);
     };
 
     return (
@@ -134,7 +312,7 @@ const Payment: React.FC = () => {
                     nights={nights}
                     guests={guests}
                     pets={booking.pets}
-                    total={total}
+                    total={amountDue}
                     originalTotal={originalTotal}
                     loading={priceState.loading}   // ← new
                 />
@@ -211,7 +389,16 @@ const Payment: React.FC = () => {
                             onOpenPrivacy={() => setPolicy({ title: 'Privacy Policy', url: POLICY_URLS.privacy })}
                         />
 
-                        <Button title="Book Now" rightIcon="arrow-right" disabled={!canBook} onPress={onBookNow} />
+                        {notice && <BookingNotice notice={notice} />}
+
+                        <Button
+                            title={priceReady ? `Pay ${formatGBP(amountDue, true)}` : 'Book Now'}
+                            rightIcon="arrow-right"
+                            disabled={!canBook}
+                            loading={!!stage}
+                            loadingTitle={stage ?? undefined}
+                            onPress={onBookNow}
+                        />
                     </>
                 )}
             </KeyboardAwareScrollView>
