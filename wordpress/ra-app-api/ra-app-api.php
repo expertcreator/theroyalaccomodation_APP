@@ -916,7 +916,7 @@ function ra_app_enquiry( WP_REST_Request $req ) {
  *    GET  /checkout-config        public — is booking on, and which Stripe key to use
  *    POST /me/checkout            start a booking: price it, create the payment, hold the dates
  *    POST /me/checkout/confirm    after the card payment: check with Stripe, complete the booking
- *    POST /me/checkout/cancel     (next steps)
+ *    POST /me/checkout/cancel     the guest left without paying: release the held dates
  * ------------------------------------------------------------------
  */
 if ( ! defined( 'RA_APP_CHECKOUT' ) ) {
@@ -1124,8 +1124,11 @@ function ra_app_me_checkout( WP_REST_Request $req ) {
 	$customer_id = (int) $owdb->get_customer_id( $email );
 	if ( $customer_id ) {
 		$earlier = ra_app_checkout_clear_earlier_hold( $owdb, $stripe, $customer_id, $accom_id, $check_in, $check_out );
-		if ( $earlier ) {
-			return ra_app_private_response( true, 'This stay is already paid.', array( 'alreadyPaid' => true, 'paymentIntentId' => $earlier ) );
+		if ( 'paid' === $earlier['result'] ) {
+			return ra_app_private_response( true, 'This stay is already paid.', array( 'alreadyPaid' => true, 'paymentIntentId' => $earlier['token'] ) );
+		}
+		if ( 'unknown' === $earlier['result'] ) {
+			return ra_app_private_response( false, 'Could not check your earlier payment. Please try again in a moment.', array( 'code' => 'unavailable' ), 503 );
 		}
 	}
 
@@ -1465,10 +1468,13 @@ function ra_app_checkout_price( $owdb, $utils, array $stay ) {
 
 /**
  * The guest already has an unpaid app hold for this exact stay (they tapped
- * Book Now twice, or a card was declined). If Stripe says it was actually
- * paid (or is still processing), return its payment id so the app can
- * confirm it. Otherwise cancel its payment and delete the hold, so the new
- * attempt starts clean and the dates aren't blocked by the old one.
+ * Book Now twice, or left and came back). Release it so the new attempt
+ * starts clean and the old hold doesn't block the dates.
+ *
+ * Returns array( 'result' => ..., 'token' => ... ), where result is:
+ *   'none'     — no earlier hold (or it was released),
+ *   'paid'     — Stripe says it went through: the app should confirm `token`, not pay again,
+ *   'unknown'  — Stripe couldn't be reached; ask the guest to try again.
  */
 function ra_app_checkout_clear_earlier_hold( $owdb, $stripe, $customer_id, $accom_id, $check_in, $check_out ) {
 	global $wpdb;
@@ -1487,20 +1493,49 @@ function ra_app_checkout_clear_earlier_hold( $owdb, $stripe, $customer_id, $acco
 		ARRAY_A
 	);
 	if ( ! $hold ) {
-		return null;
+		return array( 'result' => 'none', 'token' => null );
 	}
 
-	$status = ra_app_payment_intent_status( $stripe, $hold['payment_token'] );
+	$result = ra_app_release_hold( $owdb, $stripe, $hold );
+	return array(
+		'result' => ( 'released' === $result ) ? 'none' : $result,
+		'token'  => $hold['payment_token'],
+	);
+}
+
+/**
+ * Release an unpaid hold: cancel its Stripe payment (so it can never be
+ * charged later), then delete the reservation so the dates are free again —
+ * like the website does when a card is declined.
+ *
+ * Returns:
+ *   'released' — done,
+ *   'paid'     — Stripe says it went through after all: KEEP it (confirm instead),
+ *   'unknown'  — Stripe couldn't be reached: leave it (OWcal tidies up within the hour).
+ */
+function ra_app_release_hold( $owdb, $stripe, array $hold ) {
+	$token  = $hold['payment_token'];
+	$status = ra_app_payment_intent_status( $stripe, $token );
 	if ( in_array( $status, array( 'succeeded', 'processing' ), true ) ) {
-		return $hold['payment_token']; // paid — the app should confirm, not pay again
+		return 'paid';
 	}
 	if ( null === $status ) {
-		return null; // couldn't reach Stripe — leave it; OWcal tidies it up within the hour
+		return 'unknown';
 	}
 
-	ra_app_cancel_payment_intent( $stripe, $hold['payment_token'] );
+	if ( 'canceled' !== $status && ! ra_app_cancel_payment_intent( $stripe, $token ) ) {
+		// Stripe refused the cancel — maybe it was paid this very second. Look again.
+		$status = ra_app_payment_intent_status( $stripe, $token );
+		if ( in_array( $status, array( 'succeeded', 'processing' ), true ) ) {
+			return 'paid';
+		}
+		if ( 'canceled' !== $status ) {
+			return 'unknown';
+		}
+	}
+
 	$owdb->delete_resa( $hold['id'] );
-	return null;
+	return 'released';
 }
 
 /**
@@ -1517,11 +1552,12 @@ function ra_app_payment_intent_status( $stripe, $payment_intent_id ) {
 }
 
 /**
- * Cancel a Stripe PaymentIntent so it can never be paid later
- * (used when its hold is removed). Errors are ignored — it may already be cancelled.
+ * Cancel a Stripe PaymentIntent so it can never be paid later.
+ * Returns true if Stripe cancelled it (false if it refused, e.g. it's already paid).
  */
 function ra_app_cancel_payment_intent( $stripe, $payment_intent_id ) {
-	$stripe->remote_post_to_stripe( 'https://api.stripe.com/v1/payment_intents/' . rawurlencode( $payment_intent_id ) . '/cancel', array() );
+	$response = $stripe->remote_post_to_stripe( 'https://api.stripe.com/v1/payment_intents/' . rawurlencode( $payment_intent_id ) . '/cancel', array() );
+	return ! empty( $response['success'] );
 }
 
 /**
@@ -1669,4 +1705,63 @@ function ra_app_payment_intent_charge( $stripe, $payment_intent_id ) {
 	}
 	$intent = json_decode( $response['info'], true );
 	return ! empty( $intent['latest_charge'] ) ? (string) $intent['latest_charge'] : false;
+}
+
+/**
+ * POST /wp-json/ra-app/v1/me/checkout/cancel
+ * ------------------------------------------------------------------
+ * The guest left the Payment screen without paying. Release their hold
+ * straight away (as the website does when a card is declined), instead of
+ * blocking the dates for up to an hour until OWcal tidies it up.
+ *
+ * Only the guest's OWN, UNPAID hold. If Stripe says it was paid after all,
+ * the booking is completed instead — a paying guest never loses a booking.
+ *
+ * Header: X-Firebase-Token.   JSON body: { paymentIntentId }
+ * Success data: { status: 'cancelled' }  — or the /confirm reply if it was paid.
+ * Safe to call more than once (nothing left to cancel → 'cancelled').
+ * ------------------------------------------------------------------
+ */
+add_action( 'rest_api_init', function () {
+	register_rest_route(
+		'ra-app/v1',
+		'/me/checkout/cancel',
+		array(
+			'methods'             => 'POST',
+			'callback'            => 'ra_app_me_checkout_cancel',
+			'permission_callback' => '__return_true', // real auth is the Firebase token, checked in the callback
+		)
+	);
+} );
+
+function ra_app_me_checkout_cancel( WP_REST_Request $req ) {
+
+	// 1. Switch on, OWcal ready, guest signed in.
+	$start = ra_app_checkout_start( $req );
+	if ( $start instanceof WP_REST_Response ) {
+		return $start;
+	}
+	$owdb   = $start['owcal']['owdb'];
+	$stripe = $start['owcal']['stripe'];
+
+	// 2. This guest's booking for the payment. Already gone → nothing to do.
+	$resa = ra_app_checkout_find_own_resa( $owdb, $req, $start['email'] );
+	if ( ! $resa || ! in_array( $resa['status'], array( 'waiting_payment', 'new', 'confirmed', 'pending' ), true ) ) {
+		return ra_app_private_response( true, 'Cancelled.', array( 'status' => 'cancelled' ) );
+	}
+
+	// 3. Already a completed booking (it was paid) — never cancel that here.
+	if ( 'waiting_payment' !== $resa['status'] ) {
+		return ra_app_checkout_confirmed_response( $resa );
+	}
+
+	// 4. Release the unpaid hold.
+	$result = ra_app_release_hold( $owdb, $stripe, $resa );
+	if ( 'paid' === $result ) {
+		return ra_app_me_checkout_confirm( $req ); // it went through after all — complete it
+	}
+	if ( 'unknown' === $result ) {
+		return ra_app_private_response( false, 'Could not cancel right now. The dates will be released automatically within the hour.', array( 'code' => 'unavailable' ), 503 );
+	}
+	return ra_app_private_response( true, 'Cancelled.', array( 'status' => 'cancelled' ) );
 }
