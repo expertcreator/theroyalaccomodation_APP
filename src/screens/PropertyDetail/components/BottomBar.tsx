@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../../../context/ThemeContext';
+import { useFromRate } from '../../../context/RatesContext';
 import { typography } from '../../../theme';
 import { formatGBP } from '../../../utils/format';
 import Text from '../../../components/Text/Text';
@@ -13,6 +14,8 @@ type Props = { property: Property; onCheck: () => void };
 const BottomBar: React.FC<Props> = ({ property, onCheck }) => {
     const { theme } = useTheme();
     const p = theme.palette;
+    // Same live "from" price as the Home card (falls back to the fixed baseRate).
+    const fromRate = useFromRate(property);
 
     return (
         <FooterBar
@@ -20,7 +23,7 @@ const BottomBar: React.FC<Props> = ({ property, onCheck }) => {
                 <>
                     <Text style={[typography.overline, { color: p.text.placeHolder }]}>FROM</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-                        <Text style={[typography.h2, { color: p.text.primary }]}>{formatGBP(property.baseRate)}</Text>
+                        <Text style={[typography.h2, { color: p.text.primary }]}>{formatGBP(fromRate)}</Text>
                         <Text style={[typography.caption, { color: p.text.placeHolder }]}> / night</Text>
                     </View>
                 </>

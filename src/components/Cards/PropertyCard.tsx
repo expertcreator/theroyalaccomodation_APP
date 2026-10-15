@@ -10,7 +10,7 @@ import Text from '../Text/Text';
 import Icon, { IconName } from '../Icon/Icon';
 import Button from '../Buttons/Button';
 import type { Property } from '../../interfaces/property';
-import { useRates } from '../../context/RatesContext';
+import { useFromRate } from '../../context/RatesContext';
 import { useReviews } from '../../context/ReviewContext';
 
 type Props = { property: Property; onPress: () => void };
@@ -22,10 +22,8 @@ const PropertyCard: React.FC<Props> = ({ property, onPress }) => {
     const styles = createStyles(theme);
     const p = theme.palette;
 
-    const { rates } = useRates();
     // Live "from" for this residence, else the static baseRate as fallback.
-    const liveFrom = rates?.[String(property.owAccomId)]?.from;
-    const fromRate = typeof liveFrom === 'number' && liveFrom > 0 ? liveFrom : property.baseRate;
+    const fromRate = useFromRate(property);
 
     const { reviews } = useReviews();
     const review = reviews?.[String(property.owAccomId)];

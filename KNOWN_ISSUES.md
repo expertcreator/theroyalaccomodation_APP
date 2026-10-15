@@ -27,8 +27,8 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
 
 ## App — medium
 
-- [ ] **APP-7 · Property Detail shows a stale "from" price.** `src/screens/PropertyDetail/components/BottomBar.tsx:23` shows the static `property.baseRate`, while the Home `PropertyCard` shows the live `/rates` value, so the two screens can disagree.
-  *Fix:* move the live-rate lookup from `PropertyCard` into a shared hook (e.g. `useFromRate(property)`) and use it in both places.
+- [x] **APP-7 · Property Detail shows a stale "from" price.** `src/screens/PropertyDetail/components/BottomBar.tsx:23` shows the static `property.baseRate`, while the Home `PropertyCard` shows the live `/rates` value, so the two screens can disagree.
+  *Fixed 2026-10-15:* `useFromRate(property)` in `src/context/RatesContext.tsx` returns the live rate, or `baseRate` when there isn't one. `PropertyCard` and the detail `BottomBar` both use it. Verified in the simulator: Ascot shows £1,350 on Home and on its page, and Windsor shows £995 on both.
   *Confirmed in the iOS simulator (2026-10-14):* the Ascot card on Home shows "from £1,350" (live), while the Ascot detail page shows "FROM £1,450" (static).
 
 - [ ] **APP-8 · Signing in from the drawer creates a second drawer.** `src/screens/LoginRegister/LoginRegister.tsx:107` calls `navigation.replace(DrawerRoot)`, which leaves two `DrawerRoot` entries on the stack. Android Back then lands on the old drawer.

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { ASYNC_KEYS, getItemFromAsyncStorage, setItemInAsyncStorage } from '../utils/storage';
 import { getRatesAPI, RatesMap } from '../api/raApi';
+import type { Property } from '../interfaces/property';
 
 type RatesContextValue = {
     rates: RatesMap | null;        // live or cached; null until either arrives (consumers fall back to static)
@@ -17,6 +18,15 @@ const RatesContext = createContext<RatesContextValue>({
 });
 
 export const useRates = () => useContext(RatesContext);
+
+// A residence's "from" price per night: the live rate from the website if we
+// have it, otherwise the fixed baseRate from constants/data.ts.
+// Used by every screen that shows "from £X", so they always agree.
+export const useFromRate = (property: Property): number => {
+    const { rates } = useRates();
+    const liveFrom = rates?.[String(property.owAccomId)]?.from;
+    return typeof liveFrom === 'number' && liveFrom > 0 ? liveFrom : property.baseRate;
+};
 
 /**
  * Loads lowest/highest nightly rates once at startup and keeps them in context.
