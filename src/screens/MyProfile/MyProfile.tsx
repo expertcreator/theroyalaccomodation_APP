@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, BackHandler } from 'react-native';
+import { View, Image, TouchableOpacity, BackHandler, ActivityIndicator } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -10,7 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { typography, spacing } from '../../theme';
 import { formatMonthShort } from '../../utils/date';
 import type { DrawerParamList, RootStackParamList } from '../../navigation/types';
-import { STACK_ROUTES } from '../../navigation/routes';
+import { DRAWER_ROUTES, STACK_ROUTES } from '../../navigation/routes';
 
 import Text from '../../components/Text/Text';
 import Header from '../../components/Headers/Header';
@@ -20,6 +20,7 @@ import Icon from '../../components/Icon/Icon';
 import SectionEyebrow from '../../components/SectionEyebrow/SectionEyebrow';
 import DiamondDivider from '../../components/Dividers/DiamondDivider';
 import ConfirmModal from '../../components/Modals/ConfirmModal';
+import EmptyState from '../../components/EmptyState/EmptyState';
 import { styles } from './styles';
 import { showToast } from '../../utils/ToastNotifier';
 import { moderateScale } from 'react-native-size-matters';
@@ -39,7 +40,7 @@ interface IFormErros {
 const MyProfile: React.FC = () => {
     const navigation = useNavigation<Nav>();
     const { theme } = useTheme();
-    const { profile, updateProfile, isLoggedIn, emailVerified, resendVerification } = useAuth();
+    const { profile, updateProfile, refreshProfile, isLoggedIn, emailVerified, resendVerification } = useAuth();
     const p = theme.palette;
 
     const addr = profile?.address;
@@ -58,6 +59,7 @@ const MyProfile: React.FC = () => {
     const [errors, setErrors] = useState<IFormErros>({});
     const [saving, setSaving] = useState(false);
     const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+    const [retrying, setRetrying] = useState(false); // "Try Again" in progress
 
     const email = profile?.email ?? '';
 
@@ -118,6 +120,19 @@ const MyProfile: React.FC = () => {
             showToast('danger', 'Could not update your profile. Please try again.');
         } finally {
             setSaving(false);
+        }
+    };
+
+    // "Try Again" when the profile couldn't be loaded.
+    // If it works, the form appears with the guest's details filled in.
+    const onTryAgain = async () => {
+        setRetrying(true);
+        try {
+            await refreshProfile();
+        } catch {
+            showToast('danger', "Still couldn't load your details. Check your connection.");
+        } finally {
+            setRetrying(false);
         }
     };
 
@@ -183,6 +198,33 @@ const MyProfile: React.FC = () => {
                                 ?.navigate(STACK_ROUTES.LoginRegister, { entry: 'drawer' })
                         }
                     />
+                </View>
+            </View>
+        );
+    }
+
+    // Signed in, but the profile hasn't loaded (e.g. offline at start-up).
+    // Show a message instead of an empty form, so blank fields can never be
+    // saved over the guest's real details. The form appears once it loads.
+    if (!profile) {
+        return (
+            <View style={[styles.container, { backgroundColor: p.background.default }]}>
+                <Header title="My Profile" onBack={() => navigation.goBack()} />
+                <View style={styles.scrollContent}>
+                    {retrying ? (
+                        <ActivityIndicator size="large" color={p.primary.main} style={{ marginTop: spacing.xxxl }} />
+                    ) : (
+                        <EmptyState
+                            icon="alert"
+                            title="Couldn't Load Your Details"
+                            message="Please check your connection and try again."
+                            actionLabel="Try Again"
+                            onAction={onTryAgain}
+                            helpText="Need assistance?"
+                            helpActionLabel="Contact Concierge"
+                            onHelp={() => navigation.navigate(DRAWER_ROUTES.Contact)}
+                        />
+                    )}
                 </View>
             </View>
         );
