@@ -9,7 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { typography, spacing, fontSizes } from '../../theme';
 import { withAlpha } from '../../utils/color';
 import { formatGBP } from '../../utils/format';
-import { formatDayLabel, nightsBetween } from '../../utils/date';
+import { formatDayLabel, fromISO, nightsBetween } from '../../utils/date';
 import { getPropertyById } from '../../constants/data';
 // ← REMOVED: import { calculateStayPrice } from '../../utils/pricing';
 import type { RootStackParamList } from '../../navigation/types';
@@ -43,7 +43,10 @@ const BookingConfirmed: React.FC = () => {
     // bookingRef is OWcal's real reference; paymentPending = the bank is still finishing the payment.
     const { bookingRef, propertyId, checkIn, checkOut, adults, children, pets, total, paymentPending } = route.params;
     const property = getPropertyById(propertyId);
-    const nights = nightsBetween(new Date(checkIn), new Date(checkOut));
+    // Local dates (not new Date('YYYY-MM-DD'), which is UTC and shows the day before west of the UK)
+    const checkInDate = fromISO(checkIn);
+    const checkOutDate = fromISO(checkOut);
+    const nights = nightsBetween(checkInDate, checkOutDate);
     const guests = adults + children;
     // ← REMOVED: const total = calculateStayPrice(property, nights, adults, pets).total;
 
@@ -88,7 +91,7 @@ const BookingConfirmed: React.FC = () => {
                             {property.name}
                         </Text>
                         <Text style={[typography.caption, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
-                            {formatDayLabel(new Date(checkIn))} - {formatDayLabel(new Date(checkOut))} · {nights} {nights === 1 ? 'night' : 'nights'}
+                            {formatDayLabel(checkInDate)} - {formatDayLabel(checkOutDate)} · {nights} {nights === 1 ? 'night' : 'nights'}
                         </Text>
                         <Text style={[typography.caption, { color: p.text.placeHolder }]}>
                             {user?.name ?? 'Lead Guest'} · {guests} {guests === 1 ? 'guest' : 'guests'}

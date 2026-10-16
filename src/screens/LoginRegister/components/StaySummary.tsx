@@ -4,7 +4,7 @@ import { moderateScale } from 'react-native-size-matters';
 import { useTheme } from '../../../context/ThemeContext';
 import { typography, spacing, radius, borderWidth } from '../../../theme';
 import Text from '../../../components/Text/Text';
-import { formatMonthShort, nightsBetween } from '../../../utils/date';
+import { formatMonthShort, fromISO, nightsBetween } from '../../../utils/date';
 import type { Property } from '../../../interfaces/property';
 import type { BookingDraft } from '../../../navigation/types';
 
@@ -14,8 +14,9 @@ const StaySummary: React.FC<Props> = ({ property, booking }) => {
     const { theme } = useTheme();
     const p = theme.palette;
 
-    const checkIn = new Date(booking.checkIn);
-    const checkOut = new Date(booking.checkOut);
+    // Local dates (not new Date('YYYY-MM-DD'), which is UTC and shows the day before west of the UK)
+    const checkIn = fromISO(booking.checkIn);
+    const checkOut = fromISO(booking.checkOut);
     const nights = nightsBetween(checkIn, checkOut);
     const guests = booking.adults + booking.children;
 

@@ -6,7 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { confirmPayment, handleURLCallback, PaymentIntent } from '@stripe/stripe-react-native';
 
 import { useTheme } from '../../context/ThemeContext';
-import { nightsBetween } from '../../utils/date';
+import { fromISO, nightsBetween } from '../../utils/date';
 import { getPropertyById, POLICY_URLS } from '../../constants/data';
 import { calculateStayPrice } from '../../utils/pricing';
 import type { RootStackParamList } from '../../navigation/types';
@@ -47,8 +47,9 @@ const Payment: React.FC = () => {
     const booking = route.params;
     const property = getPropertyById(booking.propertyId);
 
-    const checkIn = new Date(booking.checkIn);
-    const checkOut = new Date(booking.checkOut);
+    // Local dates (not new Date('YYYY-MM-DD'), which is UTC and shows the day before west of the UK)
+    const checkIn = fromISO(booking.checkIn);
+    const checkOut = fromISO(booking.checkOut);
     const nights = nightsBetween(checkIn, checkOut);
     const guests = booking.adults + booking.children;
 
