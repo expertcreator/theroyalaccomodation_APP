@@ -77,6 +77,9 @@ const NETWORK_ERROR: CheckoutError = {
     message: "Couldn't reach the booking system. Please check your connection and try again.",
 };
 
+// How long a checkout request may take before we give up.
+const CHECKOUT_TIMEOUT_MS = 45000;
+
 // POST to a checkout route with the guest's sign-in token. null = no reply (network).
 async function postWithToken(path: string, body: object): Promise<PluginReply | 'signed-out'> {
     const user = auth.currentUser;
@@ -87,11 +90,21 @@ async function postWithToken(path: string, body: object): Promise<PluginReply | 
     // Content-Type — these are JSON requests (see sendEnquiryAPI in api/raApi.ts).
     const { 'Content-Type': _omit, ...wafHeaders } = OW_HEADERS;
 
-    return postDataAPI({
-        url: `${raAppBaseUrl}${path}`,
-        data: body as Record<string, any>,
-        headers: { ...wafHeaders, 'X-Firebase-Token': token },
-    });
+    // Give up after 45 s (Android has no time limit of its own), so a dead connection
+    // can't leave "Holding your dates…" spinning forever. A timed-out request
+    // comes back as null = the usual "Couldn't reach the booking system" message.
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), CHECKOUT_TIMEOUT_MS);
+    try {
+        return await postDataAPI({
+            url: `${raAppBaseUrl}${path}`,
+            data: body as Record<string, any>,
+            headers: { ...wafHeaders, 'X-Firebase-Token': token },
+            signal: controller.signal,
+        });
+    } finally {
+        clearTimeout(timer);
+    }
 }
 
 // Turn a failed reply into a CheckoutError the screen can switch on.

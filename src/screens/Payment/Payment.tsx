@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, ActivityIndicator, Linking } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import { useRoute, useNavigation, usePreventRemove, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { confirmPayment, handleURLCallback, PaymentIntent } from '@stripe/stripe-react-native';
 
@@ -33,6 +33,7 @@ import BookingNotice, { Notice } from './components/BookingNotice';
 import { startCheckout, confirmCheckout, cancelCheckout, StartedCheckout, ConfirmResult } from '../../firebase/checkout';
 import { isoForCountry } from '../../constants/countries';
 import { formatGBP } from '../../utils/format';
+import { showToast } from '../../utils/ToastNotifier';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.PaymentReview>;
@@ -135,6 +136,20 @@ const Payment: React.FC = () => {
         setActive(next);
     };
 
+    // While a payment is in progress (the Pay button is spinning), the guest can't
+    // leave this screen — back button, Android back or iOS swipe — so they always
+    // see how it ended. They get a short message instead.
+    const busyRef = useRef<boolean>(false);
+    busyRef.current = !!stage;
+    const leavingRef = useRef<boolean>(false);   // true when WE move on to Booking Confirmed
+    usePreventRemove(!!stage, ({ data }) => {
+        if (leavingRef.current) {
+            navigation.dispatch(data.action);    // our own move to Booking Confirmed — let it through
+            return;
+        }
+        showToast('normal', 'Please wait — your payment is in progress.');
+    });
+
     // Leaving the screen without paying → free the held dates straight away.
     // (Safe even if it was paid: the plugin checks with Stripe first.)
     const releaseHold = () => {
@@ -145,7 +160,10 @@ const Payment: React.FC = () => {
     };
     // Started the moment the guest leaves (before Check Availability is back in
     // view), so that screen can wait for it and then show those dates as free.
-    useEffect(() => navigation.addListener('beforeRemove', releaseHold), [navigation]);
+    // Not while paying: leaving is blocked then (above), and the hold is still needed.
+    useEffect(() => navigation.addListener('beforeRemove', () => {
+        if (!busyRef.current) releaseHold();
+    }), [navigation]);
     useEffect(() => releaseHold, []);   // fallback: the screen closed some other way (e.g. sign-out)
 
     // iOS: the bank's 3-D Secure page sends the guest back with theroyalaccommodation://safepay.
@@ -167,6 +185,7 @@ const Payment: React.FC = () => {
     const goConfirmed = (result: Exclude<ConfirmResult, { kind: 'error' }>, fallbackAmount: number) => {
         paidRef.current = true;
         rememberActive(null);
+        leavingRef.current = true;   // the "can't leave while paying" block lets this one through
         navigation.replace(STACK_ROUTES.BookingConfirmed, {
             ...booking,
             bookingRef: result.ref,
@@ -310,6 +329,17 @@ const Payment: React.FC = () => {
         await finishBooking(checkout.paymentIntentId, checkout.amount);
     };
 
+    // Safety net: if anything unexpected goes wrong, never leave the spinner (and
+    // the "can't leave while paying" block) stuck on — show an error instead.
+    const onPressPay = async () => {
+        try {
+            await onBookNow();
+        } catch {
+            setStage(null);
+            setNotice({ kind: 'error', text: 'Something went wrong. Please try again.' });
+        }
+    };
+
     return (
         <View style={[styles.container, { backgroundColor: p.background.default }]}>
             <Header title="Payment & Review" onBack={() => navigation.goBack()} />
@@ -413,7 +443,7 @@ const Payment: React.FC = () => {
                             disabled={!canBook}
                             loading={!!stage}
                             loadingTitle={stage ?? undefined}
-                            onPress={onBookNow}
+                            onPress={onPressPay}
                         />
                     </>
                 )}
