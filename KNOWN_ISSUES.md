@@ -38,8 +38,8 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
 - [ ] **APP-8 · Signing in from the drawer creates a second drawer.** `src/screens/LoginRegister/LoginRegister.tsx:107` calls `navigation.replace(DrawerRoot)`, which leaves two `DrawerRoot` entries on the stack. Android Back then lands on the old drawer.
   *Fix:* use `navigation.goBack()` (or `popTo`) for `entry: 'drawer'`.
 
-- [ ] **APP-9 · Payment can show "TOTAL DUE £0".** If the OWcal price request fails, `Payment.tsx` passes `total ?? 0` and `ReservationSummary.tsx:103` renders £0. Book Now stays disabled, but the user isn't told why.
-  *Fix:* show `priceState.error` with a retry, instead of £0.
+- [x] **APP-9 · Payment can show "TOTAL DUE £0".** If the OWcal price request fails, `Payment.tsx` passes `total ?? 0` and `ReservationSummary.tsx:103` renders £0. Book Now stays disabled, but the user isn't told why.
+  *Fixed 2026-10-16:* when the price fails, the total shows "Couldn't load the price" with a Try Again link instead of £0. `useOwcalSummary` gained `retry()`, which asks OWcal again with the same inputs; Check Availability doesn't use it, so it's unchanged. Pay stays disabled until a real price arrives. Verified in the iOS simulator with the first Payment price request forced to fail: the message showed, and Try Again loaded £2,995.
 
 - [ ] **APP-10 · Problems in `apiClient.ts`:**
   - `validateStatus: () => true` (lines 30, 81) means HTTP errors never reach `catch`, so the "show the server's message" toast there never runs.

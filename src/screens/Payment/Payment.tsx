@@ -362,6 +362,8 @@ const Payment: React.FC = () => {
                     total={amountDue}
                     originalTotal={originalTotal}
                     loading={priceState.loading}   // ← new
+                    error={priceState.error}       // price failed → "Couldn't load the price" + Try Again
+                    onRetry={priceState.retry}
                 />
 
                 <CouponCard

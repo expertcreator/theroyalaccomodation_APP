@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, ActivityIndicator } from 'react-native';
+import { View, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../../../context/ThemeContext';
 import { typography, spacing } from '../../../theme';
@@ -21,9 +21,11 @@ type Props = {
     total: number;
     originalTotal?: number;   // the price before a coupon — shown struck through above `total`
     loading?: boolean;
+    error?: boolean;          // the price couldn't be loaded → message + Try Again instead of £0
+    onRetry?: () => void;
 };
 
-const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nights, guests, pets, total, originalTotal, loading }) => {
+const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nights, guests, pets, total, originalTotal, loading, error, onRetry }) => {
     const { theme } = useTheme();
     const p = theme.palette;
 
@@ -101,6 +103,20 @@ const ReservationSummary: React.FC<Props> = ({ property, checkIn, checkOut, nigh
                 </View>
                 {loading
                     ? <ActivityIndicator size="small" color={p.primary.main} style={{ alignSelf: "center" }} />
+                    : error
+                    ? (
+                        // Price failed to load — say so (never show a made-up £0) and let the guest try again
+                        <View style={{ alignItems: 'flex-end' }}>
+                            <Text style={[typography.caption, { color: p.error.main }]}>Couldn't load the price</Text>
+                            {onRetry && (
+                                <TouchableOpacity onPress={onRetry} hitSlop={8} style={{ marginTop: spacing.xxs }}>
+                                    <Text style={[typography.caption, { color: p.primary.main, fontWeight: '600', textDecorationLine: 'underline' }]}>
+                                        Try Again
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    )
                     : (
                         <View style={{ alignItems: 'flex-end' }}>
                             {/* With a coupon: the old price, crossed out */}

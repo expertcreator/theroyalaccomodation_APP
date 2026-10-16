@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { owGetSummary, OwSummary } from '../api/owcal';
 
 // What the hook hands back to the screen on every render:
@@ -6,6 +6,7 @@ import { owGetSummary, OwSummary } from '../api/owcal';
 //   summary  → the last successful OWcal summary (total, deposit, raw html), or null
 //   error    → the last fetch failed or OWcal couldn't price these dates
 type State = { loading: boolean; summary: OwSummary | null; error: boolean };
+// Plus retry(): ask OWcal again with the same inputs (e.g. a "Try Again" after an error).
 
 /**
  * Debounced hook that fetches the REAL OWcal price (ow_get_summary) for the
@@ -29,11 +30,15 @@ export function useOwcalSummary(input: {
     couponId?: string | null; // a checked coupon → OWcal returns the discounted price
     enabled?: boolean;    // set false to pause fetching (e.g. before the range is chosen)
     debounceMs?: number;  // wait after the last change before hitting the API (default 400ms)
-}): State {
+}): State & { retry: () => void } {
     // Defaults: no pets, enabled, 400ms debounce.
     const { accomId, checkIn, checkOut, adults, children, pets = 0, couponId = null, enabled = true, debounceMs = 400 } = input;
 
     const [state, setState] = useState<State>({ loading: false, summary: null, error: false });
+
+    // Bumped by retry() — being in the deps below, it re-runs the fetch with the same inputs.
+    const [attempt, setAttempt] = useState(0);
+    const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
     useEffect(() => {
         // Nothing to price yet: disabled, or the date range isn't complete.
@@ -65,7 +70,7 @@ export function useOwcalSummary(input: {
         //  - cancelled = true → a request already in flight won't touch state
         //  - clearTimeout    → a debounce that hasn't fired yet is dropped
         return () => { cancelled = true; clearTimeout(timer); };
-    }, [accomId, checkIn, checkOut, adults, children, pets, couponId, enabled, debounceMs]);
+    }, [accomId, checkIn, checkOut, adults, children, pets, couponId, enabled, debounceMs, attempt]);
 
-    return state;
+    return { ...state, retry };
 }
