@@ -12,27 +12,32 @@ type AvailabilityData = {
     occupied: string[]; // ['YYYY-MM-DD', ...] — nights that are fully booked/blocked
 };
 
+// Give up after 30 s (Android has no time limit of its own), so the calendar
+// never waits forever — it shows "Couldn't check availability" instead.
+const AVAILABILITY_TIMEOUT_MS = 30000;
+
 /**
  * Fetch the occupied (unavailable) dates for one accommodation, between two dates.
- * Fails OPEN: returns [] on any error so the calendar still renders rather than
- * blocking every date. `from`/`to` are 'YYYY-MM-DD'.
+ * Returns null if they couldn't be loaded — never [] — so a failure is never
+ * mistaken for "nothing booked" (APP-4). `from`/`to` are 'YYYY-MM-DD'.
  */
 export async function getOccupiedDatesAPI(
     accomId: number,
     from: string,
     to: string,
-): Promise<string[]> {
+): Promise<string[] | null> {
     const res = await getAPIData(
         `${RA_APP_BASE}/availability`,
         { accomId, from, to },   // query params
         undefined,               // skipAuth (→ withCredentials)
         undefined,               // signal
         OW_HEADERS,              // WAF-friendly headers
+        AVAILABILITY_TIMEOUT_MS,
     );
     if (res?.success && Array.isArray((res.data as AvailabilityData)?.occupied)) {
         return (res.data as AvailabilityData).occupied;
     }
-    return [];
+    return null;   // couldn't load (no connection, timeout, server error)
 }
 
 

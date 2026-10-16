@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, type LayoutChangeEvent, type ViewStyle } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ActivityIndicator, type LayoutChangeEvent, type ViewStyle } from 'react-native';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
 import { typography, spacing, radius, borderWidth, IThemePalette } from '../../theme';
@@ -7,6 +7,7 @@ import { withAlpha } from '../../utils/color';
 import { buildMonthGrid, toISO, isSameDay, startOfDay, formatMonthLabel } from '../../utils/date';
 import Text from '../Text/Text';
 import Icon from '../Icon/Icon';
+import type { AvailabilityStatus } from '../../hooks/useOccupiedDates';
 
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 const COL = `${100 / 7}%`; // 7 equal columns
@@ -44,6 +45,11 @@ type Props = {
     minNights?: number;          // shortest allowed stay (default 1)
     onSelectDay: (date: Date) => void;
     onChangeMonth: (direction: -1 | 1) => void;
+    // Are this month's booked dates known yet? (default 'ready')
+    //   'loading' / 'error' → the days are faded and can't be tapped, with a message on top.
+    status?: AvailabilityStatus;
+    updating?: boolean;          // refreshing dates we already have → small spinner by the month name
+    onRetry?: () => void;        // "Try Again" when status is 'error'
 };
 
 /* ============================================================
@@ -162,7 +168,7 @@ const LegendBooked = ({ shade, label, p }: { shade: 'full' | 'morning' | 'aftern
 };
 
 /* ============================================================ */
-const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, minNights = 1, onSelectDay, onChangeMonth }) => {
+const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, minNights = 1, onSelectDay, onChangeMonth, status = 'ready', updating = false, onRetry }) => {
     const { theme } = useTheme();
     const p = theme.palette;
 
@@ -207,6 +213,9 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, mi
     // Stable so memoised Day cells don't re-render just because the parent did.
     const handlePress = useCallback((date: Date) => onSelectDay(date), [onSelectDay]);
 
+    // Booked dates not known yet (or couldn't be loaded) → don't let the guest pick days.
+    const blocked = status !== 'ready';
+
     return (
         <View style={[styles.card, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
             {/* Month navigation */}
@@ -214,7 +223,15 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, mi
                 <TouchableOpacity disabled={!canGoPrev} onPress={() => onChangeMonth(-1)} hitSlop={8} style={styles.navBtn}>
                     <Icon name="back" size={18} color={canGoPrev ? p.text.primary : withAlpha(p.text.placeHolder, 0.4)} />
                 </TouchableOpacity>
-                <Text style={[typography.title, { color: p.text.primary }]}>{formatMonthLabel(month)}</Text>
+                {/* Month name, with a small spinner while dates are being refreshed.
+                    The empty slot on the left keeps the name centred. */}
+                <View style={styles.monthTitle}>
+                    <View style={styles.spinnerSlot} />
+                    <Text style={[typography.title, { color: p.text.primary }]}>{formatMonthLabel(month)}</Text>
+                    <View style={styles.spinnerSlot}>
+                        {updating && <ActivityIndicator size="small" color={p.accent.main} />}
+                    </View>
+                </View>
                 <TouchableOpacity onPress={() => onChangeMonth(1)} hitSlop={8} style={styles.navBtn}>
                     <Icon name="chevron-right" size={18} color={p.text.primary} />
                 </TouchableOpacity>
@@ -227,33 +244,66 @@ const Calendar: React.FC<Props> = ({ month, checkIn, checkOut, occupiedDates, mi
                 ))}
             </View>
 
-            {/* Day grid */}
-            <View style={styles.grid} onLayout={onGridLayout}>
-                {grid.map((date, i) => {
-                    if (!date) return <View key={`blank-${i}`} style={styles.cell} />; // padding
+            {/* Day grid — faded and not tappable while the booked dates aren't known */}
+            <View>
+                <View
+                    style={[styles.grid, blocked && styles.gridBlocked]}
+                    pointerEvents={blocked ? 'none' : 'auto'}
+                    onLayout={onGridLayout}
+                >
+                    {grid.map((date, i) => {
+                        if (!date) return <View key={`blank-${i}`} style={styles.cell} />; // padding
 
-                    const iso = toISO(date);
-                    const isPast = date < today;
-                    // The day before — if that night was booked, a guest leaves this morning.
-                    const prevISO = toISO(new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1));
-                    return (
-                        <Day
-                            key={iso}
-                            date={date}
-                            isCheckIn={!!checkIn && isSameDay(date, checkIn)}
-                            isCheckOut={!!checkOut && isSameDay(date, checkOut)}
-                            isInRange={rangeComplete && date > checkIn! && date < checkOut!}
-                            bookedNight={!isPast && occupiedSet.has(iso)}
-                            bookedMorning={!isPast && occupiedSet.has(prevISO)}
-                            canCheckOutHere={iso === nextBookedNight}
-                            isPast={isPast}
-                            rangeComplete={rangeComplete}
-                            cellWidth={cellWidth}
-                            palette={p}
-                            onPress={handlePress}
-                        />
-                    );
-                })}
+                        const iso = toISO(date);
+                        const isPast = date < today;
+                        // The day before — if that night was booked, a guest leaves this morning.
+                        const prevISO = toISO(new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1));
+                        return (
+                            <Day
+                                key={iso}
+                                date={date}
+                                isCheckIn={!!checkIn && isSameDay(date, checkIn)}
+                                isCheckOut={!!checkOut && isSameDay(date, checkOut)}
+                                isInRange={rangeComplete && date > checkIn! && date < checkOut!}
+                                bookedNight={!isPast && occupiedSet.has(iso)}
+                                bookedMorning={!isPast && occupiedSet.has(prevISO)}
+                                canCheckOutHere={iso === nextBookedNight}
+                                isPast={isPast}
+                                rangeComplete={rangeComplete}
+                                cellWidth={cellWidth}
+                                palette={p}
+                                onPress={handlePress}
+                            />
+                        );
+                    })}
+                </View>
+
+                {blocked && (
+                    <View style={styles.gridMessage} pointerEvents="box-none">
+                        <View style={[styles.messagePill, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
+                            {status === 'loading' ? (
+                                <View style={styles.messageRow}>
+                                    <ActivityIndicator size="small" color={p.accent.main} />
+                                    <Text style={[typography.caption, { color: p.text.primary }]}>Checking availability…</Text>
+                                </View>
+                            ) : (
+                                <>
+                                    <View style={styles.messageRow}>
+                                        <Icon name="alert" size={16} color={p.error.main} />
+                                        <Text style={[typography.caption, { color: p.text.primary }]}>Couldn't check availability</Text>
+                                    </View>
+                                    {onRetry && (
+                                        <TouchableOpacity onPress={onRetry} hitSlop={8} style={{ marginTop: spacing.xs }}>
+                                            <Text style={[typography.caption, { color: p.primary.main, fontWeight: '600', textDecorationLine: 'underline' }]}>
+                                                Try Again
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </>
+                            )}
+                        </View>
+                    </View>
+                )}
             </View>
 
             {/* Legend */}
@@ -272,12 +322,18 @@ const styles = StyleSheet.create({
     card: { borderRadius: radius.xl, borderWidth: borderWidth.thin, padding: spacing.lg },
 
     navRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md, paddingHorizontal: spacing.xs },
+    monthTitle: { flexDirection: 'row', alignItems: 'center', columnGap: spacing.xs },
+    spinnerSlot: { width: moderateScale(18), alignItems: 'center' },
     navBtn: { width: moderateScale(32), height: moderateScale(32), alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill },
 
     weekRow: { flexDirection: 'row', marginBottom: spacing.sm },
     weekday: { width: COL, textAlign: 'center' },
 
     grid: { flexDirection: 'row', flexWrap: 'wrap' },
+    gridBlocked: { opacity: 0.35 },
+    gridMessage: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
+    messagePill: { alignItems: 'center', paddingVertical: spacing.sm, paddingHorizontal: spacing.md, borderRadius: radius.md, borderWidth: borderWidth.thin },
+    messageRow: { flexDirection: 'row', alignItems: 'center', columnGap: spacing.sm },
     cell: { width: COL, height: CELL_HEIGHT, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xs },
     dayTouch: { width: moderateScale(36), height: moderateScale(36), alignItems: 'center', justifyContent: 'center' },
     checkOutRing: { borderRadius: radius.pill, borderWidth: borderWidth.thin, borderStyle: 'dashed' },

@@ -69,7 +69,7 @@ All HTTP goes through `apiClient.ts` (`getAPIData`, `postDataAPI`):
 - Uses `validateStatus: () => true`, so HTTP error responses come back as normal data. Only transport errors hit `catch`, which shows a toast and returns `null`.
 - Callers check the result shape and fall back; API helpers don't throw.
 - Time limits:
-  - `getAPIData` takes an optional `timeout`, and only `/rates` uses it (30 s, so the splash can't hang).
+  - `getAPIData` takes an optional `timeout`. `/rates` (so the splash can't hang) and `/availability` (so the calendar can't hang) use 30 s.
   - The checkout POSTs abort after 45 s through `postDataAPI`'s `signal`.
   - Every other request has no limit, which on Android means it can hang forever (APP-3).
 
@@ -144,7 +144,9 @@ TypeScript, 2nd gen, region `europe-west2` (London, same as Firestore). Project 
   - Dates taken meanwhile then appear, and the reconcile effect clears a selection that now covers a booked night.
 - The calendar enforces `pricing.minNights` and blocks ranges that span a booked night.
 - `useOwcalSummary` fetches the live price, debounced 400 ms and race-safe. `retry()` asks again with the same inputs.
-- "Proceed" re-checks availability for the exact range, then routes to `LoginRegister` (signed out) or `Payment`.
+- Until the viewed month's booked dates have loaded once, `useOccupiedDates` reports `status: 'loading'` (or `'error'` after a failure) and `Calendar` fades the days and blocks taps, with "Checking availability…" or "Couldn't check availability" + Try Again (`retry()`). An already-loaded month stays `'ready'` while it refreshes (`updating` → small spinner by the month name), even if the refresh fails.
+- `getOccupiedDatesAPI` returns `null` on failure, never `[]`, so a failure is never read as "nothing booked" (APP-4).
+- "Proceed" re-checks availability for the exact range, then routes to `LoginRegister` (signed out) or `Payment`. If the re-check fails, the guest stays put with a toast. If the dates were just taken, the whole selection is cleared, the re-check's answer is merged into the calendar at once (`applyFresh`), and the calendar reloads.
 
 `Payment` takes real card payments through the plugin's checkout routes. The API helpers are in `src/firebase/checkout.ts`, and they never throw.
 - **Setup:** `useCheckoutConfig` asks `/checkout-config` and starts Stripe with that key. Its states:

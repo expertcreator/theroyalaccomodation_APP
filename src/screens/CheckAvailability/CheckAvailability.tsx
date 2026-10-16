@@ -59,7 +59,14 @@ const CheckAvailability: React.FC = () => {
   // Real occupied dates — loaded for the viewed month and extended as the user
   // pages the calendar, so far-future bookings (2027, 2028…) show correctly
   // without loading years of data up front.
-  const { occupied: occupiedDates, refresh: refreshOccupied } = useOccupiedDates(
+  const {
+    occupied: occupiedDates,
+    status: availabilityStatus,   // loading / error / ready for the viewed month
+    updating: availabilityUpdating,
+    refresh: refreshOccupied,
+    retry: retryOccupied,
+    applyFresh: applyFreshOccupied,
+  } = useOccupiedDates(
     property.owAccomId,
     month
   );
@@ -181,6 +188,11 @@ const CheckAvailability: React.FC = () => {
         toISO(checkIn),
         toISO(checkOut),
       );
+      if (freshOccupied === null) {
+        // Couldn't check — don't guess the dates are free. Stay here so the guest can try again.
+        showToast('warning', "Couldn't check availability. Please try again.");
+        return;
+      }
       const set = new Set(freshOccupied);
       let spansBooked = false;
       const d = new Date(checkIn);
@@ -189,8 +201,15 @@ const CheckAvailability: React.FC = () => {
         d.setDate(d.getDate() + 1);
       }
       if (spansBooked) {
-        setCheckOut(null);   // those nights are taken — make the user re-pick
-        showToast('warning', 'Those dates were just booked — please pick again.');
+        // Someone else has just booked them. Clear the whole selection (the
+        // check-in may be taken too) and show those nights as booked straight
+        // away from this answer, then reload the calendar for anything else
+        // that changed.
+        setCheckIn(null);
+        setCheckOut(null);
+        applyFreshOccupied(toISO(checkIn), toISO(checkOut), freshOccupied);
+        refreshOccupied();
+        showToast('warning', 'Sorry, those dates have just been booked. Please choose other dates.');
         return;
       }
 
@@ -239,6 +258,9 @@ const CheckAvailability: React.FC = () => {
           minNights={minNights}
           onSelectDay={handleSelectDay}
           onChangeMonth={(dir) => setMonth(addMonths(month, dir))}
+          status={availabilityStatus}
+          updating={availabilityUpdating}
+          onRetry={retryOccupied}
         />
 
         {/* Min-stay notice */}

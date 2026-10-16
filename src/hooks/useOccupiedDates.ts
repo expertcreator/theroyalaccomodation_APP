@@ -8,6 +8,12 @@ const CHUNK_MONTHS = 3;
 // 'YYYY-MM' key for a month.
 const monthKeyOf = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
+// The viewed month's booked dates are:
+//   loading → not known yet (first time)   → the calendar fades the days and says "Checking availability…"
+//   error   → couldn't be loaded            → "Couldn't check availability" + Try Again
+//   ready   → known (maybe being refreshed) → normal calendar
+export type AvailabilityStatus = 'loading' | 'error' | 'ready';
+
 /**
  * Loads REAL occupied dates for a property, windowed around the viewed month and
  * extended as the user pages the calendar. Results ACCUMULATE — a fetch in flight
@@ -16,16 +22,21 @@ const monthKeyOf = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).p
  *
  * refresh() re-fetches the viewed months (e.g. when the screen comes back into
  * view), so dates booked by someone else in the meantime show up.
+ * retry() tries the viewed month again after it couldn't be loaded.
+ * applyFresh() takes booked dates the screen already got from the server (the
+ * Proceed re-check), so they show at once without waiting for another request.
  */
 export function useOccupiedDates(accomId: number, focusMonth: Date) {
     const [occupied, setOccupied] = useState<string[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [, setTick] = useState(0);   // re-render when a fetch starts or ends (the status below is read from refs)
 
-    const occ = useRef<Set<string>>(new Set());        // all occupied dates gathered so far
-    const loaded = useRef<Set<string>>(new Set());     // 'YYYY-MM' chunks confirmed fetched
-    const inFlight = useRef<Set<string>>(new Set());   // 'YYYY-MM' chunks currently fetching
+    const occ = useRef<Set<string>>(new Set());          // all occupied dates gathered so far
+    const loaded = useRef<Set<string>>(new Set());       // 'YYYY-MM' chunks fetched and still fresh
+    const everLoaded = useRef<Set<string>>(new Set());   // chunks we've had a good answer for at least once
+    const failed = useRef<Set<string>>(new Set());       // chunks whose last fetch failed
+    const inFlight = useRef<Set<string>>(new Set());     // 'YYYY-MM' chunks currently fetching
     const accomRef = useRef<number>(accomId);
-    const focusRef = useRef<Date>(focusMonth);         // latest viewed month (for refresh)
+    const focusRef = useRef<Date>(focusMonth);           // latest viewed month (for refresh / retry)
     const mounted = useRef<boolean>(true);
 
     focusRef.current = focusMonth;
@@ -34,6 +45,16 @@ export function useOccupiedDates(accomId: number, focusMonth: Date) {
     useEffect(() => {
         mounted.current = true;
         return () => { mounted.current = false; };
+    }, []);
+
+    // A server answer is the truth for [from, to): drop what we had there
+    // (a night may have been freed), then add the fresh dates.
+    const mergeRange = useCallback((from: string, to: string, list: string[]) => {
+        for (const d of Array.from(occ.current)) {
+            if (d >= from && d < to) occ.current.delete(d);
+        }
+        for (const d of list) occ.current.add(d);
+        setOccupied(Array.from(occ.current));
     }, []);
 
     // Fetch the CHUNK_MONTHS months starting at `month` and merge them in.
@@ -50,26 +71,30 @@ export function useOccupiedDates(accomId: number, focusMonth: Date) {
         // switch doesn't merge into the wrong property.
         const forAccom = accomRef.current;
 
-        setLoading(true);
+        setTick(t => t + 1);   // show "loading" straight away
         getOccupiedDatesAPI(forAccom, from, to)
             .then(list => {
                 if (!mounted.current || accomRef.current !== forAccom) return;
-                // This answer is the truth for [from, to): drop what we had there
-                // (a night may have been freed), then add the fresh dates.
-                for (const d of Array.from(occ.current)) {
-                    if (d >= from && d < to) occ.current.delete(d);
+                if (list === null) {
+                    // Couldn't load: keep whatever we already knew (never wipe booked
+                    // dates), and remember it failed so the calendar can offer Try Again.
+                    chunkKeys.forEach(k => failed.current.add(k));
+                    return;
                 }
-                for (const d of list) occ.current.add(d);
-                chunkKeys.forEach(k => loaded.current.add(k)); // mark loaded on success
-                setOccupied(Array.from(occ.current));          // always merges, even if month changed
+                mergeRange(from, to, list);                    // always merges, even if month changed
+                chunkKeys.forEach(k => {
+                    loaded.current.add(k);
+                    everLoaded.current.add(k);
+                    failed.current.delete(k);
+                });
             })
             .finally(() => {
                 if (accomRef.current === forAccom) {
                     chunkKeys.forEach(k => inFlight.current.delete(k));
                 }
-                if (mounted.current && accomRef.current === forAccom) setLoading(false);
+                if (mounted.current && accomRef.current === forAccom) setTick(t => t + 1);
             });
-    }, []);
+    }, [mergeRange]);
 
     useEffect(() => {
         // Reset everything if the property changes.
@@ -77,6 +102,8 @@ export function useOccupiedDates(accomId: number, focusMonth: Date) {
             accomRef.current = accomId;
             occ.current = new Set();
             loaded.current = new Set();
+            everLoaded.current = new Set();
+            failed.current = new Set();
             inFlight.current = new Set();
             setOccupied([]);
         }
@@ -95,5 +122,24 @@ export function useOccupiedDates(accomId: number, focusMonth: Date) {
         fetchChunk(focusRef.current);
     }, [fetchChunk]);
 
-    return { occupied, loading, refresh };
+    // Booked dates for [from, to) that the screen already has from the server
+    // (Proceed's re-check). Shows them now; doesn't mark any month as loaded.
+    const applyFresh = mergeRange;
+
+    // "Try Again" after the viewed month couldn't be loaded.
+    const retry = useCallback(() => {
+        if (!inFlight.current.has(monthKeyOf(focusRef.current))) fetchChunk(focusRef.current);
+    }, [fetchChunk]);
+
+    // The viewed month's state. Once a month has loaded, it stays "ready" even while
+    // it's refreshed (or a refresh fails) — the dates shown are still the best we have.
+    const key = monthKeyOf(focusMonth);
+    const status: AvailabilityStatus = everLoaded.current.has(key)
+        ? 'ready'
+        : failed.current.has(key) && !inFlight.current.has(key)
+            ? 'error'
+            : 'loading';
+    const updating = status === 'ready' && inFlight.current.has(key);   // a refresh is running
+
+    return { occupied, status, updating, refresh, retry, applyFresh };
 }

@@ -17,16 +17,10 @@ Not bugs, but things that must happen before the app goes to the stores.
   - `bookingNumber()` in `src/utils/format.ts` is the one place to switch to the letters if the client prefers.
   - Neither guest email contains a booking number, so there's nothing to clash with.
   - Verified: My Bookings and the summary pop-up show #728, and Booking Confirmed showed #729.
-- [ ] **Check the Booking Confirmed promises with the client.**
-  - In live mode OWcal sends the confirmation email (but see the Ascot item below).
-  - Nothing in the app arranges "Your personal concierge will contact you 48 hours before arrival" or the "smart-key codes".
-  - Both guest emails ask for **two forms of ID, sent to info@theroyalaccommodation.com within 48 hours of booking**, or the booking may be cancelled. Booking Confirmed should probably say so too.
-- [ ] **Ascot guests may get no confirmation email (client's OWcal setting).** In OWcal → Emails:
-  - **Windsor:** the "Customer confirmation" template sends on *New reservation (from customers)*.
-  - **Ascot:** its template sends only on *Reservation confirmation*. Paid bookings here stay `new` and aren't confirmed by the owner, so the Ascot email likely never goes out, for website and app bookings alike.
-  - The email log fits: only booking 635 got a customer email recently.
-  - *Fix (the client decides):* also tick "New reservation (from customers)" on the Ascot template.
-  - The Ascot template's damage paragraph also says "Royal Windsor Residence" by mistake.
+- [x] **Booking Confirmed promises: not app work (decided 2026-10-16).** "Your personal concierge will contact you 48 hours before arrival" and the "smart-key codes" are kept as they are; the client handles them outside the app (email or phone).
+- **For the client (their OWcal settings, not app work).** Noted on 2026-10-16:
+  - The Ascot "Customer confirmation" email sends only on *Reservation confirmation*; Windsor's sends on *New reservation (from customers)*. Paid bookings stay `new`, so Ascot guests probably get no confirmation email. That email is also where they're asked for two forms of ID within 48 hours.
+  - The Ascot email's damage paragraph says "Royal Windsor Residence".
 - [ ] **Store release.**
   - Set version numbers (still `1.0`, build 1).
   - Android: a signed AAB (signing reads `android/local.properties`).
@@ -47,10 +41,17 @@ Not bugs, but things that must happen before the app goes to the stores.
   *Still open (optional):*
   - On a stuck network the splash can still be up for about 30 s. For signed-in guests, Firestore's own wait of about 10 s for the profile runs in parallel.
   - Possible improvements: mark rates ready as soon as cached rates exist (faster normal launches), and/or cap the splash wait (e.g. 5 s) in `RootNavigator`.
-  - **Every other request still has no time limit.** On Android, React Native's OkHttp timeouts are 0 (none), so on a stuck network these can spin forever: availability, the OWcal summary and Proceed re-check, `/me/bookings`, reviews, and the enquiry POST. (The checkout requests got a 45 s limit on 2026-10-16, because leaving Payment is blocked while they run.)
+  - **Every other request still has no time limit.** On Android, React Native's OkHttp timeouts are 0 (none), so on a stuck network these can spin forever: the OWcal summary, `/me/bookings`, reviews, and the enquiry POST. (The checkout requests got a 45 s limit on 2026-10-16, because leaving Payment is blocked while they run, and availability, including the Proceed re-check, got 30 s with APP-4.)
 
-- [ ] **APP-4 · Availability fails open and is never retried.** `getOccupiedDatesAPI` returns `[]` on any error (`src/api/raApi.ts:35`). `useOccupiedDates` then marks the chunk as loaded (`src/hooks/useOccupiedDates.ts:63`). So a failed fetch shows every date as free for the rest of the session. The "Proceed" re-check in `CheckAvailability` fails open the same way. This becomes critical once real bookings exist.
+- [x] **APP-4 · Availability fails open and is never retried.** `getOccupiedDatesAPI` returns `[]` on any error (`src/api/raApi.ts:35`). `useOccupiedDates` then marks the chunk as loaded (`src/hooks/useOccupiedDates.ts:63`). So a failed fetch shows every date as free for the rest of the session. The "Proceed" re-check in `CheckAvailability` fails open the same way. This becomes critical once real bookings exist.
   *Fix:* return `null` on failure, don't mark the chunk as loaded, and block Proceed with a "couldn't verify availability, try again" message.
+  *Fixed 2026-10-16 (with APP-15):*
+  - `getOccupiedDatesAPI` returns `null` on failure, never `[]`, and gives up after 30 s.
+  - `useOccupiedDates` doesn't mark a failed chunk as loaded, keeps already-known dates when a refresh fails, and offers `retry()`.
+  - The calendar shows "Couldn't check availability" with Try Again, and its days can't be tapped meanwhile.
+  - If Proceed's re-check fails, the guest stays on the screen with a toast instead of going on to Payment.
+  - If Proceed's re-check finds the dates were just booked, the whole selection is cleared (the check-in may be taken too). The re-check's answer is merged into the calendar straight away (`applyFresh`), so those nights show as booked at the same moment as the toast, then the calendar reloads for anything else that changed. Verified in the iOS simulator with a faked "just booked" re-check: the toast "Sorry, those dates have just been booked…" shows, the night turns booked at once, and the guest stays on the screen.
+  - Verified in the iOS simulator with forced failures.
 
 - [x] **APP-5 · Dates show one day early for users west of UTC.** `new Date('YYYY-MM-DD')` parses as UTC midnight, so guests in the Americas see the previous day. Affected: `Payment.tsx`, `StaySummary.tsx`, `BookingConfirmed.tsx`, `BookingCard.tsx`, `BookingSummaryModal.tsx`.
   *Fixed 2026-10-16:* all five now use `fromISO()` from `src/utils/date.ts`, which reads the string as a local date. My Bookings (`BookingCard`, `BookingSummaryModal`) already did; `Payment`, `StaySummary` and `BookingConfirmed` were switched. Only the display was ever wrong: the dates sent to the plugin and Stripe are the original strings. Verified in the iOS simulator with the app running in New York time (`TZ=America/New_York`): Payment shows Mon 26 → Wed 28 Oct, as picked.
@@ -83,8 +84,13 @@ Not bugs, but things that must happen before the app goes to the stores.
 
   *Fix:* add both files to the app target (with a bridging header if needed). Alternatively, drop the native module and set the launch appearance some other way.
 
-- [ ] **APP-15 · The calendar looks fully available while booked dates load.** `useOccupiedDates` exposes `loading`, but `CheckAvailability` doesn't use it. On first open, every date shows as free for a few seconds until the booked nights appear (seen in the simulator). A quick tap can select a booked date; the reconcile effect then drops it with a toast.
+- [x] **APP-15 · The calendar looks fully available while booked dates load.** `useOccupiedDates` exposes `loading`, but `CheckAvailability` doesn't use it. On first open, every date shows as free for a few seconds until the booked nights appear (seen in the simulator). A quick tap can select a booked date; the reconcile effect then drops it with a toast.
   *Fix:* show a loading state on the calendar, or disable day taps until the first chunk arrives.
+  *Fixed 2026-10-16:*
+  - Until the viewed month's booked dates have loaded once, its days are faded, can't be tapped, and show "Checking availability…". The month arrows still work.
+  - Refreshing a month that's already loaded (e.g. back from Payment) shows only a small spinner next to the month name, without fading anything.
+  - `useOccupiedDates` returns `status` (`loading` / `error` / `ready`) and `updating`; `Calendar` takes `status`, `updating` and `onRetry`.
+  - Verified in the iOS simulator.
 
 ## App — low / cleanup
 
