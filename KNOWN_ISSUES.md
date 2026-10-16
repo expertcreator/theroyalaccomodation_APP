@@ -62,10 +62,9 @@ Not bugs, but things that must happen before the app goes to the stores.
   *Fixed 2026-10-16:* when the price fails, the total shows "Couldn't load the price" with a Try Again link instead of £0. `useOwcalSummary` gained `retry()`, which asks OWcal again with the same inputs; Check Availability doesn't use it, so it's unchanged. Pay stays disabled until a real price arrives. Verified in the iOS simulator with the first Payment price request forced to fail: the message showed, and Try Again loaded £2,995.
 
 - [ ] **APP-10 · Problems in `apiClient.ts`:**
-  - `validateStatus: () => true` (lines 30, 81) means HTTP errors never reach `catch`, so the "show the server's message" toast there never runs.
-  - Every request and response body is logged in all builds (lines 33, 84). That includes the Contact form's name, email and phone.
-
-  *Fix:* gate the logs behind `__DEV__`, and decide one consistent way to handle HTTP errors.
+  - [ ] `validateStatus: () => true` (lines 30, 81) means HTTP errors never reach `catch`, so the "show the server's message" toast there never runs. *Fix (low priority):* decide one consistent way to handle HTTP errors. Callers currently rely on getting error replies back as data, so it touches every API call.
+  - [x] Every request and response body was logged in all builds (lines 33, 84). In release builds that goes to the phone's system log, and it included guests' names, emails, phones and addresses, the Stripe payment secret, sign-in tokens inside request errors, `AuthContext`'s whole user object and My Bookings' results.
+    *Fixed 2026-10-16:* `src/utils/silenceLogsInRelease.ts`, imported first in `index.js`, makes `console.log/info/debug/warn/error` do nothing when `!__DEV__`. Debug builds log as before. This covers every log in the app and in libraries. Release builds have no crash reporting, so nothing is lost.
 
 - [ ] **APP-14 · The iOS native theme module isn't compiled into the app.** `ios/ThemePreference.swift` and `ios/TheRoyalAccommodation/ThemePreference.m` exist on disk but aren't referenced in `TheRoyalAccommodation.xcodeproj`.
   - So on iOS, `NativeModules.ThemePreference` is undefined and `ThemeContext`'s `ThemePreference?.setDarkModeEnabled(...)` silently does nothing.
