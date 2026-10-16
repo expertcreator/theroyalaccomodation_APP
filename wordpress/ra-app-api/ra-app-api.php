@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RA App API
  * Description: Bridge between The Royal Accommodation mobile app and the website. Public, read-only routes for occupied dates, nightly rates and reviews; a contact-enquiry route that sends email; "My Bookings" — for the signed-in app user (Firebase sign-in token) or server-to-server (shared secret); and in-app booking with Stripe, which creates reservations through OWcal's own code exactly like the website (off unless RA_APP_CHECKOUT is set in wp-config.php).
- * Version:     1.4.0
+ * Version:     1.4.1
  * Author:      RTD / ITOasis
  * Requires PHP: 7.4
  */
@@ -184,7 +184,8 @@ function ra_app_map_reservation( array $r ) {
 	$paid     = ra_app_amount_paid( $r, $total );
 
 	return array(
-		'ref'           => isset( $r['alphanum_id'] ) ? $r['alphanum_id'] : '',
+		'id'            => isset( $r['id'] ) ? (int) $r['id'] : null,           // OWcal's booking number, e.g. 714 (admin "Id", [resa_id])
+		'ref'           => isset( $r['alphanum_id'] ) ? $r['alphanum_id'] : '', // OWcal's letter reference, e.g. T5NMGEXP
 		'accomId'       => $accom_id,
 		'property'      => ra_app_property_slug( $accom_id ),   // 'ascot' | 'windsor' | null
 		'checkIn'       => isset( $r['check_in'] ) ? $r['check_in'] : '',
@@ -1577,7 +1578,8 @@ function ra_app_cancel_payment_intent( $stripe, $payment_intent_id ) {
  *               guest's saved (live) Stripe customer is left untouched.
  *
  * Header: X-Firebase-Token.   JSON body: { paymentIntentId }
- * Success data: { status: 'confirmed' | 'processing', ref, total, paid, currency }
+ * Success data: { status: 'confirmed' | 'processing', id, ref, total, paid, currency }
+ *   id = OWcal's booking number (714), ref = its letter reference (T5NMGEXP).
  *   'processing' = the bank hasn't finished yet; OWcal completes it on its own.
  * Error data.code: not-paid (402), not-found (404), unavailable (503), plus the start errors.
  * Safe to call more than once.
@@ -1632,7 +1634,7 @@ function ra_app_me_checkout_confirm( WP_REST_Request $req ) {
 		if ( 'delete' === $result ) {
 			return ra_app_private_response( false, 'Your payment hasn\'t gone through. Please check your card details and try again.', array( 'code' => 'not-paid' ), 402 );
 		}
-		return ra_app_private_response( true, 'We\'re confirming your payment.', array( 'status' => 'processing', 'ref' => $resa ? $resa['alphanum_id'] : '' ) );
+		return ra_app_private_response( true, 'We\'re confirming your payment.', array( 'status' => 'processing', 'id' => $resa ? (int) $resa['id'] : null, 'ref' => $resa ? $resa['alphanum_id'] : '' ) );
 	}
 
 	// Test mode: the same steps as check_uncompleted_resa(), minus the emails
@@ -1691,7 +1693,8 @@ function ra_app_checkout_confirmed_response( array $resa ) {
 	return ra_app_private_response( true, 'Your booking is confirmed.', array(
 		'status'        => ! empty( $resa['payment_delayed'] ) ? 'processing' : 'confirmed',
 		'bookingStatus' => $resa['status'], // OWcal's: 'new' (normal here), 'confirmed', or 'pending' = awaiting the owner
-		'ref'           => $resa['alphanum_id'],
+		'id'            => (int) $resa['id'],      // booking number, e.g. 714
+		'ref'           => $resa['alphanum_id'],   // letter reference, e.g. T5NMGEXP
 		'total'         => (float) $resa['price'],
 		'paid'          => (float) $resa['amount_to_pay'],
 		'currency'      => $resa['currency'],
