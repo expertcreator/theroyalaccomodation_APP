@@ -157,14 +157,33 @@ export async function confirmCheckout(paymentIntentId: string): Promise<ConfirmR
     }
 }
 
+// The "free the dates" request that's still on its way (null when there's none).
+// Check Availability waits for it before re-loading booked dates, so dates the
+// guest has just let go of don't still show as booked.
+let releasing: Promise<void> | null = null;
+
 /**
  * The guest left without paying: free the held dates. Fire-and-forget — if it
  * fails, OWcal releases the hold by itself within the hour.
  */
-export async function cancelCheckout(paymentIntentId: string): Promise<void> {
-    try {
-        await postWithToken('/me/checkout/cancel', { paymentIntentId });
-    } catch {
-        // ignore — see above
-    }
+export function cancelCheckout(paymentIntentId: string): Promise<void> {
+    const request = (async () => {
+        try {
+            await postWithToken('/me/checkout/cancel', { paymentIntentId });
+        } catch {
+            // ignore — see above
+        }
+    })();
+    releasing = request;
+    request.then(() => {
+        if (releasing === request) releasing = null;
+    });
+    return request;
+}
+
+/** Resolves once a "free the dates" request has finished (straight away if none; at most 5 s). */
+export function waitForRelease(): Promise<void> {
+    if (!releasing) return Promise.resolve();
+    const fiveSeconds = new Promise<void>((resolve) => setTimeout(() => resolve(), 5000));
+    return Promise.race([releasing, fiveSeconds]);
 }

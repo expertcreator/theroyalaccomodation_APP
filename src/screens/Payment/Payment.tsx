@@ -137,9 +137,16 @@ const Payment: React.FC = () => {
 
     // Leaving the screen without paying → free the held dates straight away.
     // (Safe even if it was paid: the plugin checks with Stripe first.)
-    useEffect(() => () => {
-        if (activeRef.current && !paidRef.current) cancelCheckout(activeRef.current.paymentIntentId);
-    }, []);
+    const releaseHold = () => {
+        if (activeRef.current && !paidRef.current) {
+            cancelCheckout(activeRef.current.paymentIntentId);
+            activeRef.current = null;   // only once
+        }
+    };
+    // Started the moment the guest leaves (before Check Availability is back in
+    // view), so that screen can wait for it and then show those dates as free.
+    useEffect(() => navigation.addListener('beforeRemove', releaseHold), [navigation]);
+    useEffect(() => releaseHold, []);   // fallback: the screen closed some other way (e.g. sign-out)
 
     // iOS: the bank's 3-D Secure page sends the guest back with theroyalaccommodation://safepay.
     // Handing it to Stripe closes that page and lets confirmPayment finish. (Android does this itself.)

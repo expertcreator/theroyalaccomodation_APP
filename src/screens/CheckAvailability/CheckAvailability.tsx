@@ -25,6 +25,7 @@ import { useOwcalSummary } from '../../hooks/useOwcalSummary';
 import { useOccupiedDates } from '../../hooks/useOccupiedDates';
 import { getOccupiedDatesAPI } from '../../api/raApi';   // ← NEW: fresh re-check on Proceed
 import { showToast } from '../../utils/ToastNotifier';
+import { waitForRelease } from '../../firebase/checkout';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, typeof STACK_ROUTES.CheckAvailability>;
@@ -66,6 +67,8 @@ const CheckAvailability: React.FC = () => {
   // Coming back to this screen (e.g. from Payment after "these dates have just
   // been booked")? Re-check the calendar, so dates taken meanwhile show as booked.
   // The effect below then clears a selection that now covers a booked night.
+  // If the guest left Payment without paying, wait until their held dates are
+  // released first, otherwise those dates would still show as booked.
   const firstFocus = useRef(true);
   useFocusEffect(
     useCallback(() => {
@@ -73,7 +76,13 @@ const CheckAvailability: React.FC = () => {
         firstFocus.current = false; // the first load already happens on open
         return;
       }
-      refreshOccupied();
+      let stillHere = true;
+      waitForRelease().then(() => {
+        if (stillHere) refreshOccupied();
+      });
+      return () => {
+        stillHere = false;
+      };
     }, [refreshOccupied])
   );
 
