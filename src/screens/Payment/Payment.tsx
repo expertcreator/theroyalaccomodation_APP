@@ -113,7 +113,7 @@ const Payment: React.FC = () => {
     const canBook = acceptTerms && acceptPrivacy && cardComplete && cardholderName.trim().length > 0 && priceReady // ← + priceReady
         && payment.status === 'ready' && detailsReady;
 
-    const goContact = () => navigation.navigate(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Contact });
+    const goContact = () => navigation.navigate(STACK_ROUTES.ContactStack);   // on top, so Back returns here
     const goMyBookings = () => navigation.reset({
         index: 0,
         routes: [{ name: STACK_ROUTES.DrawerRoot, params: { screen: DRAWER_ROUTES.MyBookings } }],

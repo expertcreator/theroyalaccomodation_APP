@@ -116,12 +116,8 @@ const LoginRegister: React.FC = () => {
     }
   };
 
-  // From the drawer: back to the drawer underneath, on Contact (APP-8).
-  // From a booking: open Contact on top, so Back returns to this step.
-  const goToContact = () =>
-    entry === 'drawer'
-      ? navigation.popTo(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Contact })
-      : navigation.navigate(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Contact });
+  // Contact on top of this screen, so Back returns here (from the drawer or a booking).
+  const goToContact = () => navigation.navigate(STACK_ROUTES.ContactStack);
 
   const isRegister = mode === 'register';
 

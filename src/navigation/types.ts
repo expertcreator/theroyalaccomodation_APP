@@ -40,6 +40,7 @@ export type RootStackParamList = {
     // bookingId = OWcal's booking number (shown as "#714"); bookingRef = its letter reference.
     [STACK_ROUTES.BookingConfirmed]: BookingDraft & { bookingId?: number | null; bookingRef: string; total: number; paymentPending?: boolean };
     [STACK_ROUTES.ForgotPassword]: undefined;
+    [STACK_ROUTES.ContactStack]: undefined;
 };
 
 // Makes useNavigation()/useRoute() typed everywhere without passing generics

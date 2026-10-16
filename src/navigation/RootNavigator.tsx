@@ -15,6 +15,7 @@ import { hideSplash } from 'react-native-splash-view';
 import { useRates } from '../context/RatesContext';
 import { useAuth } from '../context/AuthContext';
 import ForgotPassword from '../screens/ForgotPassword/ForgotPassword';
+import Contact from '../screens/Contact/Contact';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -50,6 +51,7 @@ export default function RootNavigator() {
                 <Stack.Screen name={STACK_ROUTES.PaymentReview} component={Payment} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.BookingConfirmed} component={BookingConfirmed} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.ForgotPassword} component={ForgotPassword} options={{ headerShown: false }} />
+                <Stack.Screen name={STACK_ROUTES.ContactStack} component={Contact} options={{ headerShown: false }} />
             </Stack.Navigator>
         </>
     );

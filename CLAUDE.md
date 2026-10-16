@@ -57,6 +57,7 @@ Tooling state:
 - `src/navigation/routes.ts` holds route-name constants (`STACK_ROUTES`, `DRAWER_ROUTES`) — use them, never string literals.
 - `types.ts` keys the param lists off those constants and augments `ReactNavigation.RootParamList` globally, so `useNavigation()` is typed everywhere.
 - Root is a native stack; the right-side drawer is nested as the `DrawerRoot` stack screen. Booking-flow screens (PropertyDetail, CheckAvailability, LoginRegister, PaymentReview, BookingConfirmed, ForgotPassword) live on the root stack. Drawer screens reach them via `navigation.getParent()` or by navigate bubbling.
+- Contact exists twice: as a drawer screen (`DRAWER_ROUTES.Contact`) and on the root stack (`STACK_ROUTES.ContactStack`, same component). Flow screens (sign-in, Payment) open `ContactStack` so it sits on top and Back returns to them. Navigating from a root-stack screen to `DrawerRoot` would add a second drawer (APP-8); go back to it with `popTo` instead.
 - `LoginRegister` takes `{ entry: 'drawer' }` or `{ entry: 'booking', booking: BookingDraft }`; booking entry shows the stay summary and continues to Payment.
 - `BookingDraft` (ISO `YYYY-MM-DD` strings + guest counts + `propertyId`) is passed screen-to-screen through route params; there is no booking store.
 

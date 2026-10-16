@@ -11,6 +11,9 @@ export const STACK_ROUTES = {
     PaymentReview: 'PaymentReview',
     BookingConfirmed: 'BookingConfirmed',
     ForgotPassword: 'ForgotPassword',
+    // Contact again, outside the drawer: opened on top of a flow screen (sign-in,
+    // Payment) so Back returns there, without stacking a second drawer.
+    ContactStack: 'ContactStack',
 } as const;
 
 export const DRAWER_ROUTES = {
