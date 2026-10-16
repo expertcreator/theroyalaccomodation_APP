@@ -65,8 +65,14 @@ Not bugs, but things that must happen before the app goes to the stores.
   *Fixed 2026-10-15:* `useFromRate(property)` in `src/context/RatesContext.tsx` returns the live rate, or `baseRate` when there isn't one. `PropertyCard` and the detail `BottomBar` both use it. Verified in the simulator: Ascot shows £1,350 on Home and on its page, and Windsor shows £995 on both.
   *Confirmed in the iOS simulator (2026-10-14):* the Ascot card on Home shows "from £1,350" (live), while the Ascot detail page shows "FROM £1,450" (static).
 
-- [ ] **APP-8 · Signing in from the drawer creates a second drawer.** `src/screens/LoginRegister/LoginRegister.tsx:107` calls `navigation.replace(DrawerRoot)`, which leaves two `DrawerRoot` entries on the stack. Android Back then lands on the old drawer.
+- [x] **APP-8 · Signing in from the drawer creates a second drawer.** `src/screens/LoginRegister/LoginRegister.tsx:107` calls `navigation.replace(DrawerRoot)`, which leaves two `DrawerRoot` entries on the stack. Android Back then lands on the old drawer.
   *Fix:* use `navigation.goBack()` (or `popTo`) for `entry: 'drawer'`.
+  *Fixed 2026-10-16:*
+  - After signing in from the drawer, `LoginRegister` now uses `popTo(DrawerRoot, { screen: Home })`. It goes back to the drawer underneath instead of adding a second one.
+  - The sign-in screen's Contact link had the same bug. In React Navigation 7, `navigate` to a screen already further back adds a new copy. From the drawer it now uses `popTo` as well. From a booking it still opens Contact on top, so Back returns to the sign-in step.
+  - The drawer switching to Home/Contact when `popTo` updates its params was confirmed in React Navigation's source (`useNavigationBuilder`).
+  - Verified in the iOS simulator with a temporary stack readout. Drawer → Sign In → sign in left the stack as `DrawerRoot` on Home; before the fix it was `DrawerRoot > DrawerRoot`. Drawer → Sign In → Contact also went back to a single `DrawerRoot`. Android Back wasn't tried on a device, but with one `DrawerRoot` there's no second drawer to land on.
+  - Not changed: `Payment`'s `goContact` still opens Contact on top of the booking flow, so Back returns to Payment and the date hold is kept.
 
 - [x] **APP-9 · Payment can show "TOTAL DUE £0".** If the OWcal price request fails, `Payment.tsx` passes `total ?? 0` and `ReservationSummary.tsx:103` renders £0. Book Now stays disabled, but the user isn't told why.
   *Fixed 2026-10-16:* when the price fails, the total shows "Couldn't load the price" with a Try Again link instead of £0. `useOwcalSummary` gained `retry()`, which asks OWcal again with the same inputs; Check Availability doesn't use it, so it's unchanged. Pay stays disabled until a real price arrives. Verified in the iOS simulator with the first Payment price request forced to fail: the message showed, and Try Again loaded £2,995.

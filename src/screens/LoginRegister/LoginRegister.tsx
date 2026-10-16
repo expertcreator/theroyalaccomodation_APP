@@ -100,11 +100,13 @@ const LoginRegister: React.FC = () => {
         await signIn(email, password);
       }
 
-      // Where to go next. `replace` so Back doesn't return to this screen.
+      // Where to go next, without Back returning to this screen.
       if (entry === 'booking' && booking) {
         navigation.replace(STACK_ROUTES.PaymentReview, booking);
       } else {
-        navigation.replace(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Home });
+        // Opened from the drawer, which is still underneath: go back to it
+        // (popTo), never `replace`/`navigate`, which would add a second drawer (APP-8).
+        navigation.popTo(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Home });
       }
     } catch (err) {
       // Bad password, email already used, no network, etc.
@@ -114,8 +116,12 @@ const LoginRegister: React.FC = () => {
     }
   };
 
+  // From the drawer: back to the drawer underneath, on Contact (APP-8).
+  // From a booking: open Contact on top, so Back returns to this step.
   const goToContact = () =>
-    navigation.navigate(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Contact });
+    entry === 'drawer'
+      ? navigation.popTo(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Contact })
+      : navigation.navigate(STACK_ROUTES.DrawerRoot, { screen: DRAWER_ROUTES.Contact });
 
   const isRegister = mode === 'register';
 
