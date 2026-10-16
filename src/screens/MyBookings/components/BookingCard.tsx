@@ -3,7 +3,7 @@ import { View, Image, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../../context/ThemeContext';
 import { typography, spacing } from '../../../theme';
 import { withAlpha } from '../../../utils/color';
-import { formatGBP } from '../../../utils/format';
+import { formatGBP, bookingNumber } from '../../../utils/format';
 import { formatDateRange, fromISO, nightsBetween } from '../../../utils/date';
 import { getPropertyById } from '../../../constants/data';
 import Text from '../../../components/Text/Text';
@@ -42,7 +42,7 @@ const BookingCard: React.FC<Props> = ({ booking, onViewSummary }) => {
                             <View style={[styles.badgeDot, { backgroundColor: badgeColor }]} />
                             <Text style={[typography.overline, { color: badgeColor }]}>{badgeLabel}</Text>
                         </View>
-                        <Text style={[typography.caption, { color: p.text.placeHolder }]}>{booking.ref}</Text>
+                        <Text style={[typography.caption, { color: p.text.placeHolder }]}>{bookingNumber(booking)}</Text>
                     </View>
 
                     <Text style={[typography.title, { color: p.text.primary }]} numberOfLines={1}>

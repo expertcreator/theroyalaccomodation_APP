@@ -189,6 +189,7 @@ const Payment: React.FC = () => {
         leavingRef.current = true;   // the "can't leave while paying" block lets this one through
         navigation.replace(STACK_ROUTES.BookingConfirmed, {
             ...booking,
+            bookingId: result.id,
             bookingRef: result.ref,
             total: result.paid || fallbackAmount,
             paymentPending: result.kind === 'processing',

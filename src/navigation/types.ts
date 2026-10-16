@@ -37,7 +37,8 @@ export type RootStackParamList = {
     [STACK_ROUTES.PaymentReview]: BookingDraft;
     // total = the real amount charged, carried from Payment → BookingConfirmed. ← CHANGED
     // paymentPending = the bank is still finishing the payment (OWcal completes it shortly).
-    [STACK_ROUTES.BookingConfirmed]: BookingDraft & { bookingRef: string; total: number; paymentPending?: boolean };
+    // bookingId = OWcal's booking number (shown as "#714"); bookingRef = its letter reference.
+    [STACK_ROUTES.BookingConfirmed]: BookingDraft & { bookingId?: number | null; bookingRef: string; total: number; paymentPending?: boolean };
     [STACK_ROUTES.ForgotPassword]: undefined;
 };
 

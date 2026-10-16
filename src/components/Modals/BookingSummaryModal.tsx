@@ -3,7 +3,7 @@ import { Modal, View, Image, TouchableOpacity, StyleSheet, ScrollView } from 're
 import { moderateScale } from 'react-native-size-matters';
 import { useTheme } from '../../context/ThemeContext';
 import { typography, spacing, radius, borderWidth } from '../../theme';
-import { formatGBP } from '../../utils/format';
+import { formatGBP, bookingNumber } from '../../utils/format';
 import { formatDateRange, fromISO, nightsBetween } from '../../utils/date';
 import { getPropertyById } from '../../constants/data';
 import Text from '../Text/Text';
@@ -78,7 +78,7 @@ const BookingSummaryModal: React.FC<Props> = ({ booking, onClose, onContact }) =
                         Booking Summary
                     </Text>
                     <Text style={[typography.caption, { color: p.text.placeHolder, textAlign: 'center', marginTop: spacing.xs }]}>
-                        Ref: {booking.ref}
+                        Ref: {bookingNumber(booking)}
                     </Text>
 
                     {/* Property */}

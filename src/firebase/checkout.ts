@@ -60,7 +60,8 @@ export type StartResult =
 export type ConfirmResult =
     | {
         kind: 'confirmed' | 'processing';   // processing = the bank is still finishing; OWcal completes it later
-        ref: string;
+        id: number | null;                  // OWcal booking number, e.g. 714
+        ref: string;                        // OWcal letter reference, e.g. 'T5NMGEXP'
         total: number;
         paid: number;
         currency: string;
@@ -157,6 +158,7 @@ export async function confirmCheckout(paymentIntentId: string): Promise<ConfirmR
             const d = reply.data ?? {};
             return {
                 kind: d.status === 'processing' ? 'processing' : 'confirmed',
+                id: typeof d.id === 'number' ? d.id : null,
                 ref: String(d.ref ?? ''),
                 total: Number(d.total) || 0,
                 paid: Number(d.paid) || 0,

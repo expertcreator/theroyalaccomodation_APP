@@ -10,3 +10,9 @@ export const formatGBP = (n: number, showPence = false): string => {
     }
     return `£${group(Math.round(n))}`;
 };
+
+// The booking number guests see, e.g. "#714" — OWcal's booking Id (the "Id" column
+// in OWcal admin). Falls back to OWcal's letter reference (e.g. "T5NMGEXP") if the
+// number is missing. To show the letter reference instead, change only this line.
+export const bookingNumber = (booking: { id?: number | null; ref: string }): string =>
+    booking.id ? `#${booking.id}` : booking.ref;

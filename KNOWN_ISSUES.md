@@ -12,12 +12,21 @@ Not bugs, but things that must happen before the app goes to the stores.
 - [ ] **Launch day: switch to `'live'` and make one real booking.** Check that the guest gets OWcal's email and the payment appears in the live Stripe account, then refund it and delete the booking. The live publishable key was checked against OWcal's settings on 2026-10-16.
 - [x] **Delete the `APPTEST10` test coupon** (OWcal coupon id 4) on the site. Done 2026-10-16 in WP admin; the site now answers "This coupon code is not valid."
 - [x] **Delete the unused local `src/constants/stripe.ts`** (gitignored, no longer imported). Done 2026-10-16: it held only another project's test publishable key, and it was moved to the Mac's Trash.
-- [ ] **Decide which booking reference guests see.**
-  - The app shows OWcal's `alphanum_id` (e.g. `T5NMGEXP`), while OWcal admin lists the numeric Id (e.g. `#714`).
-  - It should match the placeholder OWcal's emails use (`[resa_alphanum_id]` or `[resa_id]`).
+- [x] **Decide which booking reference guests see.** Decided 2026-10-16: the app shows OWcal's booking number, e.g. **#714** (the "Id" in OWcal admin).
+  - Plugin v1.4.1 returns it as `id` next to `ref` (the letter reference, e.g. `T5NMGEXP`).
+  - `bookingNumber()` in `src/utils/format.ts` is the one place to switch to the letters if the client prefers.
+  - Neither guest email contains a booking number, so there's nothing to clash with.
+  - Verified: My Bookings and the summary pop-up show #728, and Booking Confirmed showed #729.
 - [ ] **Check the Booking Confirmed promises with the client.**
-  - In live mode OWcal sends the confirmation email.
+  - In live mode OWcal sends the confirmation email (but see the Ascot item below).
   - Nothing in the app arranges "Your personal concierge will contact you 48 hours before arrival" or the "smart-key codes".
+  - Both guest emails ask for **two forms of ID, sent to info@theroyalaccommodation.com within 48 hours of booking**, or the booking may be cancelled. Booking Confirmed should probably say so too.
+- [ ] **Ascot guests may get no confirmation email (client's OWcal setting).** In OWcal → Emails:
+  - **Windsor:** the "Customer confirmation" template sends on *New reservation (from customers)*.
+  - **Ascot:** its template sends only on *Reservation confirmation*. Paid bookings here stay `new` and aren't confirmed by the owner, so the Ascot email likely never goes out, for website and app bookings alike.
+  - The email log fits: only booking 635 got a customer email recently.
+  - *Fix (the client decides):* also tick "New reservation (from customers)" on the Ascot template.
+  - The Ascot template's damage paragraph also says "Royal Windsor Residence" by mistake.
 - [ ] **Store release.**
   - Set version numbers (still `1.0`, build 1).
   - Android: a signed AAB (signing reads `android/local.properties`).

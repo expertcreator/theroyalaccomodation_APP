@@ -8,7 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { typography, spacing, fontSizes } from '../../theme';
 import { withAlpha } from '../../utils/color';
-import { formatGBP } from '../../utils/format';
+import { formatGBP, bookingNumber } from '../../utils/format';
 import { formatDayLabel, fromISO, nightsBetween } from '../../utils/date';
 import { getPropertyById } from '../../constants/data';
 // ← REMOVED: import { calculateStayPrice } from '../../utils/pricing';
@@ -41,7 +41,7 @@ const BookingConfirmed: React.FC = () => {
 
     // total is the REAL amount charged, carried over from the Payment screen. ← CHANGED
     // bookingRef is OWcal's real reference; paymentPending = the bank is still finishing the payment.
-    const { bookingRef, propertyId, checkIn, checkOut, adults, children, pets, total, paymentPending } = route.params;
+    const { bookingId, bookingRef, propertyId, checkIn, checkOut, adults, children, pets, total, paymentPending } = route.params;
     const property = getPropertyById(propertyId);
     // Local dates (not new Date('YYYY-MM-DD'), which is UTC and shows the day before west of the UK)
     const checkInDate = fromISO(checkIn);
@@ -73,7 +73,7 @@ const BookingConfirmed: React.FC = () => {
                         <DiamondDivider />
                     </View>
                     <Text style={[typography.caption, styles.ref, { color: p.text.placeHolder }]}>
-                        REFERENCE: <Text style={{ color: p.text.primary, fontWeight: '600' }}>{bookingRef}</Text>
+                        REFERENCE: <Text style={{ color: p.text.primary, fontWeight: '600' }}>{bookingNumber({ id: bookingId, ref: bookingRef })}</Text>
                     </Text>
                     {paymentPending && (
                         <Text style={[typography.caption, { color: p.accent.dark, textAlign: 'center', marginTop: spacing.sm }]}>

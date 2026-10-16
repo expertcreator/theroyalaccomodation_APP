@@ -6,7 +6,8 @@ export type BookingStatus = 'upcoming' | 'past';
 // One reservation on My Bookings. Comes from OWcal via the getMyBookings Cloud Function.
 export interface Booking {
     accomId: number;
-    ref: string;                 // OWcal booking reference
+    id: number | null;           // OWcal booking number, e.g. 714 — shown as "#714" (see bookingNumber)
+    ref: string;                 // OWcal letter reference, e.g. 'T5NMGEXP'
     propertyId: PropertyId;
     status: BookingStatus;
     checkIn: string;             // 'YYYY-MM-DD'

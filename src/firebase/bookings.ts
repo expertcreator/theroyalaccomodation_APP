@@ -15,6 +15,7 @@ import { toISO } from '../utils/date';
 
 // One reservation as the plugin sends it.
 type RemoteBooking = {
+    id?: number | null;        // OWcal booking number (plugin v1.4.1+)
     ref: string;
     accomId: number;
     property: string | null;   // 'ascot' | 'windsor', or null for a residence the app doesn't know
@@ -56,6 +57,7 @@ const toBooking = (remote: RemoteBooking): Booking => {
     const today = toISO(new Date());
 
     return {
+        id: typeof remote.id === 'number' ? remote.id : null,
         ref: remote.ref,
         accomId: remote.accomId,
         propertyId: remote.property as PropertyId,   // safe — filtered by isKnownProperty first
