@@ -87,6 +87,9 @@ Three backends:
    - Phone is stored as E.164.
    - Address is filled in later, not at signup.
    - `AuthContext` wraps all auth actions and maps the profile to a convenience `user` view; show errors with `authErrorMessage()`.
+   - **The profile is live.** After the first read at sign-in (which the splash waits for), `AuthContext` keeps an `onSnapshot` listener on `users/{uid}` (`listenToUserProfile` in `src/firebase/users.ts`). So a change made on another phone shows up by itself, everywhere `profile` is used. Firestore stops a listener after an error; `refreshProfile()` and the foreground/back-online retries start a new one.
+   - My Profile refills its form **field by field** when the profile changes: fields the guest hasn't edited take the new value, and fields they're editing are kept. So Save never undoes another phone's change to a field they didn't touch. Coming back to the screen resets the whole form. Pull-to-refresh there re-reads the profile and re-checks Email Verified, which lives in Firebase Auth, so the listener can't see it.
+   - In React Native Firebase 22+, `snapshot.exists()` is a **method**. The old property form is always truthy.
 
 Requests to the WordPress site send browser-like headers (`OW_HEADERS` in `apiEndpoints.ts`) to get past its WAF. For JSON POSTs to `wp-json`, strip `OW_HEADERS`' urlencoded `Content-Type` first (see `sendEnquiryAPI`), otherwise WordPress parses the body as a form and the fields arrive empty.
 
@@ -188,7 +191,7 @@ Not built:
 - **Storage rules** (set in the Firebase console, not in this repo): only the owner can read, write or delete the file; uploads must be `image/*` under 5 MB. The bucket is `the-royal-accommodation.firebasestorage.app`.
 - **Choosing a photo:** `pickAvatar()` (`utils/photo.ts`) opens the gallery, crops to a 512×512 circle and saves a JPEG at quality 0.8 (about 50–150 KB).
 - **Uploading:** `uploadAvatar()` / `deleteAvatar()` are in `src/firebase/avatar.ts`. Because the file name never changes, the saved URL gets `&v=<time>` added, so phones don't keep showing the old cached photo.
-- **My Profile:** tapping the avatar opens the gallery when there's no photo. Otherwise it asks Choose New Photo / Remove Photo. Removing clears `photoURL` first, then deletes the file.
+- **My Profile:** tapping the avatar opens the gallery when there's no photo. Otherwise `OptionsModal` asks Choose New Photo / Remove Photo. On iOS the chosen action runs in the modal's `onDismiss`, because the picker can't open over a closing modal. Removing clears `photoURL` first, then deletes the file.
 - **Deleting the account** also deletes the photo, before the Auth user (`deleteAccount` in `firebase/auth.ts`).
 - The drawer doesn't show the photo.
 
@@ -201,7 +204,7 @@ Not built:
 - Use `components/Icon/Icon` with semantic names. Add a new icon by extending the `IconName` union and mapping it in `FEATHER_MAP` or `MDI_MAP`.
 - Screen layout: `src/screens/<Name>/<Name>.tsx` + `styles.ts` (plain `StyleSheet` or `createStyles(theme)`) + a `components/` folder for screen-only pieces. Shared UI goes in `src/components/`.
 - Dark mode is saved in two places: AsyncStorage `darkMode`, and the native `ThemePreference` module (iOS `UserDefaults` via `ios/ThemePreference.swift` + `.m` bridge; Android `SharedPreferences` via `ThemePreferenceModule.kt`). The iOS `AppDelegate` reads it to set the window background before JS loads, so there's no white flash. On iOS this doesn't work yet: the Swift/ObjC files aren't in the Xcode project (APP-14).
-- Feedback: `showToast(type, message)` from `utils/ToastNotifier`; confirmations use `ConfirmModal` / `PasswordPromptModal`.
+- Feedback: `showToast(type, message)` from `utils/ToastNotifier`; confirmations use `ConfirmModal` / `PasswordPromptModal`; a choice between several actions uses `OptionsModal` (same look, stacked `primary` / `destructive` / `default` buttons, Cancel last). Don't use the system `Alert` for these.
 
 ### Dates, phone, money
 - `src/utils/date.ts` works in local Y/M/D and builds `YYYY-MM-DD` by hand. Avoid `new Date('YYYY-MM-DD')`: it parses as UTC and shows the previous day for users west of UTC. Read these strings with `fromISO()`; every screen does since APP-5.

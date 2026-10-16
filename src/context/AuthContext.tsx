@@ -10,7 +10,7 @@ import {
     deleteAccount as authDeleteAccount,
     SignUpParams,
 } from '../firebase/auth';
-import { getUserProfile, updateUserProfile } from '../firebase/users';
+import { getUserProfile, listenToUserProfile, updateUserProfile } from '../firebase/users';
 import { IUserProfile, EditableProfile } from '../interfaces/user';
 import { AppState } from 'react-native';
 
@@ -62,6 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [uid, setUid] = useState<string | null>(null);
     const [emailVerified, setEmailVerified] = useState(false);
     const [profile, setProfile] = useState<IUserProfile | null>(null);
+    const [listenKey, setListenKey] = useState(0);   // bump to restart the profile listener
+    const listenerDead = useRef(false);               // the listener stopped after an error
 
     // Load (or clear) the Firestore profile for a given user id.
     const loadProfile = async (userId: string | null) => {
@@ -70,10 +72,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setProfile(p);
     };
 
-    // Re-read the current user's profile into state.
+    // Re-read the current user's profile into state. Also restarts the live
+    // listener if it stopped after an error.
     const refreshProfile = async () => {
         const current = auth.currentUser;
         await loadProfile(current ? current.uid : null);
+        if (listenerDead.current) setListenKey((k) => k + 1);
     };
 
     // Firebase tells us who is signed in — now, on every change, and once on
@@ -104,6 +108,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return unsubscribe; // stop listening when the provider unmounts
     }, []);
 
+    // Live profile: changes made on another phone (name, phone, address, photo)
+    // show up here by themselves, everywhere `profile` is used. The first read
+    // above still decides when start-up is done; this keeps it current afterwards.
+    useEffect(() => {
+        if (!uid) return;
+        listenerDead.current = false;
+        const unsubscribe = listenToUserProfile(
+            uid,
+            (p) => {
+                if (auth.currentUser?.uid === uid) setProfile(p);
+            },
+            (error) => {
+                // Firestore stops a listener after an error. The retries below (and
+                // pull-to-refresh on My Profile) start a new one.
+                listenerDead.current = true;
+                console.warn('[AuthContext] Profile listener stopped:', error);
+            },
+        );
+        return unsubscribe; // signed out, another user, or a restart
+    }, [uid, listenKey]);
+
     // Re-check email verification whenever the app returns to the foreground —
     // the user may have just tapped the verification link in their browser.
     useEffect(() => {
@@ -122,6 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Load the profile again after an earlier failure. Only use the result if
     // the same person is still signed in (they may have signed out meanwhile).
     const retryProfile = (userId: string) => {
+        if (listenerDead.current) setListenKey((k) => k + 1);
         getUserProfile(userId)
             .then((p) => {
                 if (auth.currentUser?.uid === userId) setProfile(p);

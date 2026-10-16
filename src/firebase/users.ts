@@ -5,6 +5,7 @@ import {
     getDoc,
     setDoc,
     deleteDoc,
+    onSnapshot,
     serverTimestamp,
 } from '@react-native-firebase/firestore';
 import { db } from './config';
@@ -61,11 +62,28 @@ export async function getUserProfile(
 ): Promise<IUserProfile | null> {
     const snap = await getDoc(userRef(uid));
 
-    // In React Native Firebase, `exists` is a property (not a function like
-    // the web SDK's exists()).
-    if (!snap.exists) return null;
+    // `exists()` is a method in React Native Firebase 22+ (it was a property before).
+    if (!snap.exists()) return null;
 
     return snap.data() as IUserProfile;
+}
+
+/**
+ * Keep up with a profile as it changes, e.g. when the guest edits it on another
+ * phone. Calls onChange straight away (from cache when offline), then on every
+ * change; null when the doc doesn't exist (yet). Returns the unsubscribe function.
+ * After an error the listener stops, so start a new one to try again.
+ */
+export function listenToUserProfile(
+    uid: string,
+    onChange: (profile: IUserProfile | null) => void,
+    onError: (error: Error) => void,
+): () => void {
+    return onSnapshot(
+        userRef(uid),
+        (snap) => onChange(snap.exists() ? (snap.data() as IUserProfile) : null),
+        onError,
+    );
 }
 
 /**

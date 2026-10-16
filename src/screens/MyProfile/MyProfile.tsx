@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, BackHandler, ActivityIndicator, Alert } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Image, TouchableOpacity, BackHandler, ActivityIndicator, RefreshControl } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,6 +21,7 @@ import Icon from '../../components/Icon/Icon';
 import SectionEyebrow from '../../components/SectionEyebrow/SectionEyebrow';
 import DiamondDivider from '../../components/Dividers/DiamondDivider';
 import ConfirmModal from '../../components/Modals/ConfirmModal';
+import OptionsModal from '../../components/Modals/OptionsModal';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import { styles } from './styles';
 import { showToast } from '../../utils/ToastNotifier';
@@ -43,7 +44,7 @@ interface IFormErros {
 const MyProfile: React.FC = () => {
     const navigation = useNavigation<Nav>();
     const { theme } = useTheme();
-    const { profile, updateProfile, refreshProfile, isLoggedIn, emailVerified, resendVerification } = useAuth();
+    const { profile, updateProfile, refreshProfile, isLoggedIn, emailVerified, resendVerification, reloadEmailVerified } = useAuth();
     const p = theme.palette;
 
     const addr = profile?.address;
@@ -64,6 +65,8 @@ const MyProfile: React.FC = () => {
     const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
     const [retrying, setRetrying] = useState(false); // "Try Again" in progress
     const [photoBusy, setPhotoBusy] = useState(false); // uploading or removing the photo
+    const [refreshing, setRefreshing] = useState(false); // pull-to-refresh in progress
+    const [showPhotoOptions, setShowPhotoOptions] = useState(false); // Choose / Remove photo modal
 
     const email = profile?.email ?? '';
 
@@ -132,11 +135,7 @@ const MyProfile: React.FC = () => {
             choosePhoto();
             return;
         }
-        Alert.alert('Profile Photo', undefined, [
-            { text: 'Choose New Photo', onPress: choosePhoto },
-            { text: 'Remove Photo', style: 'destructive', onPress: removePhoto },
-            { text: 'Cancel', style: 'cancel' },
-        ]);
+        setShowPhotoOptions(true);
     };
 
     const onResendVerification = async () => {
@@ -210,17 +209,69 @@ const MyProfile: React.FC = () => {
         setErrors({});
     };
 
+    /* ---------------- Keep the form in step with the live profile ---------------- */
+
+    // The values a profile puts in the form, in field order (phone as displayed).
+    const formValuesOf = (prof: typeof profile) => {
+        const a = prof?.address;
+        const c = a?.country ?? 'United Kingdom';
+        return [
+            prof?.firstName ?? '', prof?.lastName ?? '', formatPhoneDisplay(prof?.phone ?? '', c),
+            a?.line1 ?? '', a?.line2 ?? '', a?.city ?? '', a?.county ?? '', a?.postCode ?? '', c,
+        ];
+    };
+    const formValues = [firstName, lastName, phone, line1, line2, city, county, postCode, country];
+    const formSetters = [setFirstName, setLastName, setPhone, setLine1, setLine2, setCity, setCounty, setPostCode, setCountry];
+
+    // The profile the form was last filled from.
+    const filledFrom = useRef(profile);
+
+    // The profile changed (edited on another phone, or saved here): refill every
+    // field the guest hasn't edited; keep the ones they're editing. So Save never
+    // quietly undoes a change made on the other phone to a field they didn't touch.
+    useEffect(() => {
+        if (!profile || profile === filledFrom.current) return;
+        const before = formValuesOf(filledFrom.current);
+        const after = formValuesOf(profile);
+        formValues.forEach((value, i) => {
+            if (value === before[i]) formSetters[i](after[i]);   // not edited → take the new value
+        });
+        filledFrom.current = profile;
+        // Only react to a new profile, not to typing.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [profile]);
+
+    // Pull down: read the profile again and re-check Email Verified (which lives in
+    // Firebase Auth, so the live listener can't see it).
+    const onRefresh = async () => {
+        setRefreshing(true);
+        try {
+            await Promise.all([refreshProfile(), reloadEmailVerified()]);
+        } catch {
+            showToast('danger', "Couldn't refresh your details. Check your connection.");
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
     const discardAndLeave = () => {
         setShowLeaveConfirm(false);
         resetToProfile();
         navigation.goBack();
     };
 
+    // Coming back to the screen: start from the saved profile. Only on focus —
+    // profile changes while the screen is open are handled by the effect above,
+    // which keeps unsaved edits. (Refs, so this callback never has to change.)
+    const resetRef = useRef(resetToProfile);
+    resetRef.current = resetToProfile;
+    const profileRef = useRef(profile);
+    profileRef.current = profile;
     useFocusEffect(
         React.useCallback(() => {
-            resetToProfile();
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [profile])
+            resetRef.current();
+            filledFrom.current = profileRef.current;
+        }, [])
     );
 
     useFocusEffect(
@@ -293,6 +344,14 @@ const MyProfile: React.FC = () => {
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
                 bottomOffset={spacing.xl}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={p.accent.main}
+                        colors={[p.primary.main]}
+                    />
+                }
             >
                 {/* Avatar + name + email + status */}
                 <View style={styles.hero}>
@@ -427,6 +486,18 @@ const MyProfile: React.FC = () => {
                     <Button title="Save Changes" rightIcon="check" disabled={!isDirty || saving} loading={saving} onPress={onSave} />
                 </View>
             </KeyboardAwareScrollView>
+
+            <OptionsModal
+                visible={showPhotoOptions}
+                icon="camera"
+                title="Profile Photo"
+                message="Choose a new photo from your gallery, or remove the current one."
+                options={[
+                    { label: 'Choose New Photo', variant: 'primary', onPress: choosePhoto },
+                    { label: 'Remove Photo', variant: 'destructive', onPress: removePhoto },
+                ]}
+                onCancel={() => setShowPhotoOptions(false)}
+            />
 
             <ConfirmModal
                 visible={showLeaveConfirm}
