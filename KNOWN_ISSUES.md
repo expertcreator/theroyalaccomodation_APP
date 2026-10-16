@@ -10,8 +10,8 @@ Not bugs, but things that must happen before the app goes to the stores.
 
 - [ ] **Switch in-app booking off until launch (Test 5).** Set `RA_APP_CHECKOUT` to `'off'` in `wp-config.php` and check that Payment shows "Coming Soon to the App". While it's `'test'`, anyone signed in on a dev build can make "Mobile app (TEST)" bookings that block real dates.
 - [ ] **Launch day: switch to `'live'` and make one real booking.** Check that the guest gets OWcal's email and the payment appears in the live Stripe account, then refund it and delete the booking. The live publishable key was checked against OWcal's settings on 2026-10-16.
-- [ ] **Delete the `APPTEST10` test coupon** (OWcal coupon id 4) on the site.
-- [ ] **Delete the unused local `src/constants/stripe.ts`** (gitignored, no longer imported).
+- [x] **Delete the `APPTEST10` test coupon** (OWcal coupon id 4) on the site. Done 2026-10-16 in WP admin; the site now answers "This coupon code is not valid."
+- [x] **Delete the unused local `src/constants/stripe.ts`** (gitignored, no longer imported). Done 2026-10-16: it held only another project's test publishable key, and it was moved to the Mac's Trash.
 - [ ] **Decide which booking reference guests see.**
   - The app shows OWcal's `alphanum_id` (e.g. `T5NMGEXP`), while OWcal admin lists the numeric Id (e.g. `#714`).
   - It should match the placeholder OWcal's emails use (`[resa_alphanum_id]` or `[resa_id]`).
@@ -47,7 +47,7 @@ Not bugs, but things that must happen before the app goes to the stores.
   *Fixed 2026-10-16:* all five now use `fromISO()` from `src/utils/date.ts`, which reads the string as a local date. My Bookings (`BookingCard`, `BookingSummaryModal`) already did; `Payment`, `StaySummary` and `BookingConfirmed` were switched. Only the display was ever wrong: the dates sent to the plugin and Stripe are the original strings. Verified in the iOS simulator with the app running in New York time (`TZ=America/New_York`): Payment shows Mon 26 → Wed 28 Oct, as picked.
 
 - [x] **APP-6 · A fresh clone doesn't build.** `src/constants/stripe.ts` is gitignored, but `App.tsx` imports it.
-  *Fixed 2026-10-15:* the global `StripeProvider` is gone. The Payment screen gets the publishable key from the plugin's `/checkout-config` and calls `initStripe` (`useCheckoutConfig`), so nothing imports `stripe.ts` any more. The leftover local file is harmless and can be deleted.
+  *Fixed 2026-10-15:* the global `StripeProvider` is gone. The Payment screen gets the publishable key from the plugin's `/checkout-config` and calls `initStripe` (`useCheckoutConfig`), so nothing imports `stripe.ts` any more. The leftover local file was deleted on 2026-10-16.
 
 ## App — medium
 

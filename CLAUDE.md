@@ -36,7 +36,7 @@ Tooling state:
 
 ## Local setup gotchas
 
-- **No Stripe key lives in the app.** The Payment screen gets the publishable key from the plugin's `/checkout-config` and calls `initStripe` (`src/hooks/useCheckoutConfig.ts`), so app and website always use the same Stripe account and mode. The gitignored `src/constants/stripe.ts` is no longer imported. The Stripe secret keys stay in OWcal's settings on the site.
+- **No Stripe key lives in the app.** The Payment screen gets the publishable key from the plugin's `/checkout-config` and calls `initStripe` (`src/hooks/useCheckoutConfig.ts`), so app and website always use the same Stripe account and mode. The old gitignored `src/constants/stripe.ts` was deleted on 2026-10-16 (its `.gitignore` line stays, so a stray copy is never committed). The Stripe secret keys stay in OWcal's settings on the site.
 - **3-D Secure return link (iOS):** after a bank check, Stripe returns to `theroyalaccommodation://safepay`. Three places must agree on that scheme:
   - `ios/TheRoyalAccommodation/Info.plist` registers it (`CFBundleURLTypes`);
   - `AppDelegate.swift` forwards it to `RCTLinkingManager`;
