@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Linking } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { confirmPayment, PaymentIntent } from '@stripe/stripe-react-native';
+import { confirmPayment, handleURLCallback, PaymentIntent } from '@stripe/stripe-react-native';
 
 import { useTheme } from '../../context/ThemeContext';
 import { nightsBetween } from '../../utils/date';
@@ -139,6 +139,15 @@ const Payment: React.FC = () => {
     // (Safe even if it was paid: the plugin checks with Stripe first.)
     useEffect(() => () => {
         if (activeRef.current && !paidRef.current) cancelCheckout(activeRef.current.paymentIntentId);
+    }, []);
+
+    // iOS: the bank's 3-D Secure page sends the guest back with theroyalaccommodation://safepay.
+    // Handing it to Stripe closes that page and lets confirmPayment finish. (Android does this itself.)
+    useEffect(() => {
+        const sub = Linking.addEventListener('url', ({ url }) => {
+            handleURLCallback(url);
+        });
+        return () => sub.remove();
     }, []);
 
     // The amount the guest will pay. Once a booking has started, it's the plugin's

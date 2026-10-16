@@ -46,6 +46,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return true
   }
 
+  // Passes theroyalaccommodation:// links to React Native (Linking).
+  // Stripe uses one to come back to the app after a 3-D Secure bank check.
+  func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+  ) -> Bool {
+    return RCTLinkingManager.application(app, open: url, options: options)
+  }
+
   private func showSplashScreen() {
     if let splashClass = NSClassFromString("SplashView") as? NSObject.Type,
        let splashInstance = splashClass.perform(NSSelectorFromString("sharedInstance"))?.takeUnretainedValue() as? NSObject {

@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { initStripe } from '@stripe/stripe-react-native';
 import { getCheckoutConfigAPI } from '../api/raApi';
 
+// Must match CFBundleURLSchemes in ios/TheRoyalAccommodation/Info.plist.
+const STRIPE_URL_SCHEME = 'theroyalaccommodation';
+
 // What the Payment screen should show:
 //   loading → asking the site, then starting Stripe
 //   off     → in-app booking is switched off on the site → "coming soon"
@@ -35,7 +38,12 @@ export function useCheckoutConfig() {
         }
 
         try {
-            await initStripe({ publishableKey: config.publishableKey });
+            await initStripe({
+                publishableKey: config.publishableKey,
+                // iOS: after a 3-D Secure bank page, Stripe returns to theroyalaccommodation://safepay
+                // (set up in Info.plist + AppDelegate). Android uses Stripe's own return link.
+                urlScheme: STRIPE_URL_SCHEME,
+            });
             setState({ status: 'ready', mode: config.mode });
         } catch {
             setState({ status: 'error' });   // Stripe couldn't start
