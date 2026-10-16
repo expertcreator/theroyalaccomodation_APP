@@ -13,6 +13,7 @@ import {
 } from '@react-native-firebase/auth';
 import { auth } from './config';
 import { createUserProfile, deleteUserProfile } from './users';
+import { deleteAvatar } from './avatar';
 import { ISignupProfileInput } from '../interfaces/user';
 
 // What the signup form gives us: the profile fields WITHOUT uid
@@ -118,8 +119,9 @@ export async function deleteAccount(password: string): Promise<void> {
   const credential = EmailAuthProvider.credential(user.email, password);
   await reauthenticateWithCredential(user, credential);
 
-  // 2. Remove the Firestore profile while we still have auth.
-  //    (When profile photos land, also delete the Storage file here.)
+  // 2. Remove the profile photo and the Firestore profile while we still have
+  //    auth (the Storage rules only let the owner delete the photo).
+  await deleteAvatar(user.uid);
   await deleteUserProfile(user.uid);
 
   // 3. Delete the Auth user. This signs them out automatically.

@@ -14,6 +14,7 @@ export const styles = StyleSheet.create({
         borderWidth: moderateScale(2), alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
     },
     avatarImage: { width: '100%', height: '100%' },
+    avatarBusy: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
     cameraBadge: {
         position: 'absolute', bottom: 0, right: 0,
         width: moderateScale(26), height: moderateScale(26), borderRadius: moderateScale(13),

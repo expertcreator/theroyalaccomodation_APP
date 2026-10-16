@@ -109,8 +109,7 @@ Not bugs, but things that must happen before the app goes to the stores.
 - [ ] **APP-13 · Dead code:**
   - `utils/pricing.ts`, plus the unused `calculateStayPrice` import in `Payment.tsx:9`
   - `Property.occupiedDates` and `occupiedThisMonth` in `constants/data.ts`
-  - `utils/photo.ts`
-  - the `functions`/`storage` exports in `firebase/config.ts` (keep them if the Cloud Function / photo work is near)
+  - the `functions` export in `firebase/config.ts` (keep it if Cloud Function work is near)
   - `STACK_ROUTES.Splash`
   - Android `CAMERA` permission (`AndroidManifest.xml:4`)
 - [x] **APP-17 · My Bookings shows no loader when it refreshes on reopen.** Fixed 2026-10-14: the focus effect now sets `screenState` to `'loading'` before `load()`, so every open shows the full spinner (option A). Trade-off: the cards briefly disappear on each visit.
@@ -124,7 +123,6 @@ Not bugs, but things that must happen before the app goes to the stores.
 - **Check an unfinished payment the next time the app opens.** If the app is killed mid-payment, OWcal's safety net completes a paid booking or deletes an unpaid hold, but only after 15 minutes to an hour. The app could remember the started checkout and, on the next start, show "Your booking is confirmed" or release the dates straight away.
 - **Apple Pay / Google Pay.** Cards only for now (Stripe `CardForm`).
 - **Pets and extras in My Bookings.** The plugin doesn't return the reservation's `options` yet.
-- Profile photos (Firebase Storage) are shown as "coming soon".
 - The `SearchResults` route is a placeholder screen.
 
 ## RA App API plugin (WordPress — source in `wordpress/ra-app-api/`)

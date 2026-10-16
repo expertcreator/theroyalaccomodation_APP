@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, BackHandler, ActivityIndicator } from 'react-native';
+import { View, Image, TouchableOpacity, BackHandler, ActivityIndicator, Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,6 +9,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { typography, spacing } from '../../theme';
 import { formatMonthShort } from '../../utils/date';
+import { withAlpha } from '../../utils/color';
 import type { DrawerParamList, RootStackParamList } from '../../navigation/types';
 import { STACK_ROUTES } from '../../navigation/routes';
 
@@ -27,6 +28,8 @@ import { moderateScale } from 'react-native-size-matters';
 import { COUNTRIES } from '../../constants/countries';
 import Select from '../../components/Dropdown/Select';
 import { formatPhoneDisplay, isValidPhone, toE164 } from '../../utils/phone';
+import { pickAvatar } from '../../utils/photo';
+import { uploadAvatar, deleteAvatar } from '../../firebase/avatar';
 
 type Nav = DrawerNavigationProp<DrawerParamList>;
 
@@ -60,6 +63,7 @@ const MyProfile: React.FC = () => {
     const [saving, setSaving] = useState(false);
     const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
     const [retrying, setRetrying] = useState(false); // "Try Again" in progress
+    const [photoBusy, setPhotoBusy] = useState(false); // uploading or removing the photo
 
     const email = profile?.email ?? '';
 
@@ -82,8 +86,58 @@ const MyProfile: React.FC = () => {
     const initials = `${firstName.trim()[0] ?? ''}${lastName.trim()[0] ?? ''}`.toUpperCase()
         || (email[0] ?? '?').toUpperCase();
 
-    // Photo editing is disabled until Firebase Storage is set up.
-    const onPickPhoto = () => showToast('normal', 'Profile photos are coming soon.');
+    /* ---------------- Profile photo (Firebase Storage: users/{uid}/avatar.jpg) ---------------- */
+
+    // Pick from the gallery (square crop), upload, then save the URL on the profile.
+    const choosePhoto = async () => {
+        if (!profile) return;
+        const path = await pickAvatar();
+        if (!path) return; // cancelled, or no permission (pickAvatar shows the toast)
+        setPhotoBusy(true);
+        try {
+            const url = await uploadAvatar(profile.uid, path);
+            await updateProfile({ photoURL: url });
+            showToast('success', 'Profile photo updated.');
+        } catch (e) {
+            console.warn('Avatar upload failed', e);
+            showToast('danger', "Couldn't update your photo. Please try again.");
+        } finally {
+            setPhotoBusy(false);
+        }
+    };
+
+    // Clear the photo from the profile first (what the guest sees), then delete the file.
+    const removePhoto = async () => {
+        if (!profile) return;
+        setPhotoBusy(true);
+        try {
+            await updateProfile({ photoURL: null });
+            showToast('success', 'Profile photo removed.');
+        } catch (e) {
+            console.warn('Avatar remove failed', e);
+            showToast('danger', "Couldn't remove your photo. Please try again.");
+            setPhotoBusy(false);
+            return;
+        }
+        // If this fails the file just stays until the next upload overwrites it,
+        // or the account is deleted (which deletes it too).
+        await deleteAvatar(profile.uid).catch((e) => console.warn('Avatar file delete failed', e));
+        setPhotoBusy(false);
+    };
+
+    // Tap on the avatar: no photo yet → straight to the gallery; otherwise choose or remove.
+    const onPickPhoto = () => {
+        if (!profile || photoBusy) return;
+        if (!profile.photoURL) {
+            choosePhoto();
+            return;
+        }
+        Alert.alert('Profile Photo', undefined, [
+            { text: 'Choose New Photo', onPress: choosePhoto },
+            { text: 'Remove Photo', style: 'destructive', onPress: removePhoto },
+            { text: 'Cancel', style: 'cancel' },
+        ]);
+    };
 
     const onResendVerification = async () => {
         try {
@@ -248,6 +302,11 @@ const MyProfile: React.FC = () => {
                                 <Image source={{ uri: profile.photoURL }} style={styles.avatarImage} resizeMode="cover" />
                             ) : (
                                 <Text style={{ color: p.accent.light, fontSize: 22, letterSpacing: 2 }}>{initials}</Text>
+                            )}
+                            {photoBusy && (
+                                <View style={[styles.avatarBusy, { backgroundColor: withAlpha(p.primary.dark, 0.55) }]}>
+                                    <ActivityIndicator color={p.accent.light} />
+                                </View>
                             )}
                         </View>
                         <View style={[styles.cameraBadge, { backgroundColor: p.accent.main, borderColor: p.background.default }]}>

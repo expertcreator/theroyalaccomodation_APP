@@ -177,11 +177,20 @@ Not built:
 - **Coupons:** the Payment screen's coupon card checks a code with `ow_verify_coupon` (`owVerifyCoupon`).
   - It then re-fetches `ow_get_summary` with `ow-pre-validated-coupon-id`, so OWcal itself returns the discounted total and an `ow-summary-coupon-amount` line.
   - Checking a code doesn't count a use. `/me/checkout` re-checks the code server-side and counts the use when it creates the hold.
-- **Profile photos** are disabled ("coming soon"); `utils/photo.ts` and the Firebase `storage`/`functions` exports are unused.
+- **Profile photos:** gallery only, no camera. The Firebase `functions` export is unused.
 - **Cards only:** no Apple Pay or Google Pay yet. `ow_create_resa` in `apiEndpoints.ts` is unused; the plugin creates reservations.
 
 **My Bookings is live:** `MyBookings.tsx` → `loadMyBookings()` (`src/firebase/bookings.ts`) → plugin `/me/bookings`. Upcoming/past is worked out from `checkOut`. Unverified accounts see a "Verify your email" state; after verifying, the loader reloads the user and retries once with a fresh token.
 - `utils/pricing.ts` (`calculateStayPrice`) and `Property.occupiedDates` are legacy from before live OWcal pricing and availability.
+
+### Profile photo
+- **Where it lives:** Firebase Storage, one file per guest at `users/{uid}/avatar.jpg`. It's overwritten on every change, and its download URL is saved as `photoURL` on `users/{uid}`.
+- **Storage rules** (set in the Firebase console, not in this repo): only the owner can read, write or delete the file; uploads must be `image/*` under 5 MB. The bucket is `the-royal-accommodation.firebasestorage.app`.
+- **Choosing a photo:** `pickAvatar()` (`utils/photo.ts`) opens the gallery, crops to a 512×512 circle and saves a JPEG at quality 0.8 (about 50–150 KB).
+- **Uploading:** `uploadAvatar()` / `deleteAvatar()` are in `src/firebase/avatar.ts`. Because the file name never changes, the saved URL gets `&v=<time>` added, so phones don't keep showing the old cached photo.
+- **My Profile:** tapping the avatar opens the gallery when there's no photo. Otherwise it asks Choose New Photo / Remove Photo. Removing clears `photoURL` first, then deletes the file.
+- **Deleting the account** also deletes the photo, before the Auth user (`deleteAccount` in `firebase/auth.ts`).
+- The drawer doesn't show the photo.
 
 ### Theming and UI conventions
 - `useTheme()` → `const p = theme.palette`. Every color comes from the palette; both light and dark palettes are defined in `src/theme/theme.ts` against `ITheme`. Use `withAlpha(hex, a)` for translucency instead of new hex values.
