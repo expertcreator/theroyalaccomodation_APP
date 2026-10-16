@@ -37,6 +37,12 @@ Tooling state:
 ## Local setup gotchas
 
 - **No Stripe key lives in the app.** The Payment screen gets the publishable key from the plugin's `/checkout-config` and calls `initStripe` (`src/hooks/useCheckoutConfig.ts`), so app and website always use the same Stripe account and mode. The gitignored `src/constants/stripe.ts` is no longer imported. The Stripe secret keys stay in OWcal's settings on the site.
+- **3-D Secure return link (iOS):** after a bank check, Stripe returns to `theroyalaccommodation://safepay`. Three places must agree on that scheme:
+  - `ios/TheRoyalAccommodation/Info.plist` registers it (`CFBundleURLTypes`);
+  - `AppDelegate.swift` forwards it to `RCTLinkingManager`;
+  - `initStripe` gets `urlScheme` (`STRIPE_URL_SCHEME` in `useCheckoutConfig.ts`).
+
+  Payment then hands the link to `handleURLCallback`. Android needs none of this: it uses Stripe's own return link (`setReturnUrlSchemeOnAndroid` is left off). Changing the scheme needs a native iOS rebuild.
 - Firebase is configured natively (`android/app/google-services.json`, `ios/TheRoyalAccommodation/GoogleService-Info.plist`); `src/firebase/config.ts` just calls `getApp()` — no `initializeApp` in JS.
 - Android release signing reads `storeFile`/`storePassword`/`keyAlias`/`keyPassword` from `android/local.properties`.
 - `patches/` is applied on `postinstall` (patch-package). The custom-status-bar patch rewrites the component to use safe-area insets; don't upgrade those packages without re-checking the patches.
@@ -62,6 +68,10 @@ Tooling state:
 All HTTP goes through `apiClient.ts` (`getAPIData`, `postDataAPI`):
 - Uses `validateStatus: () => true`, so HTTP error responses come back as normal data. Only transport errors hit `catch`, which shows a toast and returns `null`.
 - Callers check the result shape and fall back; API helpers don't throw.
+- Time limits:
+  - `getAPIData` takes an optional `timeout`, and only `/rates` uses it (30 s, so the splash can't hang).
+  - The checkout POSTs abort after 45 s through `postDataAPI`'s `signal`.
+  - Every other request has no limit, which on Android means it can hang forever (APP-3).
 
 Three backends:
 1. **RA App WordPress plugin** — `wp-json/ra-app/v1`, in `raApi.ts`. Our own plugin; see the "RA App API plugin" section below.
@@ -104,7 +114,7 @@ It reads OWcal's DB tables and ACF data directly. The checkout routes also **wri
     - `live`: OWcal's `check_uncompleted_resa()`, including its emails.
   - **Testing happens on the live site in `test` mode.** Use December 2027 dates, and delete each "Mobile app (TEST)" booking from OWcal afterwards, because they block the calendar and iCal.
   - **OWcal's own safety net:** on every page load it checks `waiting_payment` holds older than 15 min with Stripe. Paid ones are completed and emailed; unpaid ones are deleted after 1 h. So a payment still completes if the app dies after paying.
-  - **On a declined card**, the app should re-confirm the **same** `clientSecret`, not call `/me/checkout` again. Calling it again replaces the hold and counts the coupon use again.
+  - **On a declined card**, the app re-confirms the **same** `clientSecret` instead of calling `/me/checkout` again. Payment keeps the started checkout in `active` and starts a new one only if the coupon changed. Calling it again would replace the hold and count the coupon use again.
   - Site settings this relies on: full payment (no deposit or bond), GBP, Stripe live, "store payment method" on (cards are saved, so the app must show the "charge your card for future payments" notice), and the pet fee as OWcal option id 1. These are in `ra_app_checkout_rules()`.
 - The accom-ID → slug map (`1680 → ascot`, `1225 → windsor`) exists in both the plugin (`ra_app_accom_map()`) and `constants/data.ts`. Adding a property means updating both.
 - **OWcal data facts** (from its source, `database-actions/database-actions.php`; class `OwDataBaseActions`, tables prefixed `wp_ow_`):
@@ -123,19 +133,46 @@ TypeScript, 2nd gen, region `europe-west2` (London, same as Firestore). Project 
 - The build runs as `637799926068-compute@developer.gserviceaccount.com`, which needed **Cloud Build Service Account** granted manually. It's also the runtime identity; see GCF-1 in `KNOWN_ISSUES.md`.
 - Secrets live in Secret Manager (`defineSecret`). `RA_APP_SECRET` is already stored there.
 
-### Booking flow and what is still stubbed
+### Booking flow
 `CheckAvailability`:
-- `useOccupiedDates` fetches booked nights in 3-month chunks as the calendar pages, accumulating results; a fresh answer replaces what was held for its date range. Its `refresh()` runs whenever Check Availability comes back into view (e.g. from Payment), so dates taken meanwhile appear, and the reconcile effect clears a selection that now covers a booked night.
+- `useOccupiedDates` fetches booked nights in 3-month chunks as the calendar pages, accumulating results; a fresh answer replaces what was held for its date range.
+- Its `refresh()` runs whenever Check Availability comes back into view (e.g. from Payment):
+  - It first waits for `waitForRelease()` (`src/firebase/checkout.ts`, at most 5 s), so dates the guest just let go of on Payment show as free again.
+  - Dates taken meanwhile then appear, and the reconcile effect clears a selection that now covers a booked night.
 - The calendar enforces `pricing.minNights` and blocks ranges that span a booked night.
-- `useOwcalSummary` fetches the live price, debounced 400 ms and race-safe.
+- `useOwcalSummary` fetches the live price, debounced 400 ms and race-safe. `retry()` asks again with the same inputs.
 - "Proceed" re-checks availability for the exact range, then routes to `LoginRegister` (signed out) or `Payment`.
 
-`Payment` fetches the price again and collects the card with Stripe `CardForm`, then goes to `BookingConfirmed`.
+`Payment` takes real card payments through the plugin's checkout routes. The API helpers are in `src/firebase/checkout.ts`, and they never throw.
+- **Setup:** `useCheckoutConfig` asks `/checkout-config` and starts Stripe with that key. Its states:
+  - loading;
+  - `off` → "Coming Soon to the App";
+  - error → Try Again;
+  - ready, with a test-mode note when the site is in `test`.
+- **Screen contents:**
+  - the live price. If it fails: "Couldn't load the price" + Try Again, never £0.
+  - the coupon card.
+  - the editable "Your details" card (`DetailsCard`): first name, last name and country are required, and saving writes to My Profile.
+  - Stripe `CardForm` with the saved-card notice, then the terms checkboxes.
+- **Pay** (`onBookNow`):
+  1. `startCheckout` (`/me/checkout`) holds the dates and creates the payment. If the plugin's amount differs from the screen, it shows the new amount and stops; the next tap pays it on the same hold.
+  2. Stripe `confirmPayment` takes the card, showing 3-D Secure itself if the bank asks.
+  3. `confirmCheckout` (`/me/checkout/confirm`) completes the booking. It's retried up to 3× on network errors.
+  4. `navigation.replace(BookingConfirmed)` passes OWcal's real reference (`alphanum_id`) and the amount paid.
+- **Messages** above the button use `BookingNotice`:
+  - dates taken → "Choose Other Dates";
+  - coupon no longer valid → it's removed;
+  - card declined → Stripe's message;
+  - paid but not confirmable → "finalising your booking" + Go to My Bookings. OWcal's safety net completes it.
+- **While Pay is spinning**, the guest can't leave: `usePreventRemove` shows the toast "Please wait — your payment is in progress." Our own move to Booking Confirmed is let through (`leavingRef`). An unexpected error clears the spinner (`onPressPay`).
+- **Leaving without paying** releases the hold right away: `cancelCheckout` runs on `beforeRemove`, with an unmount fallback. It's never sent once paid. If it fails, OWcal deletes the hold within the hour.
 
-Still stubbed:
-- **No real payment or reservation yet in the app.** `Payment.onBookNow` makes up an `RA-…` reference. The plugin's checkout routes (v1.4.0) are ready on the site but switched off, and the app isn't wired to them yet. `ow_create_resa` in `apiEndpoints.ts` is unused; the plugin creates reservations instead.
-- **Coupons:** the Payment screen's coupon card checks a code with `ow_verify_coupon` (`owVerifyCoupon`). It then re-fetches `ow_get_summary` with `ow-pre-validated-coupon-id`, so OWcal itself returns the discounted total and an `ow-summary-coupon-amount` line. Checking a code doesn't count a use; OWcal counts it only when a reservation is created.
+Not built:
+- **Coupons:** the Payment screen's coupon card checks a code with `ow_verify_coupon` (`owVerifyCoupon`).
+  - It then re-fetches `ow_get_summary` with `ow-pre-validated-coupon-id`, so OWcal itself returns the discounted total and an `ow-summary-coupon-amount` line.
+  - Checking a code doesn't count a use. `/me/checkout` re-checks the code server-side and counts the use when it creates the hold.
 - **Profile photos** are disabled ("coming soon"); `utils/photo.ts` and the Firebase `storage`/`functions` exports are unused.
+- **Cards only:** no Apple Pay or Google Pay yet. `ow_create_resa` in `apiEndpoints.ts` is unused; the plugin creates reservations.
 
 **My Bookings is live:** `MyBookings.tsx` → `loadMyBookings()` (`src/firebase/bookings.ts`) → plugin `/me/bookings`. Upcoming/past is worked out from `checkOut`. Unverified accounts see a "Verify your email" state; after verifying, the loader reloads the user and retries once with a fresh token.
 - `utils/pricing.ts` (`calculateStayPrice`) and `Property.occupiedDates` are legacy from before live OWcal pricing and availability.
@@ -148,10 +185,10 @@ Still stubbed:
 - Use `components/Text/Text` rather than RN `Text`: it applies a `bodySmall` base and caps font scaling at 1.2.
 - Use `components/Icon/Icon` with semantic names. Add a new icon by extending the `IconName` union and mapping it in `FEATHER_MAP` or `MDI_MAP`.
 - Screen layout: `src/screens/<Name>/<Name>.tsx` + `styles.ts` (plain `StyleSheet` or `createStyles(theme)`) + a `components/` folder for screen-only pieces. Shared UI goes in `src/components/`.
-- Dark mode is saved in two places: AsyncStorage `darkMode`, and the native `ThemePreference` module (iOS `UserDefaults` via `ios/ThemePreference.swift` + `.m` bridge; Android `SharedPreferences` via `ThemePreferenceModule.kt`). The iOS `AppDelegate` reads it to set the window background before JS loads, so there's no white flash.
+- Dark mode is saved in two places: AsyncStorage `darkMode`, and the native `ThemePreference` module (iOS `UserDefaults` via `ios/ThemePreference.swift` + `.m` bridge; Android `SharedPreferences` via `ThemePreferenceModule.kt`). The iOS `AppDelegate` reads it to set the window background before JS loads, so there's no white flash. On iOS this doesn't work yet: the Swift/ObjC files aren't in the Xcode project (APP-14).
 - Feedback: `showToast(type, message)` from `utils/ToastNotifier`; confirmations use `ConfirmModal` / `PasswordPromptModal`.
 
 ### Dates, phone, money
-- `src/utils/date.ts` works in local Y/M/D and builds `YYYY-MM-DD` by hand. Avoid `new Date('YYYY-MM-DD')`: it parses as UTC and shows the previous day for users west of UTC. Several existing screens still do this.
+- `src/utils/date.ts` works in local Y/M/D and builds `YYYY-MM-DD` by hand. Avoid `new Date('YYYY-MM-DD')`: it parses as UTC and shows the previous day for users west of UTC. Read these strings with `fromISO()`; every screen does since APP-5.
 - Phone is optional. Validate and normalize with `utils/phone.ts` (libphonenumber-js), using the region from the selected country name (`isoForCountry` in `constants/countries.ts`).
 - Format money with `formatGBP` (manual thousands grouping, since Hermes `Intl` support isn't relied on).

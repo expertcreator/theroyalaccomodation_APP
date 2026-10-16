@@ -2,7 +2,27 @@
 
 Bugs and risks found during the code review on 2026-10-14. They're deferred to fix later and ordered by priority within each section. Tick an item off (`[x]`) when it's fixed.
 
-IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this repo), `TOOL-n` = tooling.
+IDs: `APP-n` = the app, `PLG-n` = the RA App API WordPress plugin (source in `wordpress/ra-app-api/`; the live copy is on the site), `TOOL-n` = tooling.
+
+## Before launch
+
+Not bugs, but things that must happen before the app goes to the stores.
+
+- [ ] **Switch in-app booking off until launch (Test 5).** Set `RA_APP_CHECKOUT` to `'off'` in `wp-config.php` and check that Payment shows "Coming Soon to the App". While it's `'test'`, anyone signed in on a dev build can make "Mobile app (TEST)" bookings that block real dates.
+- [ ] **Launch day: switch to `'live'` and make one real booking.** Check that the guest gets OWcal's email and the payment appears in the live Stripe account, then refund it and delete the booking. The live publishable key was checked against OWcal's settings on 2026-10-16.
+- [ ] **Delete the `APPTEST10` test coupon** (OWcal coupon id 4) on the site.
+- [ ] **Delete the unused local `src/constants/stripe.ts`** (gitignored, no longer imported).
+- [ ] **Decide which booking reference guests see.**
+  - The app shows OWcal's `alphanum_id` (e.g. `T5NMGEXP`), while OWcal admin lists the numeric Id (e.g. `#714`).
+  - It should match the placeholder OWcal's emails use (`[resa_alphanum_id]` or `[resa_id]`).
+- [ ] **Check the Booking Confirmed promises with the client.**
+  - In live mode OWcal sends the confirmation email.
+  - Nothing in the app arranges "Your personal concierge will contact you 48 hours before arrival" or the "smart-key codes".
+- [ ] **Store release.**
+  - Set version numbers (still `1.0`, build 1).
+  - Android: a signed AAB (signing reads `android/local.properties`).
+  - iOS: an archive.
+  - App Store Connect: privacy labels and screenshots.
 
 ## App — high
 
@@ -18,7 +38,7 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
   *Still open (optional):*
   - On a stuck network the splash can still be up for about 30 s. For signed-in guests, Firestore's own wait of about 10 s for the profile runs in parallel.
   - Possible improvements: mark rates ready as soon as cached rates exist (faster normal launches), and/or cap the splash wait (e.g. 5 s) in `RootNavigator`.
-  - **Every other request still has no time limit.** On Android, React Native's OkHttp timeouts are 0 (none), so on a stuck network these can spin forever: availability, the OWcal summary and Proceed re-check, `/me/bookings`, reviews, and the enquiry POST.
+  - **Every other request still has no time limit.** On Android, React Native's OkHttp timeouts are 0 (none), so on a stuck network these can spin forever: availability, the OWcal summary and Proceed re-check, `/me/bookings`, reviews, and the enquiry POST. (The checkout requests got a 45 s limit on 2026-10-16, because leaving Payment is blocked while they run.)
 
 - [ ] **APP-4 · Availability fails open and is never retried.** `getOccupiedDatesAPI` returns `[]` on any error (`src/api/raApi.ts:35`). `useOccupiedDates` then marks the chunk as loaded (`src/hooks/useOccupiedDates.ts:63`). So a failed fetch shows every date as free for the rest of the session. The "Proceed" re-check in `CheckAvailability` fails open the same way. This becomes critical once real bookings exist.
   *Fix:* return `null` on failure, don't mark the chunk as loaded, and block Proceed with a "couldn't verify availability, try again" message.
@@ -79,16 +99,12 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
 
 ## Not built yet (feature work, not bugs)
 
-- Real payment in the app: `Payment.onBookNow` still makes up an `RA-…` reference.
-  - The **plugin side is done** (v1.4.0: `/checkout-config`, `/me/checkout`, `/confirm`, `/cancel`, live but switched off; see CLAUDE.md). It already re-checks and applies coupons server-side.
-  - **Still to do:**
-    - wire the Payment screen to those routes;
-    - fetch the Stripe key from `/checkout-config`, so `src/constants/stripe.ts` and APP-6 go away;
-    - add the saved-card notice;
-    - test in `RA_APP_CHECKOUT='test'` with December 2027 dates, then delete the test bookings and the `APPTEST10` coupon.
+- **A6 · Rates and reviews are only fetched at app start.** If the app comes back after a long time away (e.g. 30+ minutes), or the connection returns, `RatesContext` / `ReviewContext` don't refresh. Prices on Home can be out of date until the app restarts. Payment always uses OWcal's live price, so nothing is charged wrongly.
+- **Check an unfinished payment the next time the app opens.** If the app is killed mid-payment, OWcal's safety net completes a paid booking or deletes an unpaid hold, but only after 15 minutes to an hour. The app could remember the started checkout and, on the next start, show "Your booking is confirmed" or release the dates straight away.
+- **Apple Pay / Google Pay.** Cards only for now (Stripe `CardForm`).
+- **Pets and extras in My Bookings.** The plugin doesn't return the reservation's `options` yet.
 - Profile photos (Firebase Storage) are shown as "coming soon".
 - The `SearchResults` route is a placeholder screen.
-- The `BookingConfirmed` copy promises a confirmation email and a concierge call that nothing triggers yet.
 
 ## RA App API plugin (WordPress — source in `wordpress/ra-app-api/`)
 
@@ -124,6 +140,23 @@ IDs: `APP-n` = this repo, `PLG-n` = the RA App API WordPress plugin (not in this
 ## Fixed
 
 - [x] **iOS build failed: wrong Firebase config path** (fixed 2026-10-14, uncommitted at the time of writing). In `ios/TheRoyalAccommodation.xcodeproj/project.pbxproj`, `GoogleService-Info.plist` was referenced as `ios/GoogleService-Info.plist` instead of `ios/TheRoyalAccommodation/GoogleService-Info.plist`, so every fresh iOS build failed with "Build input file cannot be found". The path now carries the `TheRoyalAccommodation/` prefix like its siblings.
+
+- [x] **Real payment in the app** (done 2026-10-15 and 16). Payment used to make up an `RA-…` reference. It now books for real through the plugin's checkout routes (v1.4.0); see "Booking flow" in CLAUDE.md:
+  - The dates are held, Stripe takes the card (with 3-D Secure), and the plugin completes the booking with OWcal's code.
+  - The Stripe key comes from `/checkout-config`.
+  - The saved-card notice is shown, and the guest's details can be edited on Payment.
+  - **Also done on 2026-10-16:**
+    - **A8:** after 3-D Secure, iOS returns to the app by itself (the `theroyalaccommodation://` link).
+    - Backing out of Payment frees the guest's own dates on the calendar straight away.
+    - The guest can't leave Payment while a payment is in progress.
+  - **Tested in `test` mode** (December 2027 dates, test bookings deleted afterwards):
+    - card 4242;
+    - 3-D Secure Complete and Fail, on iOS;
+    - declined, then retried: one payment, one booking;
+    - backing out releases the hold;
+    - coupon + 2 pets, on Android;
+    - back blocked while paying, on iOS and Android.
+  - What's left before launch is listed under "Before launch" above.
 
 - [x] **My Bookings showed hard-coded demo bookings** (done 2026-10-14). It now loads real OWcal reservations via the plugin's `/me/bookings`, with upcoming/past worked out from the dates and a "Verify your email" state. The demo `BOOKINGS` have been removed.
 
