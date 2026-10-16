@@ -94,11 +94,23 @@ const Header: React.FC<HeaderProps> = ({
         if (showBrand) {
             return (
                 <View style={styles.center}>
-                    <Text style={[typography.headerTitle, { color: p.accent.main }]}>
+                    {/* Always one line: shrinks a little to fit (iOS: at most 15%),
+                        and only if it still doesn't fit does it end with "…". */}
+                    <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        adjustsFontSizeToFit
+                        minimumFontScale={0.85}
+                        style={[typography.headerTitle, { color: p.accent.main }]}
+                    >
                         THE ROYAL ACCOMMODATION
                     </Text>
                     {!!subtitle && (
-                        <Text style={[typography.overline, { color: p.text.placeHolder, marginTop: spacing.xxs }]}>
+                        <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                            style={[typography.overline, { color: p.text.placeHolder, marginTop: spacing.xxs }]}
+                        >
                             {subtitle}
                         </Text>
                     )}
