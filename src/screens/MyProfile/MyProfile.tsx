@@ -10,7 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { typography, spacing } from '../../theme';
 import { formatMonthShort } from '../../utils/date';
 import type { DrawerParamList, RootStackParamList } from '../../navigation/types';
-import { DRAWER_ROUTES, STACK_ROUTES } from '../../navigation/routes';
+import { STACK_ROUTES } from '../../navigation/routes';
 
 import Text from '../../components/Text/Text';
 import Header from '../../components/Headers/Header';
@@ -222,7 +222,7 @@ const MyProfile: React.FC = () => {
                             onAction={onTryAgain}
                             helpText="Need assistance?"
                             helpActionLabel="Contact Concierge"
-                            onHelp={() => navigation.navigate(DRAWER_ROUTES.Contact)}
+                            onHelp={() => navigation.getParent()?.navigate(STACK_ROUTES.ContactStack)}   // on top, so Back returns here
                         />
                     )}
                 </View>

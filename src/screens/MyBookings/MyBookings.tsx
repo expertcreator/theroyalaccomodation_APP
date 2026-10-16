@@ -103,7 +103,8 @@ const MyBookings: React.FC = () => {
 
     const goHome = () =>
         navigation.reset({ index: 0, routes: [{ name: DRAWER_ROUTES.Home }] });
-    const goContact = () => navigation.navigate(DRAWER_ROUTES.Contact);
+    // Contact on top (root stack), so Back returns here, not to the drawer's Home.
+    const goContact = () => navigation.getParent()?.navigate(STACK_ROUTES.ContactStack);
 
     // Main content for each screen state.
     const renderContent = () => {
