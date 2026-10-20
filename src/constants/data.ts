@@ -4,7 +4,7 @@ import type { Property, Room, Attraction } from '../interfaces/property';
 import { toISO } from '../utils/date';
 import { AreaAttraction } from '../interfaces/attraction';
 
-export const ASCOT_BASE_RATE = 1450;
+export const ASCOT_BASE_RATE = 1350;
 export const WINDSOR_BASE_RATE = 995;
 
 type PropertyImages = {
