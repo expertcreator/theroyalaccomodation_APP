@@ -64,7 +64,8 @@ export type RatesMap = Record<string, ResidenceRate>;
 // (on Android, React Native has no network time limit of its own).
 const RATES_TIMEOUT_MS = 30000;
 
-export async function getRatesAPI(): Promise<RatesMap | null> {
+// quiet = no toast if it fails (used for background refreshes).
+export async function getRatesAPI(quiet = false): Promise<RatesMap | null> {
     const res = await getAPIData(
         `${RA_APP_BASE}/rates`,
         undefined,   // no query params
@@ -72,6 +73,7 @@ export async function getRatesAPI(): Promise<RatesMap | null> {
         undefined,   // signal
         OW_HEADERS,  // WAF-friendly headers (same recipe as /availability)
         RATES_TIMEOUT_MS,
+        quiet,
     );
     if (res?.success === true && res.data && typeof res.data === 'object') {
         return res.data as RatesMap;
@@ -107,13 +109,16 @@ export type ReviewsMap = Record<string, ResidenceReviews>;
  * or a transport/WAF/500 error). getAPIData never throws — it returns null on
  * network error — so callers just check for null and fall back to cache / hide.
  */
-export async function getReviewsAPI(): Promise<ReviewsMap | null> {
+// quiet = no toast if it fails (used for background refreshes).
+export async function getReviewsAPI(quiet = false): Promise<ReviewsMap | null> {
     const res = await getAPIData(
         `${RA_APP_BASE}/reviews`,
-        undefined,
-        undefined,
-        undefined,
+        undefined,   // no query params
+        undefined,   // skipAuth
+        undefined,   // signal
         OW_HEADERS,
+        undefined,   // timeout (none yet — see APP-3)
+        quiet,
     );
     if (res?.success === true && res.data && typeof res.data === 'object') {
         return res.data as ReviewsMap;

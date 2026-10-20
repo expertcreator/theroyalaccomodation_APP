@@ -9,6 +9,7 @@ export const getAPIData = async (
     signal?: AbortSignal,
     extraHeaders?: Record<string, string>,   // ← NEW: per-call headers (e.g. WAF recipe)
     timeout?: number,                        // ms — give up after this long (default: no limit)
+    quiet?: boolean,                         // true = no toast on failure (for refreshes the guest didn't ask for)
 ) => {
 
     // Build headers — caller's extras win over the defaults.
@@ -48,7 +49,7 @@ export const getAPIData = async (
         // We only get here when no answer came back (offline, server unreachable,
         // or the time limit was hit) — server error replies are returned above as
         // normal data, because of `validateStatus: () => true`.
-        showNetworkError(error);
+        if (!quiet) showNetworkError(error);
         return null;
     }
 };

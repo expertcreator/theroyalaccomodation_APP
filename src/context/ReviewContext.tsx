@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { ASYNC_KEYS, getItemFromAsyncStorage, setItemInAsyncStorage } from '../utils/storage';
 import { getReviewsAPI, ReviewsMap } from '../api/raApi';
+import { useRefreshWhenStale } from '../hooks/useRefreshWhenStale';
 
 type ReviewsContextValue = {
     reviews: ReviewsMap | null;    // live or cached; null until either arrives (consumers hide the row)
@@ -17,7 +18,9 @@ const ReviewsContext = createContext<ReviewsContextValue>({
 export const useReviews = () => useContext(ReviewsContext);
 
 /**
- * Loads guest reviews once at startup and keeps them in context.
+ * Loads guest reviews at startup and keeps them in context.
+ * Reloads by itself (quietly) when the phone comes back online or the app comes
+ * back to the foreground, if the reviews aren't fresh — see useRefreshWhenStale.
  *
  * NON-blocking — unlike rates, reviews never gate the splash. Fetched in
  * parallel with rates, cache-first: show cached reviews instantly on cold
@@ -29,29 +32,34 @@ export const ReviewsProvider: React.FC<{ children: ReactNode }> = ({ children })
     const [loading, setLoading] = useState<boolean>(false);
     const mounted = useRef(true);
 
-    const load = async () => {
+    // Fetch the reviews. Returns true if it worked. quiet = no toast on failure.
+    const load = async (quiet: boolean): Promise<boolean> => {
         setLoading(true);
-        const live = await getReviewsAPI();   // null on any failure
-        if (!mounted.current) return;
+        const live = await getReviewsAPI(quiet);   // null on any failure
+        if (!mounted.current) return false;
         if (live) {
             setReviews(live);
             setItemInAsyncStorage(ASYNC_KEYS.REVIEWS, live); // fire-and-forget cache write
         }
         setLoading(false);
+        return !!live;
     };
+
+    // `run` does the first load; the hook reloads later when the reviews go stale.
+    const run = useRefreshWhenStale(load);
 
     useEffect(() => {
         mounted.current = true;
         (async () => {
             const cached = await getItemFromAsyncStorage<ReviewsMap>(ASYNC_KEYS.REVIEWS);
             if (mounted.current && cached) setReviews(prev => prev ?? cached);
-            load();
+            run();
         })();
         return () => { mounted.current = false; };
     }, []);
 
     return (
-        <ReviewsContext.Provider value={{ reviews, loading, refresh: load }}>
+        <ReviewsContext.Provider value={{ reviews, loading, refresh: () => run() }}>
             {children}
         </ReviewsContext.Provider>
     );

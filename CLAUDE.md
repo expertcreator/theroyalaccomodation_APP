@@ -64,6 +64,8 @@ Tooling state:
 ### Static content vs live data
 - All property content (names, copy, images, amenities, attractions, contact info) is static in `src/constants/data.ts`, keyed by `PropertyId` (`'ascot' | 'windsor'`). Each property's `owAccomId` (Ascot `1680`, Windsor `1225`) bridges to the backend; live maps from the API are keyed by `String(owAccomId)`.
 - `RatesContext` / `ReviewContext` load cache-first from AsyncStorage, then refresh from the network; consumers fall back to static values (e.g. `property.baseRate`) when live data is missing.
+  - After that, `useRefreshWhenStale` (`src/hooks/`) reloads each of them **quietly** (no toast) when the phone comes back online or the app returns to the foreground, but only if nothing has loaded yet or the last success is over 30 minutes old. Turning Wi-Fi off and on with fresh data makes no requests.
+  - `getAPIData`'s last argument `quiet` turns off the failure toast; `getRatesAPI(quiet)` / `getReviewsAPI(quiet)` pass it through.
 
 ### Backend integrations (`src/api/`, `src/firebase/`)
 All HTTP goes through `apiClient.ts` (`getAPIData`, `postDataAPI`):

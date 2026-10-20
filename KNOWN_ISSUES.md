@@ -120,7 +120,7 @@ Not bugs, but things that must happen before the app goes to the stores.
 
 ## Not built yet (feature work, not bugs)
 
-- **A6 · Rates and reviews are only fetched at app start.** If the app comes back after a long time away (e.g. 30+ minutes), or the connection returns, `RatesContext` / `ReviewContext` don't refresh. Prices on Home can be out of date until the app restarts. Payment always uses OWcal's live price, so nothing is charged wrongly.
+- **A6 · Rates and reviews are only fetched at app start.** *Built 2026-10-20 (`useRefreshWhenStale`): they now reload quietly on reconnect or return to the foreground, if not loaded yet or over 30 min old. Tested on Android: with app data cleared and Airplane mode on, Home showed fallback prices and no reviews; turning Airplane mode off made the review rows appear by themselves. The return-to-foreground case was also checked on Android. (The iOS Simulator doesn't report reconnects.)* If the app comes back after a long time away (e.g. 30+ minutes), or the connection returns, `RatesContext` / `ReviewContext` don't refresh. Prices on Home can be out of date until the app restarts. Payment always uses OWcal's live price, so nothing is charged wrongly.
 - **Check an unfinished payment the next time the app opens.** If the app is killed mid-payment, OWcal's safety net completes a paid booking or deletes an unpaid hold, but only after 15 minutes to an hour. The app could remember the started checkout and, on the next start, show "Your booking is confirmed" or release the dates straight away.
 - **Apple Pay / Google Pay.** Cards only for now (Stripe `CardForm`).
 - **Pets and extras in My Bookings.** The plugin doesn't return the reservation's `options` yet.

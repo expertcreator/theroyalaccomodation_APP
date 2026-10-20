@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { ASYNC_KEYS, getItemFromAsyncStorage, setItemInAsyncStorage } from '../utils/storage';
 import { getRatesAPI, RatesMap } from '../api/raApi';
+import { useRefreshWhenStale } from '../hooks/useRefreshWhenStale';
 import type { Property } from '../interfaces/property';
 
 type RatesContextValue = {
     rates: RatesMap | null;        // live or cached; null until either arrives (consumers fall back to static)
-    loading: boolean;              // true while the first network fetch is in flight
+    loading: boolean;              // true while a network fetch is in flight
     ready: boolean;
     refresh: () => Promise<void>;  // manual re-fetch if ever needed
 };
@@ -29,7 +30,9 @@ export const useFromRate = (property: Property): number => {
 };
 
 /**
- * Loads lowest/highest nightly rates once at startup and keeps them in context.
+ * Loads lowest/highest nightly rates at startup and keeps them in context.
+ * Reloads by itself (quietly) when the phone comes back online or the app comes
+ * back to the foreground, if the rates aren't fresh — see useRefreshWhenStale.
  *
  * Non-blocking: children render immediately (splash is never delayed). Flow is
  * cache-first — show the last cached rates instantly on cold start, then refresh
@@ -42,17 +45,22 @@ export const RatesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [ready, setReady] = useState<boolean>(false);
     const mounted = useRef(true);
 
-    const load = async () => {
+    // Fetch the rates. Returns true if it worked. quiet = no toast on failure.
+    const load = async (quiet: boolean): Promise<boolean> => {
         setLoading(true);
-        const live = await getRatesAPI();               // null on any failure
-        if (!mounted.current) return;
+        const live = await getRatesAPI(quiet);          // null on any failure
+        if (!mounted.current) return false;
         if (live) {
             setRates(live);
             setItemInAsyncStorage(ASYNC_KEYS.RATES, live); // fire-and-forget cache write
         }
         setLoading(false);
         setReady(true);   // we got a definitive true/false response — splash may proceed
+        return !!live;
     };
+
+    // `run` does the first load; the hook reloads later when the rates go stale.
+    const run = useRefreshWhenStale(load);
 
     useEffect(() => {
         mounted.current = true;
@@ -64,14 +72,14 @@ export const RatesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 setRates(prev => prev ?? cached); // don't clobber a live result that already landed
             }
             // 2. Refresh from the network in the background.
-            load();
+            run();
         })();
 
         return () => { mounted.current = false; };
     }, []);
 
     return (
-        <RatesContext.Provider value={{ rates, loading, ready, refresh: load }}>
+        <RatesContext.Provider value={{ rates, loading, ready, refresh: () => run() }}>
             {children}
         </RatesContext.Provider>
     );
