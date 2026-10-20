@@ -1,5 +1,5 @@
 import axios from "axios";
-import { showToast } from "../utils/ToastNotifier";
+import { showNetworkError } from "../utils/networkError";
 
 //Get Method
 export const getAPIData = async (
@@ -45,9 +45,10 @@ export const getAPIData = async (
         }
         console.error(`[apiClient.ts] Error in Axios API component ${url} = `, error);
 
-        // prefer the server's message from the response body; fall back to the generic axios one
-        const serverMessage = error?.response?.data?.message;
-        showToast('warning', serverMessage || error?.message);
+        // We only get here when no answer came back (offline, server unreachable,
+        // or the time limit was hit) — server error replies are returned above as
+        // normal data, because of `validateStatus: () => true`.
+        showNetworkError(error);
         return null;
     }
 };
@@ -97,9 +98,8 @@ export const postDataAPI = async ({ url, data, ContentType = 'application/json',
         }
         console.error(`[Post API] Error in Axios API component ${url} = `, error);
 
-        // prefer the server's message from the response body; fall back to the generic axios one
-        const serverMessage = error?.response?.data?.message;
-        showToast('warning', serverMessage || error?.message);
+        // No answer came back (offline or server unreachable) — see the note in getAPIData.
+        showNetworkError(error);
         return null;
     }
 }

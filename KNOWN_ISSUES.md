@@ -79,6 +79,7 @@ Not bugs, but things that must happen before the app goes to the stores.
 
 - [ ] **APP-10 · Problems in `apiClient.ts`:**
   - [ ] `validateStatus: () => true` (lines 30, 81) means HTTP errors never reach `catch`, so the "show the server's message" toast there never runs. *Fix (low priority):* decide one consistent way to handle HTTP errors. Callers currently rely on getting error replies back as data, so it touches every API call.
+    *Partly addressed 2026-10-20:* the dead "server's message" branch was removed. Network failures now show a friendly toast through `showNetworkError()` (offline / couldn't connect / too slow, once per burst) instead of axios's raw "Network Error". Tested on Android. HTTP error replies are still handled by each caller.
   - [x] Every request and response body was logged in all builds (lines 33, 84). In release builds that goes to the phone's system log, and it included guests' names, emails, phones and addresses, the Stripe payment secret, sign-in tokens inside request errors, `AuthContext`'s whole user object and My Bookings' results.
     *Fixed 2026-10-16:* `src/utils/silenceLogsInRelease.ts`, imported first in `index.js`, makes `console.log/info/debug/warn/error` do nothing when `!__DEV__`. Debug builds log as before. This covers every log in the app and in libraries. Release builds have no crash reporting, so nothing is lost.
 

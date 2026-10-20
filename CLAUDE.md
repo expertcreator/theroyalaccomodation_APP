@@ -67,7 +67,7 @@ Tooling state:
 
 ### Backend integrations (`src/api/`, `src/firebase/`)
 All HTTP goes through `apiClient.ts` (`getAPIData`, `postDataAPI`):
-- Uses `validateStatus: () => true`, so HTTP error responses come back as normal data. Only transport errors hit `catch`, which shows a toast and returns `null`.
+- Uses `validateStatus: () => true`, so HTTP error responses come back as normal data. Only transport errors hit `catch`, which returns `null` and calls `showNetworkError()` (`src/utils/networkError.ts`). It asks NetInfo whether the phone is online and shows one friendly toast: "You're offline…", "Couldn't connect…", or the time-limit message. The same message is shown only once per 4 s, so a screen's several failed requests give one toast.
 - Callers check the result shape and fall back; API helpers don't throw.
 - Time limits:
   - `getAPIData` takes an optional `timeout`. `/rates` (so the splash can't hang) and `/availability` (so the calendar can't hang) use 30 s.
