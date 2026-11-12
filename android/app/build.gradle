@@ -94,8 +94,8 @@ android {
         // (1.1 → 10100, 1.2.3 → 10203, 2.0 → 20000). The app reads it from Google
         // Play to tell a new MAJOR version (forced update) from a small one
         // (optional) — see src/hooks/useAppUpdate.ts. Keep versionName matching.
-        versionCode 1
-        versionName "1.0"
+        versionCode 10200
+        versionName "1.2"
     }
     signingConfigs {
         release {

@@ -103,3 +103,6 @@ firebase-debug*.log
 
 # VS Code React Native extension cache
 .vscode/.react/
+
+# JS bundle written by `yarn android-app-bundle`; Gradle builds its own (Hermes) copy for the AAB
+android/app/src/main/assets/index.android.bundle
