@@ -16,6 +16,8 @@ import { useRates } from '../context/RatesContext';
 import { useAuth } from '../context/AuthContext';
 import ForgotPassword from '../screens/ForgotPassword/ForgotPassword';
 import Contact from '../screens/Contact/Contact';
+import UpdateModal from '../components/Modals/UpdateModal';
+import { useAppUpdate } from '../hooks/useAppUpdate';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -35,6 +37,9 @@ export default function RootNavigator() {
         }
     }, [ready, initializing]);
 
+    // New app version? Checked after the splash, so it never delays start-up.
+    const { prompt, update, later } = useAppUpdate(ready && !initializing);
+
     return (
         <>
             <CustomStatusBar
@@ -53,6 +58,14 @@ export default function RootNavigator() {
                 <Stack.Screen name={STACK_ROUTES.ForgotPassword} component={ForgotPassword} options={{ headerShown: false }} />
                 <Stack.Screen name={STACK_ROUTES.ContactStack} component={Contact} options={{ headerShown: false }} />
             </Stack.Navigator>
+
+            <UpdateModal
+                visible={!!prompt}
+                force={!!prompt?.force}
+                storeVersion={prompt?.storeVersion}
+                onUpdate={update}
+                onLater={later}
+            />
         </>
     );
 }

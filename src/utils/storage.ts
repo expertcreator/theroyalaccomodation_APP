@@ -6,6 +6,7 @@ export const ASYNC_KEYS = {
     DARK_MODE: 'darkMode',
     RATES: 'rates',        // cached lowest/highest nightly rates
     REVIEWS: 'reviews',      // cached per-residence reviews
+    UPDATE_SNOOZE: 'updateSnooze', // { version, until }: the guest tapped "Later" on this store version
 };
 
 /**

@@ -112,7 +112,7 @@ Not bugs, but things that must happen before the app goes to the stores.
   - `Property.occupiedDates` and `occupiedThisMonth` in `constants/data.ts`
   - the `functions` export in `firebase/config.ts` (keep it if Cloud Function work is near)
   - `STACK_ROUTES.Splash`
-  - Android `CAMERA` permission (`AndroidManifest.xml:4`)
+  - ~~Android `CAMERA` permission~~: removed 2026-11-11, before the first Play upload (photos are gallery-only)
 - [x] **APP-17 · My Bookings shows no loader when it refreshes on reopen.** Fixed 2026-10-14: the focus effect now sets `screenState` to `'loading'` before `load()`, so every open shows the full spinner (option A). Trade-off: the cards briefly disappear on each visit.
   *Possible polish later (option B):* keep the cards visible and show a small "Updating…" spinner instead.
 - [ ] **APP-16 · The Contact map label overlaps the map's own text.** The "WINDSOR & ASCOT ESTATES" pill covers the illustration's printed "BERKSHIRE, ENGLAND" caption (`src/screens/Contact/Contact.tsx` map card). *Fix:* move the pill to the top-left, or use a map image without the caption.

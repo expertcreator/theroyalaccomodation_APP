@@ -6,6 +6,7 @@ import type { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useTheme } from '../../context/ThemeContext';
 import { typography, spacing } from '../../theme';
 import { withAlpha } from '../../utils/color';
+import { callNumber, sendEmail } from '../../utils/contactLinks';
 import { CONTACT } from '../../constants/data';
 import imagePath from '../../constants/imagePath';
 import type { DrawerParamList } from '../../navigation/types';
@@ -134,17 +135,17 @@ const Contact: React.FC = () => {
                 {/* Get in touch */}
                 <Text style={[typography.overline, { color: p.text.primary, marginBottom: spacing.sm }]}>GET IN TOUCH</Text>
                 <View style={[styles.contactCard, { backgroundColor: p.background.card, borderColor: p.borderColor }]}>
-                    <ContactRow icon="mail" label="EMAIL US" onPress={() => Linking.openURL(`mailto:${CONTACT.email}`)}>
+                    <ContactRow icon="mail" label="EMAIL US" onPress={() => sendEmail(CONTACT.email)}>
                         <Text style={[typography.bodySmall, { color: p.text.primary }]}>{CONTACT.email}</Text>
                     </ContactRow>
 
                     <View style={[styles.rowDivider, { backgroundColor: p.divider }]} />
 
                     <ContactRow icon="phone" label="PHONE">
-                        <TouchableOpacity onPress={() => Linking.openURL(`tel:${CONTACT.phone}`)}>
+                        <TouchableOpacity onPress={() => callNumber(CONTACT.phone, CONTACT.phoneDisplay)}>
                             <Text style={[typography.bodySmall, { color: p.text.primary }]}>{CONTACT.phoneDisplay}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => Linking.openURL(`tel:${CONTACT.phone2}`)}>
+                        <TouchableOpacity onPress={() => callNumber(CONTACT.phone2, CONTACT.phone2Display)}>
                             <Text style={[typography.bodySmall, { color: p.text.primary, marginTop: spacing.xxs }]}>{CONTACT.phone2Display}</Text>
                         </TouchableOpacity>
                     </ContactRow>

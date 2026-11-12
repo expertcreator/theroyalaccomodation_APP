@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Pressable, StyleSheet, Linking } from 'react-native';
+import { View, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,6 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { typography, spacing, radius, borderWidth } from '../../theme';
 import { withAlpha } from '../../utils/color';
+import { callNumber, sendEmail } from '../../utils/contactLinks';
 import { CONTACT, PROPERTIES } from '../../constants/data';
 import { DRAWER_ROUTES, STACK_ROUTES } from '../../navigation/routes';
 import Text from '../Text/Text';
@@ -135,10 +136,23 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                     style={styles.hairline}
                 />
                 <View style={styles.contact}>
-                    <Pressable onPress={() => Linking.openURL(`tel:${CONTACT.phone}`)}>
+                    {/* Tap the number to call, the address to email. hitSlop makes the small text easier to hit. */}
+                    <Pressable
+                        onPress={() => callNumber(CONTACT.phone, CONTACT.phoneDisplay)}
+                        hitSlop={{ top: 8, bottom: 4, left: 16, right: 16 }}
+                        accessibilityRole="link"
+                        accessibilityLabel={`Call ${CONTACT.phoneDisplay}`}
+                        style={({ pressed }) => pressed && styles.pressed}
+                    >
                         <Text style={[typography.bodySmall, { color: white(0.6) }]}>{CONTACT.phoneDisplay}</Text>
                     </Pressable>
-                    <Pressable onPress={() => Linking.openURL(`mailto:${CONTACT.email}`)}>
+                    <Pressable
+                        onPress={() => sendEmail(CONTACT.email)}
+                        hitSlop={{ top: 4, bottom: 8, left: 16, right: 16 }}
+                        accessibilityRole="link"
+                        accessibilityLabel={`Email ${CONTACT.email}`}
+                        style={({ pressed }) => pressed && styles.pressed}
+                    >
                         <Text style={[typography.caption, { color: white(0.5), marginTop: spacing.xs }]}>{CONTACT.email}</Text>
                     </Pressable>
                 </View>
@@ -178,6 +192,7 @@ const styles = StyleSheet.create({
     footer: { paddingHorizontal: spacing.xl3, paddingTop: spacing.lg },
     hairline: { height: borderWidth.thin, width: '100%', marginBottom: spacing.lg },
     contact: { alignItems: 'center' },
+    pressed: { opacity: 0.6 },
 });
 
 export default DrawerContent;
